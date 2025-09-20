@@ -1,0 +1,86 @@
+# Runs checks on every pull request
+name: Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_call:
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-ci
+
+      - name: Cache ESLint
+        uses: actions/cache@v4
+        with:
+          path: .cache/.eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
+
+      - name: Cache Prettier
+        uses: actions/cache@v4
+        with:
+          path: .cache/.prettier-cache
+          key: ${{ runner.os }}-prettier-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-prettier-
+
+      - name: Generate svelte configs
+        run: pnpm svelte-kit sync
+
+      - name: Run Prettier style check
+        run: pnpm prettier --check --cache --cache-location=.cache/.prettier-cache --cache-strategy content .
+
+      - name: Run ESLint
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+        run: pnpm eslint --cache --cache-location=.cache/.eslintcache --cache-strategy content .
+
+      - name: Svelte check
+        run: pnpm svelte-check --tsconfig ./tsconfig.json
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-ci
+
+      - name: Cache Vitest
+        uses: actions/cache@v4
+        with:
+          path: .cache/.vite
+          key: ${{ runner.os }}-vitest-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-vitest-
+
+      - name: Generate svelte configs
+        run: pnpm svelte-kit sync
+
+      - name: Run tests
+        run: pnpm test
+
+  check-changeset:
+    # This job runs checks on PRs to ensure a changeset file is included if needed
+    name: Check for Changeset
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-ci
+
+      - name: Check for changeset file
+        run: 'pnpm changeset status --since origin/main'

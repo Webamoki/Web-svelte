@@ -1,3 +1,13 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import { links } from './links.js';
+</script>
+
+<h1>Web-svelte showcase</h1>
+<nav class="p-2">
+	<p>Links:</p>
+	<ul class="ml-4 list-disc">
+		{#each links as { name, href } (href)}
+			<li><a class="text-blue-500 hover:underline" {href}>{name}</a></li>
+		{/each}
+	</ul>
+</nav>

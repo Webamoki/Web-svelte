@@ -34,16 +34,14 @@
 					{#if label || description}
 						<div>
 							{#if label}
-								<Label class="">{label}</Label>
+								<Label class="text-sm font-medium">{label}</Label>
 							{/if}
 							{#if description}
 								<Description class="">{description}</Description>
 							{/if}
 						</div>
 					{/if}
-					<div class="px-1">
-						{@render formElem(props)}
-					</div>
+					{@render formElem(props)}
 				</div>
 			{/snippet}
 		</Control>

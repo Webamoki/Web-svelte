@@ -325,10 +325,22 @@ function padNum(num: number, len: number): string {
  * @param time
  * @returns string of time in that format
  */
-export function formatTime(time: Time): string {
+export function formatTimeShort(time: Time): string {
 	const hours = padNum(time.hour, 2);
 	const minutes = padNum(time.minute, 2);
 	return `${hours}:${minutes}`;
+}
+
+/**
+ * Gives time in HH:MM:SS format
+ * @param time
+ * @returns string of time in that format
+ */
+export function formatTimeFull(time: Time): string {
+	const hours = padNum(time.hour, 2);
+	const minutes = padNum(time.minute, 2);
+	const seconds = padNum(time.second, 2);
+	return `${hours}:${minutes}:${seconds}`;
 }
 
 /**
@@ -339,19 +351,19 @@ export function formatTime(time: Time): string {
  */
 export function formatTimeEnd(timeStart: Time, durationMinutes: number): string {
 	const timeEnd = timeStart.add({ minutes: durationMinutes });
-	return formatTime(timeEnd);
+	return formatTimeShort(timeEnd);
 }
 
 /**
  * Formats a full date and time.
  * @param datetime The ZonedDateTime object to format.
  * @returns The formatted date and time string.
- * @example "05/10/2023 14:30"
+ * @example "05/10/2023 14:30:00"
  */
 export function formatAbsolute(datetime: ZonedDateTime): string {
 	const date = toCalendarDate(datetime);
 	const time = toTime(datetime);
-	return `${formatDateNum(date)} ${time}`;
+	return `${formatDateNum(date)} ${formatTimeFull(time)}`;
 }
 
 /* State handling */

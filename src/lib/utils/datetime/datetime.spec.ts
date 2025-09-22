@@ -17,8 +17,9 @@ import {
 	formatDateFull,
 	formatDateISO,
 	formatMonth,
-	formatTime,
+	formatTimeShort,
 	formatTimeEnd,
+	formatTimeFull,
 	formatAbsolute,
 	formatDateNum
 } from './index.js';
@@ -720,35 +721,35 @@ describe('formatMonth', () => {
 	});
 });
 
-describe('formatTime', () => {
+describe('formatTimeShort', () => {
 	it('should format time correctly with 2-digit hours and 2-digit minutes', () => {
 		const time = new Time(14, 30);
-		expect(formatTime(time)).toBe('14:30');
+		expect(formatTimeShort(time)).toBe('14:30');
 	});
 
 	it('should pad single digit hours with leading zero', () => {
 		const time = new Time(9, 45);
-		expect(formatTime(time)).toBe('09:45');
+		expect(formatTimeShort(time)).toBe('09:45');
 	});
 
 	it('should pad single digit minutes with leading zero', () => {
 		const time = new Time(12, 5);
-		expect(formatTime(time)).toBe('12:05');
+		expect(formatTimeShort(time)).toBe('12:05');
 	});
 
 	it('should pad both single digit hours and minutes with leading zeros', () => {
 		const time = new Time(1, 7);
-		expect(formatTime(time)).toBe('01:07');
+		expect(formatTimeShort(time)).toBe('01:07');
 	});
 
 	it('should format midnight correctly', () => {
 		const time = new Time(0, 0);
-		expect(formatTime(time)).toBe('00:00');
+		expect(formatTimeShort(time)).toBe('00:00');
 	});
 
 	it('should format end of day correctly', () => {
 		const time = new Time(23, 59);
-		expect(formatTime(time)).toBe('23:59');
+		expect(formatTimeShort(time)).toBe('23:59');
 	});
 
 	it('should format the end time correctly for a short duration', () => {
@@ -777,6 +778,53 @@ describe('formatTime', () => {
 
 	it('should pad times correctly', () => {
 		expect(formatTimeEnd(new Time(9, 5), 5)).toBe('09:10');
+	});
+});
+
+describe('formatTimeFull', () => {
+	it('should format time correctly with hours, minutes, and seconds', () => {
+		const time = new Time(14, 30, 45);
+		expect(formatTimeFull(time)).toBe('14:30:45');
+	});
+
+	it('should pad single digit hours with leading zero', () => {
+		const time = new Time(9, 45, 30);
+		expect(formatTimeFull(time)).toBe('09:45:30');
+	});
+
+	it('should pad single digit minutes with leading zero', () => {
+		const time = new Time(12, 5, 30);
+		expect(formatTimeFull(time)).toBe('12:05:30');
+	});
+
+	it('should pad single digit seconds with leading zero', () => {
+		const time = new Time(12, 30, 5);
+		expect(formatTimeFull(time)).toBe('12:30:05');
+	});
+
+	it('should pad all single digits with leading zeros', () => {
+		const time = new Time(1, 7, 9);
+		expect(formatTimeFull(time)).toBe('01:07:09');
+	});
+
+	it('should format midnight correctly', () => {
+		const time = new Time(0, 0, 0);
+		expect(formatTimeFull(time)).toBe('00:00:00');
+	});
+
+	it('should format end of day correctly', () => {
+		const time = new Time(23, 59, 59);
+		expect(formatTimeFull(time)).toBe('23:59:59');
+	});
+
+	it('should handle times without seconds specified (defaults to 0)', () => {
+		const time = new Time(10, 30);
+		expect(formatTimeFull(time)).toBe('10:30:00');
+	});
+
+	it('should handle times with milliseconds (ignores milliseconds)', () => {
+		const time = new Time(15, 45, 30, 500);
+		expect(formatTimeFull(time)).toBe('15:45:30');
 	});
 });
 
@@ -830,6 +878,7 @@ describe('formatTimeEnd', () => {
 		expect(formatTimeEnd(new Time(10, 0), 1500)).toBe('11:00');
 	});
 });
+
 describe('formatAbsolute', () => {
 	it('should format a ZonedDateTime correctly', () => {
 		const datetime = new ZonedDateTime(2024, 5, 15, 'Europe/London', 0, 14, 30);
@@ -880,5 +929,15 @@ describe('formatAbsolute', () => {
 		// Both should format the same since we're using the same local date/time components
 		expect(formatAbsolute(datetimeUTC)).toBe('15/05/2024 14:30:00');
 		expect(formatAbsolute(datetimeNY)).toBe('15/05/2024 14:30:00');
+	});
+
+	it('should include seconds in the time portion', () => {
+		const datetime = new ZonedDateTime(2024, 5, 15, 'Europe/London', 0, 14, 30, 45);
+		expect(formatAbsolute(datetime)).toBe('15/05/2024 14:30:45');
+	});
+
+	it('should handle times with milliseconds (ignores milliseconds)', () => {
+		const datetime = new ZonedDateTime(2024, 5, 15, 'Europe/London', 0, 14, 30, 45, 500);
+		expect(formatAbsolute(datetime)).toBe('15/05/2024 14:30:45');
 	});
 });

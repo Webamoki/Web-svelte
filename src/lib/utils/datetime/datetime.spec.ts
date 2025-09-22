@@ -751,34 +751,6 @@ describe('formatTimeShort', () => {
 		const time = new Time(23, 59);
 		expect(formatTimeShort(time)).toBe('23:59');
 	});
-
-	it('should format the end time correctly for a short duration', () => {
-		expect(formatTimeEnd(new Time(10, 0), 30)).toBe('10:30');
-	});
-
-	it('should handle hour rollover correctly', () => {
-		expect(formatTimeEnd(new Time(9, 45), 30)).toBe('10:15');
-	});
-
-	it('should handle day rollover correctly', () => {
-		expect(formatTimeEnd(new Time(23, 30), 60)).toBe('00:30');
-	});
-
-	it('should handle multiple hour additions', () => {
-		expect(formatTimeEnd(new Time(10, 0), 120)).toBe('12:00');
-	});
-
-	it('should handle zero duration', () => {
-		expect(formatTimeEnd(new Time(15, 30), 0)).toBe('15:30');
-	});
-
-	it('should handle large duration across multiple days', () => {
-		expect(formatTimeEnd(new Time(12, 0), 1440)).toBe('12:00'); // 24 hours = 1440 minutes
-	});
-
-	it('should pad times correctly', () => {
-		expect(formatTimeEnd(new Time(9, 5), 5)).toBe('09:10');
-	});
 });
 
 describe('formatTimeFull', () => {

@@ -1,5 +1,1 @@
-import * as datetime from './datetime/index.js';
-
-export default {
-	...datetime
-};
+export * from './datetime/index.js';

@@ -179,11 +179,7 @@ export function getLastMonths(count: number, startDate: CalendarDate): CalendarD
  * @returns True if the ranges overlap, false otherwise.
  */
 export function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time): boolean {
-	if (start1.compare(end2) < 0 && start2.compare(end1) < 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return start1.compare(end2) < 0 && start2.compare(end1) < 0;
 }
 
 /**

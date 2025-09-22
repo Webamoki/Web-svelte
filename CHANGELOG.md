@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.2.0
+
+### Minor Changes
+
+- ec963d1: add datetime functions
+
 ## 0.1.1
 
 ### Patch Changes

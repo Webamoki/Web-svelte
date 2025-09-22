@@ -24,6 +24,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: ./.github/actions/setup-ci
+
       - name: Configure Git User
         run: |
           git config --global user.name "github-actions[bot]"

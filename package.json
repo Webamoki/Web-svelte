@@ -62,6 +62,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/node": "^22",
+		"@types/ramda": "^0.31.1",
 		"arktype": "^2.1.22",
 		"clsx": "^2.1.1",
 		"eslint": "^9.22.0",

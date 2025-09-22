@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
-	import Input from '../Input.svelte';
+	import { Input } from '$lib/shadcn/components/ui/input/index.js';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: string;
@@ -9,24 +9,14 @@
 	let { value = $bindable(), ...fieldProps }: Props = $props();
 
 	let show = $state(false);
-	let inputType = $state('password');
-
-	$effect(() => {
-		inputType = show ? 'text' : 'password';
-	});
+	let inputType = $derived(show ? 'text' : 'password');
 </script>
 
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<div class="flex w-full items-center gap-2">
 			<!-- Input itself -->
-			<Input
-				type={inputType}
-				bind:value
-				{...props}
-				class="flex-1 rounded-md border px-3 py-2 text-sm transition-all duration-150 outline-none
-				 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-			/>
+			<Input type={inputType} bind:value {...props} />
 
 			<!-- Show/hide button outside input -->
 			<button

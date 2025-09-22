@@ -9,7 +9,7 @@ const masterSchema = type({
 });
 
 export const load = async () => {
-  const form = await superValidate(arktype(masterSchema));
+	const form = await superValidate(arktype(masterSchema));
 
-  return { form };
+	return { form };
 };

@@ -7,11 +7,11 @@
 		value?: string;
 		type?: HTMLInputElement['type'];
 	}
-	let { value = $bindable(), ...fieldProps }: Props = $props();
+	let { value = $bindable(), type = 'text', ...fieldProps }: Props = $props();
 </script>
 
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
-		<Input type={fieldProps.type ?? 'text'} bind:value {...props} />
+		<Input {type} bind:value {...props} />
 	{/snippet}
 </FieldWrapper>

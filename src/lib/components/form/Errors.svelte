@@ -12,8 +12,8 @@
 <FieldErrors>
 	{#snippet children({ errors, errorProps })}
 		<div class={cn('space-y-1', className)}>
-			{#each errors as error (error)}
-				<span class="text-red-600" {...errorProps}>{error}</span>
+			{#each errors as error, i (i)}
+				<span class="text-destructive" {...errorProps}>{error}</span>
 			{/each}
 		</div>
 	{/snippet}

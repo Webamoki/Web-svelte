@@ -1,12 +1,16 @@
 <script lang="ts">
 	import PasswordField from '$lib/components/form/fields/PasswordField.svelte';
 	import TextField from '$lib/components/form/fields/TextField.svelte';
-	import { superForm } from 'sveltekit-superforms';
+	import { arktypeClient } from 'sveltekit-superforms/adapters';
 	import Showcase from './Showcase.svelte';
+	import { masterSchema } from './master-schema.js';
+	import { superForm } from 'sveltekit-superforms';
 
 	let { data } = $props();
-	const form = superForm(data.form);
-	const formData = form.form;
+	const form = superForm(data.form, {
+		validators: arktypeClient(masterSchema)
+	});
+	const { form: formData, enhance } = form;
 </script>
 
 <div class="flex min-h-screen bg-gray-50">
@@ -29,7 +33,7 @@
 			description="A basic input field with validation support."
 			code={`<TextField {form} label="Email" name="email" type="email" bind:value={$formData.email} />`}
 		>
-			<form method="POST" class="space-y-5">
+			<form method="POST" use:enhance class="space-y-5">
 				<TextField {form} label="Email" name="email" type="email" bind:value={$formData.email} />
 			</form>
 		</Showcase>
@@ -40,7 +44,7 @@
 			description="A password input with show/hide toggle."
 			code={`<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />`}
 		>
-			<form method="POST" class="space-y-5">
+			<form method="POST" use:enhance class="space-y-5">
 				<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />
 			</form>
 		</Showcase>

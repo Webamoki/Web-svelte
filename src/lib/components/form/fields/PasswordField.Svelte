@@ -2,6 +2,7 @@
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 	import { Input } from '$lib/shadcn/components/ui/input/index.js';
+	import { Eye, EyeOff } from '@lucide/svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: string;
@@ -26,43 +27,9 @@
 				aria-label={show ? 'Hide password' : 'Show password'}
 			>
 				{#if show}
-					<!-- Eye-off icon -->
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M13.875 18.825A10.05 10.05 0 0112 19c-5 0-9.27-3-11-7 1.066-2.013 2.648-3.724 4.634-4.855m3.86-1.025A9.97 9.97 0 0112 5c5 0 9.27 3 11 7-1.054 2.01-2.633 3.72-4.615 4.852M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-						/>
-						<path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
-					</svg>
+					<EyeOff class="size-5" />
 				{:else}
-					<!-- Eye icon -->
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-						/>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-						/>
-					</svg>
+					<Eye class="size-5" />
 				{/if}
 			</button>
 		</div>

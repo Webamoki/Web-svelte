@@ -37,7 +37,7 @@
 								<Label class="text-sm font-medium">{label}</Label>
 							{/if}
 							{#if description}
-								<Description class="">{description}</Description>
+								<Description class="text-sm font-medium">{description}</Description>
 							{/if}
 						</div>
 					{/if}

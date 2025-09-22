@@ -10,28 +10,27 @@ export const PasswordType = type('string')
 	.narrow((data, ctx) => {
 		if (!allowedChars.test(data)) {
 			return ctx.reject({
-				problem: 'invalid_character',
-				message: 'Password contains invalid characters. Only A–Z, a–z, 0–9, !@$#() are allowed.'
+				problem: 'must contains invalid characters. Only A–Z, a–z, 0–9, !@$#() are allowed.'
 			});
 		}
 		if (!/[A-Z]/.test(data)) {
 			return ctx.reject({
-				problem: 'Must contain at least one uppercase letter.'
+				problem: 'must contain at least one uppercase letter.'
 			});
 		}
 		if (!/[a-z]/.test(data)) {
 			return ctx.reject({
-				problem: 'Must contain at least one lowercase letter.'
+				problem: 'must contain at least one lowercase letter.'
 			});
 		}
 		if (!/[0-9]/.test(data)) {
 			return ctx.reject({
-				problem: 'Must contain at least one number.'
+				problem: 'must contain at least one number.'
 			});
 		}
 		if (!/[!@$#()]/.test(data)) {
 			return ctx.reject({
-				problem: 'Must contain at least one special character (!@$#()).'
+				problem: 'must contain at least one special character (!@$#()).'
 			});
 		}
 		return true;

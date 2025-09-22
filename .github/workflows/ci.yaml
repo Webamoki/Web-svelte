@@ -8,28 +8,22 @@ on:
   workflow_call:
 
 jobs:
-  checks:
+  checks-run:
     name: Checks
+    # This job runs for pushes/workflow calls, or for any PR NOT from the changeset branch
+    if: github.event_name == 'workflow_call' || github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-ci
 
-      - name: Cache ESLint
+      - name: Caches
         uses: actions/cache@v4
         with:
-          path: .cache/.eslintcache
-          key: ${{ runner.os }}-eslint-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-eslint-
-
-      - name: Cache Prettier
-        uses: actions/cache@v4
-        with:
-          path: .cache/.prettier-cache
-          key: ${{ runner.os }}-prettier-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-prettier-
+          path: |
+            .cache/.eslintcache
+            .cache/.prettier-cache
+          key: ${{ runner.os }}-checks-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Generate svelte configs
         run: pnpm svelte-kit sync
@@ -45,8 +39,17 @@ jobs:
       - name: Svelte check
         run: pnpm svelte-check --tsconfig ./tsconfig.json
 
-  test:
+  checks-skipped:
+    name: Checks # NOTE: The name is IDENTICAL to the job above
+    runs-on: ubuntu-latest
+    # This job runs ONLY on PRs that ARE from the changeset branch
+    if: github.event_name == 'pull_request' && github.head_ref == 'changeset-release/main'
+    steps:
+      - run: echo "Checks are not required for automated versioning PRs."
+
+  test-run:
     name: Run Tests
+    if: github.event_name == 'workflow_call' || github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,8 +60,6 @@ jobs:
         with:
           path: .cache/.vite
           key: ${{ runner.os }}-vitest-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-vitest-
 
       - name: Generate svelte configs
         run: pnpm svelte-kit sync
@@ -66,12 +67,17 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-  check-changeset:
-    # This job runs checks on PRs to ensure a changeset file is included if needed
-    name: Check for Changeset
+  test-skipped:
+    name: Run Tests # NOTE: The name is IDENTICAL
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.head_ref == 'changeset-release/main'
+    steps:
+      - run: echo "Tests are not required for automated versioning PRs."
 
+  check-changeset-run:
+    name: Check for Changeset
+    if: github.event_name == 'workflow_call' || github.head_ref != 'changeset-release/main'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -81,3 +87,10 @@ jobs:
 
       - name: Check for changeset file
         run: 'pnpm changeset status --since origin/main'
+
+  check-changeset-skipped:
+    name: Check for Changeset # NOTE: The name is IDENTICAL
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.head_ref == 'changeset-release/main'
+    steps:
+      - run: echo "A changeset check is not required for the versioning PR itself."

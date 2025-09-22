@@ -31,10 +31,17 @@
 			id="textfield"
 			title="TextField"
 			description="A basic input field with validation support."
-			code={`<TextField {form} label="Email" name="email" type="email" bind:value={$formData.email} />`}
+			code={`<TextField {form} label="Email" name="email" type="email" placeholder="johndoe@gmail.com" bind:value={$formData.email} />`}
 		>
 			<form method="POST" use:enhance class="space-y-5">
-				<TextField {form} label="Email" name="email" type="email" bind:value={$formData.email} />
+				<TextField
+					{form}
+					label="Email"
+					name="email"
+					type="email"
+					placeholder="johndoe@gmail.com"
+					bind:value={$formData.email}
+				/>
 			</form>
 		</Showcase>
 

@@ -6,12 +6,20 @@
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: string;
 		type?: HTMLInputElement['type'];
+		class?: string;
+		placeholder?: string;
 	}
-	let { value = $bindable(), type = 'text', ...fieldProps }: Props = $props();
+	let {
+		value = $bindable(),
+		type = 'text',
+		class: className,
+		placeholder,
+		...fieldProps
+	}: Props = $props();
 </script>
 
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
-		<Input {type} bind:value {...props} />
+		<Input {type} bind:value class={className} {placeholder} {...props} />
 	{/snippet}
 </FieldWrapper>

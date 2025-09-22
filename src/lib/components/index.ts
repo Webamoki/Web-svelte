@@ -1,7 +1,2 @@
-import TextField from './form/fields/TextField.svelte';
-import PasswordField from './form/fields/PasswordField.svelte';
-
-export default {
-	TextField,
-	PasswordField
-};
+export { default as TextField } from "./form/fields/TextField.svelte";
+export { default as PasswordField } from "./form/fields/PasswordField.svelte";

@@ -17,7 +17,7 @@ jobs:
   checks-run:
     name: Checks
     runs-on: ubuntu-latest
-    needs: normal
+    needs: normal-filter
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-ci
@@ -47,7 +47,7 @@ jobs:
   test-run:
     name: Run Tests
     runs-on: ubuntu-latest
-    needs: normal
+    needs: normal-filter
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-ci
@@ -70,7 +70,7 @@ jobs:
     # This job runs checks on PRs to ensure a changeset file is included if needed
     name: Check for Changeset
     runs-on: ubuntu-latest
-    needs: normal
+    needs: normal-filter
     if: github.event_name == 'pull_request'
 
     steps:

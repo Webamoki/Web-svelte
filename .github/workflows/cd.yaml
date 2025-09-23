@@ -1,4 +1,4 @@
-name: Deployment
+name: Changeset
 
 on:
   push:
@@ -8,16 +8,19 @@ on:
 jobs:
   checks:
     uses: ./.github/workflows/ci.yaml
-    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    # Don't run checks if only versioning happened
+    if: 'github.event.head_commit.message != "chore: version packages"'
+
+  pages:
+    # Deploy every push, except versioning (when no checks)
+    uses: ./.github/workflows/pages.yaml
+    needs: [checks]
 
   version-and-publish:
     name: Version & Publish
     runs-on: ubuntu-latest
     needs: [checks]
-
-    outputs:
-      published: ${{ steps.changesets.outputs.published }}
-      newVersionTag: ${{ steps.changesets.outputs.newVersionTag }}
+    if: always() && needs.checks.result != 'failure'
 
     steps:
       - uses: actions/checkout@v4
@@ -26,63 +29,11 @@ jobs:
 
       - uses: ./.github/actions/setup-ci
 
-      - name: Configure Git User
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create Version PR or Publish to npm
+      - name: Version and Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
         with:
-          # This command will run 'pnpm changeset version' and create a PR
-          version: 'pnpm changeset version'
-          # This command will run 'pnpm publish' if a new version was released
-          publish: 'pnpm publish --no-git-checks'
+          commit: 'chore: version packages'
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  create-release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    needs: [version-and-publish]
-    if: needs.version-and-publish.outputs.published == 'true'
-
-    steps:
-      - name: Create GitHub Release
-        id: create_release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ needs.version-and-publish.outputs.newVersionTag }}
-          generateReleaseNotes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy-to-pages:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: [checks]
-    if: github.event.head_commit.author.name != 'github-actions[bot]'
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-ci
-
-      - name: Build SvelteKit site
-        run: pnpm build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './build'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

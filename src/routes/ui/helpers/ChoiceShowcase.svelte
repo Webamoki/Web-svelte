@@ -19,13 +19,7 @@
 
 	<div>
 		Multiple: {valueMultiple}
-		<ChoiceMultiple
-			bind:value={valueMultiple}
-			{items}
-			getKey={identity}
-			getLabel={identity}
-			compareItems={(a, b) => a.localeCompare(b)}
-		/>
+		<ChoiceMultiple bind:value={valueMultiple} {items} getKey={identity} getLabel={identity} />
 	</div>
 
 	<div>
@@ -40,7 +34,6 @@
 			{items}
 			getKey={identity}
 			getLabel={identity}
-			compareItems={(a, b) => a.localeCompare(b)}
 			vertical
 		/>
 	</div>

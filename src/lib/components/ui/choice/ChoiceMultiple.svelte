@@ -6,23 +6,19 @@
 		value: T[];
 		onAdd?: (value: T) => void;
 		onRemove?: (value: T) => void;
-		/** Compare items for sorting
-		 * @returns negative if a < b, 0 if a == b, positive if a > b
-		 */
-		compareItems: (a: T, b: T) => number;
 	}
 
-	let {
-		value = $bindable([]),
-		onAdd,
-		onRemove,
-		compareItems: _compare,
-		...props
-	}: Props = $props();
+	let { value = $bindable([]), onAdd, onRemove, items, ...props }: Props = $props();
+
+	const valueIndex = new Map<T, number>(items.map((item, index) => [item, index] as const));
 
 	function compareItems(a: T, b: T) {
-		// Clamp to -1, 0, 1
-		return Math.sign(_compare(a, b)) as -1 | 0 | 1;
+		const index1 = valueIndex.get(a);
+		if (index1 === undefined) return 1;
+		const index2 = valueIndex.get(b);
+		if (index2 === undefined) return -1;
+
+		return Math.sign(index1 - index2) as -1 | 0 | 1;
 	}
 
 	function contains(item: T) {
@@ -47,4 +43,4 @@
 	}
 </script>
 
-<ChoiceInternal {handleItemClick} isActive={contains} {...props} />
+<ChoiceInternal {handleItemClick} isActive={contains} {items} {...props} />

@@ -3,5 +3,6 @@ import { PasswordType } from './types/password.js';
 
 export const masterSchema = type({
 	email: 'string.email',
-	password: PasswordType
+	password: PasswordType,
+	tags: 'string[]>0'
 });

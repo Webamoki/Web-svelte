@@ -5,9 +5,11 @@
 	import Showcase from './Showcase.svelte';
 	import { masterSchema } from './master-schema.js';
 	import { superForm } from 'sveltekit-superforms';
+	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
 
 	let { data } = $props();
 	const form = superForm(data.form, {
+		dataType: 'json',
 		validators: arktypeClient(masterSchema)
 	});
 	const { form: formData, enhance } = form;
@@ -53,6 +55,31 @@
 		>
 			<form method="POST" use:enhance class="space-y-5">
 				<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />
+			</form>
+		</Showcase>
+
+		<Showcase
+			id="choice-multi"
+			title="ChoiceMultiField"
+			description="A multiple choice selection component integrated with a text input."
+			code={`<ChoiceMultiField {form} label="Tags" name="tags" items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']} getKey={item => item} getLabel={item => item} bind:value={$formData.tags} />`}
+		>
+			<form method="POST" use:enhance class="space-y-5">
+				<ChoiceMultiField
+					{form}
+					label="Tags"
+					name="tags"
+					items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+					getKey={(item) => item}
+					getLabel={(item) => item}
+					bind:value={$formData.tags}
+				/>
+				<button
+					type="submit"
+					class="mb-6 ml-6 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+				>
+					Submit
+				</button>
 			</form>
 		</Showcase>
 	</main>

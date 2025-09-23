@@ -9,7 +9,7 @@ jobs:
   checks:
     uses: ./.github/workflows/ci.yaml
     # Don't run checks if only versioning happened
-    if: 'github.event.head_commit.message != "chore: version packages"'
+    if: github.event.head_commit.message != 'Version Packages'
 
   pages:
     # Deploy every push, except versioning (when no checks)
@@ -33,7 +33,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          commit: 'chore: version packages'
+          commit: 'Version Packages'
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

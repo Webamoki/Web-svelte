@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.3.0
+
+### Minor Changes
+
+- 8b164e7: ChoiceFields + WeekdayFields
+
 ## 0.2.0
 
 ### Minor Changes

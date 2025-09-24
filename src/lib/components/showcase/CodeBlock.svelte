@@ -46,6 +46,7 @@
 		<slot />
 	</div>
 	<div class="overflow-x-auto text-sm">
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html highlightedCode}
 	</div>
 </div>

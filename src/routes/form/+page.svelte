@@ -153,14 +153,14 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-					<ChoiceMultiField
+					<ChoiceField
 						{form} 
-						label="Tags"
-						name="tags"
+						label="Tag"
+						name="tag"
 						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']} 
 						getKey={item => item} 
 						getLabel={item => item} 
-						bind:value={$formData.tags}
+						bind:value={$formData.tag}
 					/>
 				`}
 			</CodeBlock>
@@ -413,8 +413,8 @@
 				{`
 					<WeekdayChoiceMultiField
 						{form} 
-						label="Weekday"
-						name="weekday"
+						label="Weekdays"
+						name="weekdays"
 						bind:value={$formData.weekdays}
 						readonly?
 						disabled?

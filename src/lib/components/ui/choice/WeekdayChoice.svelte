@@ -10,13 +10,13 @@
 	}
 </script>
 
-<script lang="ts" generics="V, K extends string | number | symbol">
+<script lang="ts">
 	import Choice from './Choice.svelte';
 
 	let { value = $bindable(undefined), ...props }: WeekdayChoiceProps = $props();
 
 	const items = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	const longLables = {
+	const longLabels = {
 		Mon: 'Monday',
 		Tue: 'Tuesday',
 		Wed: 'Wednesday',
@@ -25,7 +25,7 @@
 		Sat: 'Saturday',
 		Sun: 'Sunday'
 	};
-	const shortLables = {
+	const shortLabels = {
 		Mon: 'M',
 		Tue: 'T',
 		Wed: 'W',
@@ -36,8 +36,8 @@
 	};
 	let getKey = (item: string) => item;
 	let getLabel = (item: string) => {
-		if (props.longLabels) return longLables[item as keyof typeof longLables];
-		if (props.shortLabels) return shortLables[item as keyof typeof shortLables];
+		if (props.longLabels) return longLabels[item as keyof typeof longLabels];
+		if (props.shortLabels) return shortLabels[item as keyof typeof shortLabels];
 		return item;
 	};
 </script>

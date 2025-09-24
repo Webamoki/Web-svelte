@@ -23,6 +23,13 @@ jobs:
     if: always() && needs.checks.result != 'failure'
 
     steps:
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.CHANGESET_APP_ID }}
+          private-key: ${{ secrets.CHANGESET_APP_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -36,5 +43,5 @@ jobs:
           publish: pnpm publish -r
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

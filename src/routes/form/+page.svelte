@@ -329,7 +329,7 @@
 						{form} 
 						label="Weekday"
 						name="weekday"
-						bind:value={$formData.weekdays}
+						bind:value={$formData.weekday}
 						readonly?
 						disabled?
 						shortLabels?

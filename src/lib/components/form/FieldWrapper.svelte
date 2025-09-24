@@ -5,6 +5,11 @@
 		label?: string;
 		description?: string;
 	}
+
+	export interface FormAttrs extends ControlAttrs {
+		disabled?: HTMLInputAttributes['disabled'];
+		readonly?: HTMLInputAttributes['readonly'];
+	}
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
@@ -19,6 +24,7 @@
 	import type { Snippet } from 'svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import Errors from './Errors.svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		formElem: Snippet<[ControlAttrs]>;

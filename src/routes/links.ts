@@ -5,4 +5,10 @@ type Link = {
 	href: ReturnType<typeof resolve>;
 };
 
-export const links: Link[] = [{ name: 'form', href: resolve('/form') }];
+export const links: Link[] = [
+	{ name: 'form', href: resolve('/form') },
+	{
+		name: 'ui',
+		href: resolve('/ui')
+	}
+];

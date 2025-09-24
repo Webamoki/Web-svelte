@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.3.1
+
+### Patch Changes
+
+- eb29939: specify docs in date checkOverlap function
+
 ## 0.3.0
 
 ### Minor Changes

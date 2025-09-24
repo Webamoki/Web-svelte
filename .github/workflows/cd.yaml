@@ -8,8 +8,8 @@ on:
 jobs:
   checks:
     uses: ./.github/workflows/ci.yaml
-    # Don't run checks if only versioning happened
-    if: github.event.head_commit.message != 'Version Packages'
+    # Don't run checks from a versioning merge
+    if: ${{ !contains(github.event.head_commit.message, 'changeset-release/main') }}
 
   pages:
     # Deploy every push, except versioning (when no checks)
@@ -23,6 +23,13 @@ jobs:
     if: always() && needs.checks.result != 'failure'
 
     steps:
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.CHANGESET_APP_ID }}
+          private-key: ${{ secrets.CHANGESET_APP_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -33,7 +40,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          commit: 'Version Packages'
+          publish: pnpm publish -r
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -8,10 +8,9 @@ on:
   workflow_call:
 
 jobs:
-  checks-run:
+  checks:
     name: Checks
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_call' || github.ref_name != 'changeset-release/main'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-ci
@@ -38,10 +37,9 @@ jobs:
       - name: Svelte check
         run: pnpm svelte-check --tsconfig ./tsconfig.json
 
-  test-run:
+  test:
     name: Run Tests
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_call' || github.ref_name != 'changeset-release/main'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-ci
@@ -60,11 +58,11 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-  check-changeset-run:
+  check-changeset:
     # This job runs checks on PRs to ensure a changeset file is included if needed
     name: Check for Changeset
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.ref_name != 'changeset-release/main'
+    if: github.event_name == 'pull_request'
 
     steps:
       - uses: actions/checkout@v4
@@ -75,24 +73,3 @@ jobs:
 
       - name: Check for changeset file
         run: 'pnpm changeset status --since origin/main'
-
-  checks-skip:
-    name: Checks
-    runs-on: ubuntu-latest
-    if: github.ref_name == 'changeset-release/main'
-    steps:
-      - run: echo "Pull request is a version bump, skip checks"
-
-  test-skip:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    if: github.ref_name == 'changeset-release/main'
-    steps:
-      - run: echo "Pull request is a version bump, skip tests"
-
-  check-changeset-skip:
-    name: Check for Changeset
-    runs-on: ubuntu-latest
-    if: github.ref_name == 'changeset-release/main'
-    steps:
-      - run: echo "Pull request is a version bump, skip changeset checks"

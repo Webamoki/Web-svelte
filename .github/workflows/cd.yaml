@@ -8,8 +8,8 @@ on:
 jobs:
   checks:
     uses: ./.github/workflows/ci.yaml
-    # Don't run checks if only versioning happened
-    if: github.event.head_commit.message != 'Version Packages'
+    # Don't run checks from a versioning merge
+    if: ${{ !contains(github.event.head_commit.message, 'changeset-release/main') }}
 
   pages:
     # Deploy every push, except versioning (when no checks)
@@ -33,7 +33,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          commit: 'Version Packages'
+          publish: pnpm publish -r
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

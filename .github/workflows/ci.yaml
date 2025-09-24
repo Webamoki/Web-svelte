@@ -11,11 +11,15 @@ jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
+    if: github.head_ref != 'changeset-release/main' # Skips the entire job for changeset PRs
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-ci
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Caches
+      - name: Setup CI Environment
+        uses: ./.github/actions/setup-ci
+
+      - name: Restore Caches
         uses: actions/cache@v4
         with:
           path: |
@@ -23,28 +27,27 @@ jobs:
             .cache/.prettier-cache
           key: ${{ runner.os }}-checks-${{ hashFiles('**/pnpm-lock.yaml') }}
 
-      - name: Generate svelte configs
-        run: pnpm svelte-kit sync
-
-      - name: Run Prettier style check
-        run: pnpm prettier --check --cache --cache-location=.cache/.prettier-cache --cache-strategy content .
-
-      - name: Run ESLint
+      - name: Run Linting and Type Checks
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
-        run: pnpm eslint --cache --cache-location=.cache/.eslintcache --cache-strategy content .
+        run: |
+          pnpm svelte-kit sync
+          pnpm prettier --check --cache --cache-location=.cache/.prettier-cache --cache-strategy content .
+          pnpm eslint --cache --cache-location=.cache/.eslintcache --cache-strategy content .
+          pnpm svelte-check --tsconfig ./tsconfig.json
 
-      - name: Svelte check
-        run: pnpm svelte-check --tsconfig ./tsconfig.json
-
-  test:
+  tests:
     name: Run Tests
     runs-on: ubuntu-latest
+    if: github.head_ref != 'changeset-release/main'
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-ci
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Cache Vitest
+      - name: Setup CI Environment
+        uses: ./.github/actions/setup-ci
+
+      - name: Restore Vitest Cache
         uses: actions/cache@v4
         with:
           path: .cache/.vite
@@ -52,24 +55,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-vitest-
 
-      - name: Generate svelte configs
-        run: pnpm svelte-kit sync
-
-      - name: Run tests
-        run: pnpm test
+      - name: Run Unit Tests
+        run: |
+          pnpm svelte-kit sync
+          pnpm test
 
   check-changeset:
-    # This job runs checks on PRs to ensure a changeset file is included if needed
     name: Check for Changeset
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-ci
+      - name: Setup CI Environment
+        uses: ./.github/actions/setup-ci
 
-      - name: Check for changeset file
+      - name: Verify Changeset File
         run: 'pnpm changeset status --since origin/main'

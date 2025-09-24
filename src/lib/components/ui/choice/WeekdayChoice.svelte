@@ -1,45 +1,28 @@
 <script lang="ts" module>
 	export interface WeekdayChoiceProps {
-		value?: string;
-		onChange?: (value: string) => void;
+		value?: Day;
+		onChange?: (value: Day) => void;
 		vertical?: boolean;
 		longLabels?: boolean;
-		shortLabels?: boolean;
+		letterLabels?: boolean;
 		disabled?: boolean | null;
 		readonly?: boolean | null;
 	}
 </script>
 
 <script lang="ts">
+	import { Days, formatDayLetter, formatDayShort, type Day } from '$lib/utils/index.js';
+	import { identity } from 'ramda';
+
 	import Choice from './Choice.svelte';
 
 	let { value = $bindable(undefined), ...props }: WeekdayChoiceProps = $props();
 
-	const items = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	const longLabels = {
-		Mon: 'Monday',
-		Tue: 'Tuesday',
-		Wed: 'Wednesday',
-		Thu: 'Thursday',
-		Fri: 'Friday',
-		Sat: 'Saturday',
-		Sun: 'Sunday'
-	};
-	const shortLabels = {
-		Mon: 'M',
-		Tue: 'T',
-		Wed: 'W',
-		Thu: 'T',
-		Fri: 'F',
-		Sat: 'S',
-		Sun: 'S'
-	};
-	let getKey = (item: string) => item;
-	let getLabel = (item: string) => {
-		if (props.longLabels) return longLabels[item as keyof typeof longLabels];
-		if (props.shortLabels) return shortLabels[item as keyof typeof shortLabels];
-		return item;
-	};
+	let getLabel = $derived.by(() => {
+		if (props.longLabels) return identity;
+		if (props.letterLabels) return formatDayLetter;
+		return formatDayShort;
+	});
 </script>
 
-<Choice {items} bind:value {getLabel} {getKey} {...props} />
+<Choice items={Days} bind:value {getLabel} getKey={identity} {...props} />

@@ -38,8 +38,8 @@
 		'grid gap-1',
 		vertical ? 'grid-flow-row auto-rows-fr' : 'auto-cols-fr grid-flow-col',
 		disabled || readonly ? 'pointer-events-none' : 'cursor-pointer',
-		disabled ? 'opacity-50' : '',
-		ariaInvalid ? 'border-destructive' : ''
+		disabled && 'opacity-50',
+		ariaInvalid && 'border-destructive'
 	)}
 >
 	{#each items as item (getKey(item))}

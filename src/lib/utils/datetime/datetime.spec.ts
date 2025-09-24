@@ -21,7 +21,8 @@ import {
 	formatTimeEnd,
 	formatTimeFull,
 	formatAbsolute,
-	formatDateNum
+	formatDateNum,
+	formatDayLetter
 } from './index.js';
 
 const SERVER_TIME_ZONE = 'Europe/London';
@@ -539,6 +540,18 @@ describe('formatDayShort', () => {
 		expect(formatDayShort('Friday')).toBe('Fri');
 		expect(formatDayShort('Saturday')).toBe('Sat');
 		expect(formatDayShort('Sunday')).toBe('Sun');
+	});
+});
+
+describe('formatDayLetter', () => {
+	it('should format all days of the week correctly', () => {
+		expect(formatDayLetter('Monday')).toBe('M');
+		expect(formatDayLetter('Tuesday')).toBe('T');
+		expect(formatDayLetter('Wednesday')).toBe('W');
+		expect(formatDayLetter('Thursday')).toBe('T');
+		expect(formatDayLetter('Friday')).toBe('F');
+		expect(formatDayLetter('Saturday')).toBe('S');
+		expect(formatDayLetter('Sunday')).toBe('S');
 	});
 });
 

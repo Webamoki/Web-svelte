@@ -11,6 +11,7 @@ import {
 	ZonedDateTime,
 	type DateDuration
 } from '@internationalized/date';
+import { type } from 'arktype';
 import { map, range } from 'ramda';
 
 const DEFAULT_TIME_ZONE = 'Europe/London';
@@ -28,6 +29,7 @@ export const Days = [
 	'Sunday'
 ] as const;
 export type Day = (typeof Days)[number];
+export const Day = type.enumerated(...Days);
 
 const DayIndex: Record<Day, number> = Object.fromEntries(
 	Days.map((day, index) => [day, index])
@@ -227,6 +229,17 @@ export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number 
 export function formatDayShort(day: Day): string {
 	// Use the first three letters of the day
 	return day.slice(0, 3);
+}
+
+/**
+ * Formats a day of the week.
+ * @param day - The day of the week to format.
+ * @example "Monday" -> "M"
+ * @returns Formatted letter of the day of the week.
+ */
+export function formatDayLetter(day: Day): string {
+	// Use the first letters of the day
+	return day.slice(0, 1);
 }
 
 /* Calendar Dates */

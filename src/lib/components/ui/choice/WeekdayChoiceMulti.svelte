@@ -1,11 +1,13 @@
 <script lang="ts" module>
+	import { identity } from 'ramda';
+
 	export interface WeekdayChoiceMultiProps {
-		value: string[];
-		onAdd?: (value: string) => void;
-		onRemove?: (value: string) => void;
+		value: Day[];
+		onAdd?: (value: Day) => void;
+		onRemove?: (value: Day) => void;
 		vertical?: boolean;
 		longLabels?: boolean;
-		shortLabels?: boolean;
+		letterLabels?: boolean;
 		disabled?: boolean | null;
 		readonly?: boolean | null;
 	}
@@ -13,34 +15,15 @@
 
 <script lang="ts">
 	import ChoiceMulti from './ChoiceMulti.svelte';
+	import { Days, formatDayLetter, formatDayShort, type Day } from '$lib/utils/index.js';
 
 	let { value = $bindable([]), ...props }: WeekdayChoiceMultiProps = $props();
 
-	const items = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	const longLabels = {
-		Mon: 'Monday',
-		Tue: 'Tuesday',
-		Wed: 'Wednesday',
-		Thu: 'Thursday',
-		Fri: 'Friday',
-		Sat: 'Saturday',
-		Sun: 'Sunday'
-	};
-	const shortLabels = {
-		Mon: 'M',
-		Tue: 'T',
-		Wed: 'W',
-		Thu: 'T',
-		Fri: 'F',
-		Sat: 'S',
-		Sun: 'S'
-	};
-	let getKey = (item: string) => item;
-	let getLabel = (item: string) => {
-		if (props.longLabels) return longLabels[item as keyof typeof longLabels];
-		if (props.shortLabels) return shortLabels[item as keyof typeof shortLabels];
-		return item;
-	};
+	let getLabel = $derived.by(() => {
+		if (props.longLabels) return identity;
+		if (props.letterLabels) return formatDayLetter;
+		return formatDayShort;
+	});
 </script>
 
-<ChoiceMulti {items} bind:value {getLabel} {getKey} {...props} />
+<ChoiceMulti items={Days} bind:value {getLabel} getKey={identity} {...props} />

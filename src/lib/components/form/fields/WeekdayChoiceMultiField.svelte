@@ -10,7 +10,7 @@
 		onRemove,
 		vertical,
 		value = $bindable([]),
-		shortLabels,
+		letterLabels,
 		longLabels,
 
 		form,
@@ -31,7 +31,7 @@
 				{disabled}
 				{readonly}
 				{vertical}
-				{shortLabels}
+				{letterLabels}
 				{longLabels}
 				{...props}
 				bind:value

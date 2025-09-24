@@ -308,10 +308,10 @@
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceField
 							{form}
-							label="Horizontal ShortLabels"
+							label="Horizontal LetterLabels"
 							name="weekday"
 							bind:value={$formData.weekday}
-							shortLabels
+							letterLabels
 						/>
 						<WeekdayChoiceField
 							{form}
@@ -332,7 +332,7 @@
 						bind:value={$formData.weekday}
 						readonly?
 						disabled?
-						shortLabels?
+						letterLabels?
 						longLabels?
 					/>
 				`}
@@ -394,10 +394,10 @@
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceMultiField
 							{form}
-							label="Horizontal ShortLabels"
+							label="Horizontal LetterLabels"
 							name="weekdays"
 							bind:value={$formData.weekdays}
-							shortLabels
+							letterLabels
 						/>
 						<WeekdayChoiceMultiField
 							{form}
@@ -418,7 +418,7 @@
 						bind:value={$formData.weekdays}
 						readonly?
 						disabled?
-						shortLabels?
+						letterLabels?
 						longLabels?
 					/>
 				`}

@@ -11,7 +11,7 @@
 		onChange,
 		vertical,
 		value = $bindable(undefined),
-		shortLabels,
+		letterLabels,
 		longLabels,
 
 		form,
@@ -31,7 +31,7 @@
 				{vertical}
 				{disabled}
 				{readonly}
-				{shortLabels}
+				{letterLabels}
 				{longLabels}
 				bind:value
 				{...props}

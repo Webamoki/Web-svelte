@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Choice, ChoiceMultiple } from '$lib/components/index.js';
+	import { Choice, ChoiceMulti } from '$lib/components/index.js';
 	import { identity } from 'ramda';
 
 	const items: string[] = ['item1', 'item2', 'item3', 'item4', 'item5'];
@@ -19,7 +19,7 @@
 
 	<div>
 		Multiple: {valueMultiple}
-		<ChoiceMultiple bind:value={valueMultiple} {items} getKey={identity} getLabel={identity} />
+		<ChoiceMulti bind:value={valueMultiple} {items} getKey={identity} getLabel={identity} />
 	</div>
 
 	<div>
@@ -29,7 +29,7 @@
 
 	<div>
 		Multiple Vertical: {valueMultipleV}
-		<ChoiceMultiple
+		<ChoiceMulti
 			bind:value={valueMultipleV}
 			{items}
 			getKey={identity}

@@ -173,7 +173,7 @@ export function getLastMonths(count: number, startDate: CalendarDate): CalendarD
 /* Intervals */
 
 /**
- * Checks if two time ranges overlap
+ * Checks if two time ranges overlap, boundaries are not considered overlapping.
  * @param start1 - The start time of the first range.
  * @param end1 - The end time of the first range.
  * @param start2 - The start time of the second range.

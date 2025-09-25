@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.3.2
+
+### Patch Changes
+
+- 66ea349: export weekday choice field
+
 ## 0.3.1
 
 ### Patch Changes

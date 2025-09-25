@@ -6,12 +6,16 @@ import Choice from './ui/choice/Choice.svelte';
 import ChoiceMulti from './ui/choice/ChoiceMulti.svelte';
 import WeekdayChoice from './ui/choice/WeekdayChoice.svelte';
 import WeekdayChoiceMulti from './ui/choice/WeekdayChoiceMulti.svelte';
+import WeekdayChoiceField from './form/fields/WeekdayChoiceField.svelte';
+import WeekdayChoiceMultiField from './form/fields/WeekdayChoiceMultiField.svelte';
 
 export {
 	TextField,
 	PasswordField,
 	ChoiceMultiField,
 	ChoiceField,
+	WeekdayChoiceField,
+	WeekdayChoiceMultiField,
 	Choice,
 	ChoiceMulti,
 	WeekdayChoice,

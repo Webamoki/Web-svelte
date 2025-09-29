@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.3.3
+
+### Patch Changes
+
+- b6330d2: fix export for utils
+
 ## 0.3.2
 
 ### Patch Changes

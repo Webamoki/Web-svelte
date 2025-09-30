@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.4.0
+
+### Minor Changes
+
+- 8f6f9e5: hex color field + button
+
 ## 0.3.3
 
 ### Patch Changes

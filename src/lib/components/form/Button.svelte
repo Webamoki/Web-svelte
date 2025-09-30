@@ -2,18 +2,16 @@
 	import Loader2Icon from '@lucide/svelte/icons/loader-2';
 	import { Button } from '$lib/shadcn/components/ui/button/index.js';
 	import type { ButtonProps } from '$lib/shadcn/components/ui/button/index.js';
-	import type { Readable } from 'svelte/store';
 
 	type Props = ButtonProps & {
 		loading?: boolean;
-		delayed?: Readable<boolean>;
 	};
 
-	let { disabled, loading, delayed, children, ...restProps }: Props = $props();
+	let { disabled, loading, children, ...restProps }: Props = $props();
 </script>
 
-<Button disabled={disabled || loading || $delayed} {...restProps}>
-	{#if loading || $delayed}
+<Button disabled={disabled || loading} {...restProps}>
+	{#if loading}
 		<Loader2Icon class="mr-2 animate-spin" />
 		Please wait
 	{:else}

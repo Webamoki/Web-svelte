@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.4.1
+
+### Patch Changes
+
+- 2655c4a: fix button pointer
+
 ## 0.4.0
 
 ### Minor Changes

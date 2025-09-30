@@ -13,6 +13,8 @@
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
+	import HexColorField from '$lib/components/form/fields/HexColorField.svelte';
+	import Button from '$lib/components/form/Button.svelte';
 
 	let { data } = $props();
 	const form = superForm(data.form, {
@@ -26,6 +28,7 @@
 	<Sidebar>
 		<SidebarLink title="TextField" />
 		<SidebarLink title="PasswordField" />
+		<SidebarLink title="HexColorField" />
 		<SidebarLink title="ChoiceField" />
 		<SidebarLink title="ChoiceMultiField" />
 		<SidebarLink title="WeekdayChoiceField" />
@@ -35,7 +38,7 @@
 	<!-- Main content -->
 	<main class="flex-1 p-8">
 		<h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>
-		<Container title="TextField" description="A basic input field with validation support.">
+		<Container title="TextField" description="A basic input field with validation support">
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">
 					<TextField
@@ -61,7 +64,7 @@
 			`}
 			</CodeBlock>
 		</Container>
-		<Container title="PasswordField" description="A password input with show/hide toggle.">
+		<Container title="PasswordField" description="A password input with show/hide toggle">
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">
 					<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />
@@ -74,6 +77,25 @@
 					label="Password" 
 					name="password" 
 					bind:value={$formData.password} 
+				/>
+			`}
+			</CodeBlock>
+		</Container>
+
+		<Container title="HexColorField" description="A hex color input">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<HexColorField {form} label="Color" name="color" bind:value={$formData.color} />
+					<Button type="submit">Submit</Button>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<HexColorField 
+					{form} 
+					label="Color" 
+					name="color" 
+					bind:value={$formData.color} 
 				/>
 			`}
 			</CodeBlock>

@@ -36,6 +36,8 @@
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
+		} & {
+			loading?: boolean;
 		};
 </script>
 
@@ -51,15 +53,16 @@
 		children,
 		...restProps
 	}: ButtonProps = $props();
+
+	let pointer = disabled ? '' : 'cursor-pointer';
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
-
 {#if href}
 	<a
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(buttonVariants({ variant, size }), className, pointer)}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
 		role={disabled ? 'link' : undefined}
@@ -72,7 +75,7 @@
 	<button
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(buttonVariants({ variant, size }), className, pointer)}
 		{type}
 		{disabled}
 		{...restProps}

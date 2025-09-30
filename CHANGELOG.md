@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.4.2
+
+### Patch Changes
+
+- 24a68c9: Remove svelte 4 store from button
+
 ## 0.4.1
 
 ### Patch Changes

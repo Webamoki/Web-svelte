@@ -2,6 +2,12 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		namespace Superforms {
+			type Message = {
+				success: boolean;
+				text?: string;
+			};
+		}
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}

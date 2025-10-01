@@ -1,6 +1,7 @@
 import {
 	CalendarDate,
 	DateFormatter,
+	fromDate,
 	getDayOfWeek,
 	getLocalTimeZone,
 	startOfMonth,
@@ -11,8 +12,9 @@ import {
 	ZonedDateTime,
 	type DateDuration
 } from '@internationalized/date';
-import { type } from 'arktype';
+import type { Transport } from '@sveltejs/kit';
 import { map, range } from 'ramda';
+import type { Day } from '../types/arktype.js';
 
 const DEFAULT_TIME_ZONE = 'Europe/London';
 const DEFAULT_LOCALE = 'en-GB';
@@ -28,8 +30,6 @@ export const Days = [
 	'Saturday',
 	'Sunday'
 ] as const;
-export type Day = (typeof Days)[number];
-export const Day = type.enumerated(...Days);
 
 const DayIndex: Record<Day, number> = Object.fromEntries(
 	Days.map((day, index) => [day, index])
@@ -394,3 +394,24 @@ export function unfreezeDate(raw: $state.Snapshot<CalendarDate>): CalendarDate {
 export function unfreezeTime(raw: $state.Snapshot<Time>): Time {
 	return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
 }
+
+// SerDe
+
+export const dateTransport: Transport = {
+	Time: {
+		encode: (t) => t instanceof Time && [t.hour, t.minute, t.second, t.millisecond],
+		decode: ([hour, minute, second, millisecond]: [number, number, number, number]) =>
+			new Time(hour, minute, second, millisecond)
+	},
+	CalendarDate: {
+		encode: (d) => d instanceof CalendarDate && [d.year, d.month, d.day],
+		decode: ([year, month, day]: [number, number, number]) => new CalendarDate(year, month, day)
+	},
+	ZonedDateTime: {
+		encode: (value) => value instanceof ZonedDateTime && [value.toAbsoluteString(), value.timeZone],
+		decode: ([absoluteString, timezone]: [string, string]) => {
+			const nativeDate = new Date(absoluteString);
+			return fromDate(nativeDate, timezone);
+		}
+	}
+};

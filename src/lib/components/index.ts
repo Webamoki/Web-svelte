@@ -10,7 +10,9 @@ import WeekdayChoiceMulti from './ui/choice/WeekdayChoiceMulti.svelte';
 import WeekdayChoiceField from './form/fields/WeekdayChoiceField.svelte';
 import WeekdayChoiceMultiField from './form/fields/WeekdayChoiceMultiField.svelte';
 import Button from './form/Button.svelte';
+import Form from './form/Form.svelte';
 export {
+	Form,
 	TextField,
 	PasswordField,
 	HexColorField,

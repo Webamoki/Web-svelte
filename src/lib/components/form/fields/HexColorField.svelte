@@ -6,10 +6,18 @@
 		value?: string;
 	}
 	let { value = $bindable(), ...fieldProps }: Props = $props();
+
+	function get() {
+		return `#${value}`;
+	}
+	function set(raw: string | undefined) {
+		if (raw === undefined) return undefined;
+		return raw.slice(1); // remove #
+	}
 </script>
 
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem()}
-		<ColorPicker bind:hex={value} label={value} isAlpha={false} position="responsive" />
+		<ColorPicker bind:hex={get, set} label={value} isAlpha={false} position="responsive" />
 	{/snippet}
 </FieldWrapper>

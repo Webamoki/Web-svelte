@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.4
+
+### Patch Changes
+
+- 75bad23: form data default
+
 ## 0.5.3
 
 ### Patch Changes

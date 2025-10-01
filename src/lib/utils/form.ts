@@ -9,6 +9,7 @@ import {
 	type SuperValidated
 } from 'sveltekit-superforms';
 import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
+import { Time } from '@internationalized/date';
 
 export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 	validated: SuperValidated<S['infer']> | S['infer'],
@@ -84,7 +85,7 @@ export async function serverValidateForm<S extends type.Any<Record<string, unkno
 	request: Request,
 	schema: S
 ) {
-	const form = await superValidate(request, arktype(schema));
+	const form = await superValidate(request, arktype(schema), { transport: dateTransport });
 	if (!form.valid) {
 		throw fail(400, { form });
 	}

@@ -15,6 +15,8 @@
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
 	import HexColorField from '$lib/components/form/fields/HexColorField.svelte';
 	import Button from '$lib/components/form/Button.svelte';
+	import SelectField from '$lib/components/form/fields/SelectField.svelte';
+	import { identity } from 'ramda';
 
 	let { data } = $props();
 	const form = superForm(data.form, {
@@ -92,6 +94,34 @@
 			<CodeBlock slot="code">
 				{`
 				<HexColorField 
+					{form} 
+					label="Color" 
+					name="color" 
+					bind:value={$formData.color} 
+				/>
+			`}
+			</CodeBlock>
+		</Container>
+
+		<Container title="SelectField" description="select field">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<SelectField
+						{form}
+						label="Color"
+						name="color"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => n.toString()}
+						getValue={identity}
+						placeholder="Please select"
+						bind:value={$formData.select}
+					/>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<SelectField 
 					{form} 
 					label="Color" 
 					name="color" 

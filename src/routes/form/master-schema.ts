@@ -9,5 +9,6 @@ export const masterSchema = type({
 	tags: 'string[]>0',
 	weekday: Day,
 	weekdays: Day.array().moreThanLength(0),
-	color: type('string').atLeastLength(4).atMostLength(7)
+	color: type('string').atLeastLength(4).atMostLength(7),
+	select: 'number'
 });

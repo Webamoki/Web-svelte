@@ -1,4 +1,4 @@
-<script lang="ts" generics="S extends type.Any<Record<string, unknown>>">
+<!-- <script lang="ts" generics="S extends type.Any<Record<string, unknown>>">
 	import { toast } from 'svelte-sonner';
 	import { dateTransport } from '$lib/utils/index.js';
 	import { type } from 'arktype';
@@ -68,4 +68,22 @@
 
 <form class={className} action="{_action}?/{actionName}" method="POST" use:form.enhance>
 	{@render children({ form, data, delayed, errors })}
+</form> -->
+<script lang="ts" generics="T extends Record<string, unknown>, M">
+	import type { FsSuperForm } from 'formsnap';
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		form: FsSuperForm<T, M>;
+		action: string;
+		actionName?: string;
+		class?: string;
+		children?: Snippet;
+	}
+
+	let { form, action: _action, actionName, class: className, children }: Props = $props();
+</script>
+
+<form class={className} action="{_action}?/{actionName}" method="POST" use:form.enhance>
+	{@render children?.()}
 </form>

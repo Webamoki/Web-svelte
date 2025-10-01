@@ -19,7 +19,7 @@
 		>;
 		// TODO: Enforce use of resolve
 		action: string;
-		actionName: string;
+		actionName?: string;
 		class: string;
 	}
 
@@ -29,7 +29,7 @@
 		onSuccess,
 		invalidateAll = false,
 		children,
-		action: _action,
+		action,
 		actionName,
 		class: className
 	}: Props = $props();
@@ -55,8 +55,9 @@
 		}
 	});
 	const data = form.form;
+	const _action = actionName ? `${action}?/${actionName}` : action;
 </script>
 
-<form class={className} action="{_action}?/{actionName}" method="POST" use:form.enhance>
+<form class={className} action={_action} method="POST" use:form.enhance>
 	{@render children({ form, data })}
 </form>

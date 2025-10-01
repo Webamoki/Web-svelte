@@ -5,7 +5,8 @@
 	import type { Snippet } from 'svelte';
 	import { superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
 	import { arktypeClient } from 'sveltekit-superforms/adapters';
-	import type { SuperFormData } from 'sveltekit-superforms/client';
+	import type { SuperFormData, SuperFormErrors } from 'sveltekit-superforms/client';
+	import type { Readable } from 'svelte/store';
 
 	interface Props {
 		validated: SuperValidated<S['infer']> | S['infer'];
@@ -15,11 +16,18 @@
 		) => void;
 		invalidateAll?: boolean;
 		children: Snippet<
-			[{ form: SuperForm<S['infer'], App.Superforms.Message>; data: SuperFormData<S['infer']> }]
+			[
+				{
+					form: SuperForm<S['infer'], App.Superforms.Message>;
+					data: SuperFormData<S['infer']>;
+					delayed: Readable<boolean>;
+					errors: SuperFormErrors<S['infer']>;
+				}
+			]
 		>;
 		// TODO: Enforce use of resolve
 		action: string;
-		actionName?: string;
+		actionName: string;
 		class: string;
 	}
 
@@ -29,7 +37,7 @@
 		onSuccess,
 		invalidateAll = false,
 		children,
-		action,
+		action: _action,
 		actionName,
 		class: className
 	}: Props = $props();
@@ -54,10 +62,9 @@
 			}
 		}
 	});
-	const data = form.form;
-	const _action = actionName ? `${action}?/${actionName}` : action;
+	const { form: data, delayed, errors } = form;
 </script>
 
-<form class={className} action={_action} method="POST" use:form.enhance>
-	{@render children({ form, data })}
+<form class={className} action="{_action}?/{actionName}" method="POST" use:form.enhance>
+	{@render children({ form, data, delayed, errors })}
 </form>

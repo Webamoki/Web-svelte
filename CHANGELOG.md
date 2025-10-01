@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.3
+
+### Patch Changes
+
+- 894040f: form export
+
 ## 0.5.2
 
 ### Patch Changes

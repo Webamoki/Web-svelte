@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.2
+
+### Patch Changes
+
+- 394518e: form snippet props
+
 ## 0.5.1
 
 ### Patch Changes

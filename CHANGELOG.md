@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.1
+
+### Patch Changes
+
+- 1f8a309: fix form action name prop
+
 ## 0.5.0
 
 ### Minor Changes

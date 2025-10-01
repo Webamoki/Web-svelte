@@ -3,13 +3,13 @@
 	import { dateTransport } from '$lib/utils/index.js';
 	import { type } from 'arktype';
 	import type { Snippet } from 'svelte';
-	import { superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
-	import { arktypeClient } from 'sveltekit-superforms/adapters';
-	import type { SuperFormData, SuperFormErrors } from 'sveltekit-superforms/client';
 	import type { Readable } from 'svelte/store';
+	import { defaults, superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
+	import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
+	import type { SuperFormData, SuperFormErrors } from 'sveltekit-superforms/client';
 
 	interface Props {
-		validated: SuperValidated<S['infer']> | S['infer'];
+		validated?: SuperValidated<S['infer']> | S['infer'];
 		schema: S;
 		onSuccess?: (
 			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
@@ -27,12 +27,12 @@
 		>;
 		// TODO: Enforce use of resolve
 		action: string;
-		actionName: string;
-		class: string;
+		actionName?: string;
+		class?: string;
 	}
 
 	let {
-		validated,
+		validated: _validated,
 		schema,
 		onSuccess,
 		invalidateAll = false,
@@ -42,6 +42,7 @@
 		class: className
 	}: Props = $props();
 
+	let validated = _validated ?? defaults(arktype(schema));
 	const form = superForm(validated, {
 		validators: arktypeClient(schema),
 		dataType: 'json',

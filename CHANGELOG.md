@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.5
+
+### Patch Changes
+
+- f1e25d3: select fields
+
 ## 0.5.4
 
 ### Patch Changes

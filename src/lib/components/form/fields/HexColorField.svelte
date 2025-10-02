@@ -8,11 +8,12 @@
 	let { value = $bindable(), ...fieldProps }: Props = $props();
 
 	function get() {
-		return `#${value}`;
+		if (value) return `#${value}`;
+		return '';
 	}
 	function set(raw: string | undefined) {
 		if (raw === undefined) return undefined;
-		return raw.slice(1); // remove #
+		value = raw.slice(1); // remove #
 	}
 </script>
 

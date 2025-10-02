@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.6
+
+### Patch Changes
+
+- bd4569d: fix timefield
+
 ## 0.5.5
 
 ### Patch Changes

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Choice, ChoiceMulti } from '$lib/components/index.js';
+	import { Choice, ChoiceMulti } from '$lib/components/ui/index.js';
 	import { identity } from 'ramda';
 
 	const items: string[] = ['item1', 'item2', 'item3', 'item4', 'item5'];

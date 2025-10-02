@@ -17,6 +17,7 @@
 	import Button from '$lib/components/form/Button.svelte';
 	import SelectField from '$lib/components/form/fields/SelectField.svelte';
 	import { identity } from 'ramda';
+	import TimeField from '$lib/components/form/fields/TimeField.svelte';
 
 	let { data } = $props();
 	const form = superForm(data.form, {
@@ -31,6 +32,8 @@
 		<SidebarLink title="TextField" />
 		<SidebarLink title="PasswordField" />
 		<SidebarLink title="HexColorField" />
+		<SidebarLink title="SelectField" />
+		<SidebarLink title="TimeField" />
 		<SidebarLink title="ChoiceField" />
 		<SidebarLink title="ChoiceMultiField" />
 		<SidebarLink title="WeekdayChoiceField" />
@@ -121,11 +124,35 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<SelectField 
+				<SelectField
+						{form}
+						label="Color"
+						name="color"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => n.toString()}
+						getValue={identity}
+						placeholder="Please select"
+						bind:value={$formData.select}
+					/>
+			`}
+			</CodeBlock>
+		</Container>
+
+		<Container title="TimeField" description="time field">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<TimeField {form} label="Time" name="time" bind:value={$formData.time} />
+					<Button type="submit">Submit</Button>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<TimeField 
 					{form} 
-					label="Color" 
-					name="color" 
-					bind:value={$formData.color} 
+					label="Time" 
+					name="time" 
+					bind:value={$formData.time} 
 				/>
 			`}
 			</CodeBlock>

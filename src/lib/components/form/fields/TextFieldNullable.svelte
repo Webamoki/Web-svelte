@@ -18,7 +18,7 @@
 	}: Props = $props();
 
 	function get() {
-		if (!value) return;
+		if (!value) return '';
 		return value;
 	}
 	function set(raw: string | undefined) {

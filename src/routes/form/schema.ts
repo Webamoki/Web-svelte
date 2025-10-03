@@ -2,8 +2,9 @@ import { type } from 'arktype';
 import { PasswordType } from './types/password.js';
 import { Day, Time } from '$lib/utils/index.js';
 
-export const masterSchema = type({
+export const MasterSchema = type({
 	email: 'string.email',
+	emailNull: type('string.email').or(type.null).default(null),
 	password: PasswordType,
 	tag: 'string',
 	tags: 'string[]>0',
@@ -12,4 +13,8 @@ export const masterSchema = type({
 	color: type('string').atLeastLength(4).atMostLength(7),
 	select: 'number',
 	time: Time
+});
+
+export const TextNullSchema = type({
+	emailNull: type('string.email').or(type.null).default(null)
 });

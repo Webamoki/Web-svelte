@@ -1,9 +1,7 @@
 <script lang="ts">
 	import PasswordField from '$lib/components/form/fields/PasswordField.svelte';
 	import TextField from '$lib/components/form/fields/TextField.svelte';
-	import { arktypeClient } from 'sveltekit-superforms/adapters';
-	import { masterSchema } from './master-schema.js';
-	import { superForm } from 'sveltekit-superforms';
+	import { MasterSchema, TextNullSchema } from './schema.js';
 	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
 	import ChoiceField from '$lib/components/form/fields/ChoiceField.svelte';
@@ -18,13 +16,12 @@
 	import SelectField from '$lib/components/form/fields/SelectField.svelte';
 	import { identity } from 'ramda';
 	import TimeField from '$lib/components/form/fields/TimeField.svelte';
+	import TextFieldNullable from '$lib/components/form/fields/TextFieldNullable.svelte';
+	import { prepareEmptyForm } from '$lib/utils/form.js';
 
-	let { data } = $props();
-	const form = superForm(data.form, {
-		dataType: 'json',
-		validators: arktypeClient(masterSchema)
-	});
-	const { form: formData, enhance } = form;
+	const { form, data: formData } = prepareEmptyForm(MasterSchema);
+	const enhance = form.enhance;
+	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
 </script>
 
 <div class="flex min-h-screen bg-gray-50">
@@ -55,10 +52,20 @@
 						bind:value={$formData.email}
 					/>
 				</form>
+				<form method="POST" use:textNullForm.enhance class="space-y-5">
+					<TextFieldNullable
+						form={textNullForm}
+						label="Email"
+						name="emailNull"
+						type="email"
+						placeholder="johndoe@gmail.com"
+						bind:value={$textNullData.emailNull}
+					/>
+				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<TextField 
+				<TextField | TextfieldNullable
 					{form} 
 					label="Email" 
 					name="email" 

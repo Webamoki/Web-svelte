@@ -64,7 +64,7 @@
 	{#snippet formElem(props)}
 		<Select type="single" {...props} bind:value={getKeyFromValue, setValueFromKey}>
 			<SelectTrigger class={cn('w-[180px] cursor-pointer', className)}>
-				{value ? value : placeholder}
+				{value ? getLabel(valueToItem.get(value)!) : placeholder}
 			</SelectTrigger>
 			<SelectContent>
 				<SelectGroup>

@@ -27,6 +27,7 @@
 <div class="flex min-h-screen bg-gray-50">
 	<Sidebar>
 		<SidebarLink title="TextField" />
+		<SidebarLink title="TextFieldNullable" />
 		<SidebarLink title="PasswordField" />
 		<SidebarLink title="HexColorField" />
 		<SidebarLink title="SelectField" />
@@ -122,7 +123,7 @@
 						name="color"
 						items={[1, 2, 3]}
 						getKey={identity}
-						getLabel={(n: number) => n.toString()}
+						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
 						placeholder="Please select"
 						bind:value={$formData.select}

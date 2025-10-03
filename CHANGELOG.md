@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.7
+
+### Patch Changes
+
+- e65444c: fix button disabled
+
 ## 0.5.6
 
 ### Patch Changes

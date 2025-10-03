@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.8
+
+### Patch Changes
+
+- eb4c4ca: fix textfield empty
+
 ## 0.5.7
 
 ### Patch Changes

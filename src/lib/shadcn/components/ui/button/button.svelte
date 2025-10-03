@@ -54,7 +54,7 @@
 		...restProps
 	}: ButtonProps = $props();
 
-	let pointer = disabled ? '' : 'cursor-pointer';
+	let pointer = $derived(disabled ? '' : 'cursor-pointer');
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
@@ -62,7 +62,7 @@
 	<a
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className, pointer)}
+		class={cn(buttonVariants({ variant, size }), pointer, className)}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
 		role={disabled ? 'link' : undefined}
@@ -75,7 +75,7 @@
 	<button
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className, pointer)}
+		class={cn(buttonVariants({ variant, size }), pointer, className)}
 		{type}
 		{disabled}
 		{...restProps}

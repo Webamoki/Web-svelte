@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.9
+
+### Patch Changes
+
+- 23cd2ee: fix selectfield display
+
 ## 0.5.8
 
 ### Patch Changes

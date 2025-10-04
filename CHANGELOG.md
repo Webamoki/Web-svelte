@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.11
+
+### Patch Changes
+
+- 6a4a462: reset form option for prepareForm
+
 ## 0.5.10
 
 ### Patch Changes

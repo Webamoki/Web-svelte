@@ -82,8 +82,9 @@
 	}
 
 	let { form, action: _action, actionName, class: className, children }: Props = $props();
+	actionName = actionName ? `?/${actionName}` : '';
 </script>
 
-<form class={className} action="{_action}?/{actionName}" method="POST" use:form.enhance>
+<form class={className} action="{_action}{actionName}" method="POST" use:form.enhance>
 	{@render children?.()}
 </form>

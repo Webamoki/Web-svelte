@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.10
+
+### Patch Changes
+
+- 803fc5a: default form action not found patch
+
 ## 0.5.9
 
 ### Patch Changes

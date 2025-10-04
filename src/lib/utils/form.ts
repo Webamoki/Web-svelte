@@ -24,9 +24,9 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 	const form = superForm(validated, {
 		validators: arktypeClient(schema),
 		dataType: 'json',
-		invalidateAll: options?.invalidateAll === undefined ? false : true,
+		invalidateAll: options?.invalidateAll ?? false,
 		transport: dateTransport,
-		resetForm: options?.resetForm === undefined ? true : false,
+		resetForm: options?.resetForm ?? true,
 		onUpdated({ form }) {
 			if (form.valid) {
 				options?.onSuccess?.(form);

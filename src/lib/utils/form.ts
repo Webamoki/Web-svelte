@@ -15,17 +15,18 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 	schema: S,
 	options?: Partial<{
 		invalidateAll: boolean;
+		resetForm: boolean;
 		onSuccess: (
 			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 		) => void;
 	}>
 ) {
-	const _invalidateAll = options?.invalidateAll === undefined ? false : true;
 	const form = superForm(validated, {
 		validators: arktypeClient(schema),
 		dataType: 'json',
-		invalidateAll: _invalidateAll,
+		invalidateAll: options?.invalidateAll ?? false,
 		transport: dateTransport,
+		resetForm: options?.resetForm ?? true,
 		onUpdated({ form }) {
 			if (form.valid) {
 				options?.onSuccess?.(form);
@@ -49,17 +50,18 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 	schema: S,
 	options?: Partial<{
 		invalidateAll: boolean;
+		resetForm: boolean;
 		onSuccess: (
 			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 		) => void;
 	}>
 ) {
-	const _invalidateAll = options?.invalidateAll === undefined ? false : true;
 	const form = superForm(defaults(arktype(schema)), {
 		validators: arktypeClient(schema),
 		dataType: 'json',
-		invalidateAll: _invalidateAll,
+		invalidateAll: options?.invalidateAll === undefined ? false : true,
 		transport: dateTransport,
+		resetForm: options?.resetForm === undefined ? true : false,
 		onUpdated({ form }) {
 			if (form.valid) {
 				options?.onSuccess?.(form);

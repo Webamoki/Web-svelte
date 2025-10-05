@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.12
+
+### Patch Changes
+
+- 2517418: export dayindex functionality
+
 ## 0.5.11
 
 ### Patch Changes

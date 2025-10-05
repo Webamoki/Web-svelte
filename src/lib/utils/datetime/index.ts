@@ -31,12 +31,12 @@ export const Days = [
 	'Sunday'
 ] as const;
 
-const DayIndex: Record<Day, number> = Object.fromEntries(
+export const DayIndex: Record<Day, number> = Object.fromEntries(
 	Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
 
 /** Gets the day index of the date */
-function getDayIndex(date: CalendarDate): number {
+export function getDayIndex(date: CalendarDate): number {
 	// Always start 0 on Monday
 	return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
 }

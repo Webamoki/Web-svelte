@@ -18,6 +18,7 @@
 	import TimeField from '$lib/components/form/fields/TimeField.svelte';
 	import TextFieldNullable from '$lib/components/form/fields/TextFieldNullable.svelte';
 	import { prepareEmptyForm } from '$lib/utils/form.js';
+	import DateField from '$lib/components/form/fields/DateField.svelte';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
@@ -32,6 +33,7 @@
 		<SidebarLink title="HexColorField" />
 		<SidebarLink title="SelectField" />
 		<SidebarLink title="TimeField" />
+		<SidebarLink title="DateField" />
 		<SidebarLink title="ChoiceField" />
 		<SidebarLink title="ChoiceMultiField" />
 		<SidebarLink title="WeekdayChoiceField" />
@@ -161,6 +163,25 @@
 					label="Time" 
 					name="time" 
 					bind:value={$formData.time} 
+				/>
+			`}
+			</CodeBlock>
+		</Container>
+
+		<Container title="DateField" description="date field">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<DateField {form} label="Date" name="calendarDate" bind:value={$formData.calendarDate} />
+					<Button type="submit">Submit</Button>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<DateField 
+					{form} 
+					label="Date" 
+					name="date" 
+					bind:value={$formData.calendarDate} 
 				/>
 			`}
 			</CodeBlock>

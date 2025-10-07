@@ -1,6 +1,6 @@
 import { type } from 'arktype';
 import { PasswordType } from './types/password.js';
-import { Day, Time } from '$lib/utils/index.js';
+import { CalendarDate, Day, Time } from '$lib/utils/index.js';
 
 export const MasterSchema = type({
 	email: 'string.email',
@@ -12,7 +12,8 @@ export const MasterSchema = type({
 	weekdays: Day.array().moreThanLength(0),
 	color: type('string').atLeastLength(4).atMostLength(7),
 	select: 'number',
-	time: Time
+	time: Time,
+	calendarDate: CalendarDate
 });
 
 export const TextNullSchema = type({

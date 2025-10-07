@@ -3,6 +3,7 @@ import Button from './Button.svelte';
 import TextField from './fields/TextField.svelte';
 import TextFieldNullable from './fields/TextFieldNullable.svelte';
 import TimeField from './fields/TimeField.svelte';
+import DateField from './fields/DateField.svelte';
 import NumberField from './fields/NumberField.svelte';
 import SelectField from './fields/SelectField.svelte';
 import PasswordField from './fields/PasswordField.svelte';
@@ -18,6 +19,7 @@ export {
 	TextField,
 	TextFieldNullable,
 	TimeField,
+	DateField,
 	NumberField,
 	SelectField,
 	PasswordField,

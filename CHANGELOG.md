@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.13
+
+### Patch Changes
+
+- a73979a: feature: datefield
+
 ## 0.5.12
 
 ### Patch Changes

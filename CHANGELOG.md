@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.14
+
+### Patch Changes
+
+- 2dd6ddf: fail serverValidate form
+
 ## 0.5.13
 
 ### Patch Changes

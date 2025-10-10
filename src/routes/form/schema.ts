@@ -12,6 +12,7 @@ export const MasterSchema = type({
 	weekdays: Day.array().moreThanLength(0),
 	color: type('string').atLeastLength(4).atMostLength(7),
 	select: 'number',
+	selects: type('number').array(),
 	time: Time,
 	calendarDate: CalendarDate
 });

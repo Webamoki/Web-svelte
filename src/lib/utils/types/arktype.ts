@@ -1,7 +1,7 @@
 import { Type, type } from 'arktype';
 import { Days } from '../datetime/index.js';
 import { Time as timeImport, CalendarDate as calendarImport } from '@internationalized/date';
-import { EMAIL_MAX, FIRST_NAME_MAX, LAST_NAME_MAX } from './consts.js';
+import { EMAIL_MAX, FIRST_NAME_MAX, LAST_NAME_MAX, NAME_MAX } from './consts.js';
 import { toTitleCase } from '../string.js';
 
 /** Type string which is trimmed before narrowing the type checking */
@@ -41,6 +41,8 @@ export const Email = trimTo(
 		})
 		.atMostLength(EMAIL_MAX)
 ).pipe((email) => email.toLowerCase());
+
+export const Name = trimTo(type.string.moreThanLength(0).atMostLength(NAME_MAX)).pipe(toTitleCase);
 
 export const FirstName = trimTo(type.string.moreThanLength(0).atMostLength(FIRST_NAME_MAX)).pipe(
 	toTitleCase

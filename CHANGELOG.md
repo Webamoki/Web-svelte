@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.15
+
+### Patch Changes
+
+- 9d4fbb6: name arktype export
+
 ## 0.5.14
 
 ### Patch Changes

@@ -6,6 +6,7 @@ import TimeField from './fields/TimeField.svelte';
 import DateField from './fields/DateField.svelte';
 import NumberField from './fields/NumberField.svelte';
 import SelectField from './fields/SelectField.svelte';
+import SelectMultiField from './fields/SelectMultiField.svelte';
 import PasswordField from './fields/PasswordField.svelte';
 import HexColorField from './fields/HexColorField.svelte';
 import ChoiceField from './fields/ChoiceField.svelte';
@@ -22,6 +23,7 @@ export {
 	DateField,
 	NumberField,
 	SelectField,
+	SelectMultiField,
 	PasswordField,
 	HexColorField,
 	ChoiceField,

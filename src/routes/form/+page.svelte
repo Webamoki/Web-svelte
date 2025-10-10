@@ -19,6 +19,7 @@
 	import TextFieldNullable from '$lib/components/form/fields/TextFieldNullable.svelte';
 	import { prepareEmptyForm } from '$lib/utils/form.js';
 	import DateField from '$lib/components/form/fields/DateField.svelte';
+	import SelectMultiField from '$lib/components/form/fields/SelectMultiField.svelte';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
@@ -32,6 +33,7 @@
 		<SidebarLink title="PasswordField" />
 		<SidebarLink title="HexColorField" />
 		<SidebarLink title="SelectField" />
+		<SidebarLink title="SelectMultiField" />
 		<SidebarLink title="TimeField" />
 		<SidebarLink title="DateField" />
 		<SidebarLink title="ChoiceField" />
@@ -121,8 +123,8 @@
 				<form method="POST" use:enhance class="space-y-5">
 					<SelectField
 						{form}
-						label="Color"
-						name="color"
+						label="Select"
+						name="select"
 						items={[1, 2, 3]}
 						getKey={identity}
 						getLabel={(n: number) => (n * 2).toString()}
@@ -136,11 +138,11 @@
 				{`
 				<SelectField
 						{form}
-						label="Color"
-						name="color"
+						label="Select"
+						name="select"
 						items={[1, 2, 3]}
 						getKey={identity}
-						getLabel={(n: number) => n.toString()}
+						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
 						placeholder="Please select"
 						bind:value={$formData.select}
@@ -148,7 +150,38 @@
 			`}
 			</CodeBlock>
 		</Container>
-
+		<Container title="SelectMultiField" description="select multi field">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<SelectMultiField
+						{form}
+						label="Select Multi"
+						name="selects"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => (n * 2).toString()}
+						getValue={identity}
+						placeholder="Please select"
+						bind:values={$formData.selects}
+					/>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<SelectMultiField
+						{form}
+						label="Select Multi"
+						name="selects"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => n.toString()}
+						getValue={identity}
+						placeholder="Please select"
+						bind:value={$formData.selects}
+					/>
+			`}
+			</CodeBlock>
+		</Container>
 		<Container title="TimeField" description="time field">
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">

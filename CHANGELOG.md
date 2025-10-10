@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.16
+
+### Patch Changes
+
+- e386d31: multi select field
+
 ## 0.5.15
 
 ### Patch Changes

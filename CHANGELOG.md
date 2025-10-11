@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.17
+
+### Patch Changes
+
+- a320d68: textNullable fix
+
 ## 0.5.16
 
 ### Patch Changes

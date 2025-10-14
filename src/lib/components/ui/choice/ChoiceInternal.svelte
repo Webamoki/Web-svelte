@@ -5,12 +5,14 @@
 		getKey: (item: T) => K;
 		getLabel: (item: T) => string;
 		vertical?: boolean;
+		buttonContent?: Snippet<[label: string]>;
 	}
 </script>
 
 <script lang="ts" generics="T, K extends string | number | symbol">
 	import type { FormAttrs } from '$lib/components/form/FieldWrapper.svelte';
 	import { cn } from '$lib/shadcn/utils.js';
+	import type { Snippet } from 'svelte';
 
 	interface Props extends ChoiceInternalProps<T, K> {
 		handleItemClick: (item: T) => void;
@@ -27,6 +29,7 @@
 		disabled,
 		readonly,
 		'aria-invalid': ariaInvalid,
+		buttonContent,
 		...control
 	}: Props = $props();
 </script>
@@ -51,7 +54,12 @@
 			}}
 			data-state={isActive(item) ? 'active' : 'inactive'}
 			class="h-8 cursor-pointer rounded-lg bg-transparent p-2 text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-			>{getLabel(item)}
+		>
+			{#if buttonContent}
+				{@render buttonContent(getLabel(item))}
+			{:else}
+				{getLabel(item)}
+			{/if}
 		</button>
 	{/each}
 </div>

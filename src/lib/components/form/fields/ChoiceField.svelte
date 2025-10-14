@@ -21,7 +21,8 @@
 		label,
 		description,
 		disabled,
-		readonly
+		readonly,
+		buttonContent
 	}: Props = $props();
 </script>
 
@@ -33,6 +34,7 @@
 				{getKey}
 				{getLabel}
 				{onChange}
+				{buttonContent}
 				{vertical}
 				{disabled}
 				{readonly}

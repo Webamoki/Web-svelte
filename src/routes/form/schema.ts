@@ -1,6 +1,6 @@
+import { CalendarDate, Day, Time } from '$lib/utils/index.js';
 import { type } from 'arktype';
 import { PasswordType } from './types/password.js';
-import { CalendarDate, Day, Time } from '$lib/utils/index.js';
 
 export const MasterSchema = type({
 	email: 'string.email',
@@ -11,6 +11,8 @@ export const MasterSchema = type({
 	weekday: Day,
 	weekdays: Day.array().moreThanLength(0),
 	color: type('string').atLeastLength(4).atMostLength(7),
+	radio: 'number',
+	radios: type('number').array(),
 	select: 'number',
 	selects: type('number').array(),
 	time: Time,

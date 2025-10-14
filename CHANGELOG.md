@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.19
+
+### Patch Changes
+
+- 892f7cc: fix search
+
 ## 0.5.18
 
 ### Patch Changes

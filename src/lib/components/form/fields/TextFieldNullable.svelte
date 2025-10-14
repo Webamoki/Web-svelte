@@ -22,11 +22,7 @@
 		return value;
 	}
 	function set(raw: string | undefined) {
-		if (!raw) {
-			value = null;
-			return;
-		}
-		value = raw;
+		value = raw || null;
 	}
 </script>
 

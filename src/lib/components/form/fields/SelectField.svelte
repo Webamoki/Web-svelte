@@ -2,8 +2,6 @@
 	lang="ts"
 	generics="I,V, K extends string | number,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
-	import type { FormPath } from 'sveltekit-superforms';
-	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 	import {
 		Select,
 		SelectContent,
@@ -13,6 +11,8 @@
 		SelectTrigger
 	} from '$lib/shadcn/components/ui/select/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
+	import type { FormPath } from 'sveltekit-superforms';
+	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: V;
@@ -63,8 +63,10 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<Select type="single" {...props} bind:value={getKeyFromValue, setValueFromKey}>
-			<SelectTrigger class={cn('w-[180px] cursor-pointer', className)}>
-				{value ? getLabel(valueToItem.get(value)!) : placeholder}
+			<SelectTrigger class={cn('w-[180px] cursor-pointer truncate', className)}>
+				<span class="block truncate">
+					{value ? getLabel(valueToItem.get(value)!) : placeholder}
+				</span>
 			</SelectTrigger>
 			<SelectContent>
 				<SelectGroup>

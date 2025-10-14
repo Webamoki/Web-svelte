@@ -1,25 +1,25 @@
 <script lang="ts">
-	import PasswordField from '$lib/components/form/fields/PasswordField.svelte';
-	import TextField from '$lib/components/form/fields/TextField.svelte';
-	import { MasterSchema, TextNullSchema } from './schema.js';
-	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
-	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
+	import Button from '$lib/components/form/Button.svelte';
 	import ChoiceField from '$lib/components/form/fields/ChoiceField.svelte';
+	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
+	import DateField from '$lib/components/form/fields/DateField.svelte';
+	import HexColorField from '$lib/components/form/fields/HexColorField.svelte';
+	import PasswordField from '$lib/components/form/fields/PasswordField.svelte';
+	import SelectField from '$lib/components/form/fields/SelectField.svelte';
+	import SelectMultiField from '$lib/components/form/fields/SelectMultiField.svelte';
+	import TextField from '$lib/components/form/fields/TextField.svelte';
+	import TextFieldNullable from '$lib/components/form/fields/TextFieldNullable.svelte';
+	import TimeField from '$lib/components/form/fields/TimeField.svelte';
 	import WeekdayChoiceField from '$lib/components/form/fields/WeekdayChoiceField.svelte';
 	import WeekdayChoiceMultiField from '$lib/components/form/fields/WeekdayChoiceMultiField.svelte';
 	import Container from '$lib/components/showcase/Container.svelte';
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
-	import HexColorField from '$lib/components/form/fields/HexColorField.svelte';
-	import Button from '$lib/components/form/Button.svelte';
-	import SelectField from '$lib/components/form/fields/SelectField.svelte';
-	import { identity } from 'ramda';
-	import TimeField from '$lib/components/form/fields/TimeField.svelte';
-	import TextFieldNullable from '$lib/components/form/fields/TextFieldNullable.svelte';
 	import { prepareEmptyForm } from '$lib/utils/form.js';
-	import DateField from '$lib/components/form/fields/DateField.svelte';
-	import SelectMultiField from '$lib/components/form/fields/SelectMultiField.svelte';
+	import { identity } from 'ramda';
+	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
+	import { MasterSchema, TextNullSchema } from './schema.js';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
@@ -268,7 +268,11 @@
 							getKey={(item) => item}
 							getLabel={(item) => item}
 							bind:value={$formData.tag}
-						/>
+						>
+							{#snippet buttonContent(label)}
+								<span class="text-sm font-medium">s{label}</span>
+							{/snippet}
+						</ChoiceField>
 						<ChoiceField
 							{form}
 							label="Horizontal Disabled"

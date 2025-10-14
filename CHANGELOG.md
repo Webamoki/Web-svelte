@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.18
+
+### Patch Changes
+
+- 968e0a4: search functionality + choice customisation
+
 ## 0.5.17
 
 ### Patch Changes

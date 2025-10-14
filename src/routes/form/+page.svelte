@@ -231,8 +231,9 @@
 							label="Vertical"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 							vertical
 						/>
@@ -241,8 +242,9 @@
 							label="Vertical Disabled"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 							vertical
 							disabled
@@ -252,8 +254,9 @@
 							label="Vertical Readonly"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 							vertical
 							readonly
@@ -265,8 +268,9 @@
 							label="Horizontal"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 						>
 							{#snippet buttonContent(label)}
@@ -278,8 +282,9 @@
 							label="Horizontal Disabled"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 							disabled
 						/>
@@ -288,8 +293,9 @@
 							label="Horizontal Readonly"
 							name="tag"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tag}
 							readonly
 						/>
@@ -319,8 +325,9 @@
 							label="Vertical"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 							vertical
 						/>
@@ -329,8 +336,9 @@
 							label="Vertical Disabled"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 							vertical
 							disabled
@@ -340,8 +348,9 @@
 							label="Vertical Readonly"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 							vertical
 							readonly
@@ -353,8 +362,9 @@
 							label="Horizontal"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 						/>
 						<ChoiceMultiField
@@ -362,8 +372,9 @@
 							label="Horizontal Disabled"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 							disabled
 						/>
@@ -372,8 +383,9 @@
 							label="Horizontal Readonly"
 							name="tags"
 							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={(item) => item}
-							getLabel={(item) => item}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
 							bind:value={$formData.tags}
 							readonly
 						/>

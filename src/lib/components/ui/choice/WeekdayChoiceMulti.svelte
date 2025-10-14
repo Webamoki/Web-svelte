@@ -14,8 +14,8 @@
 </script>
 
 <script lang="ts">
-	import ChoiceMulti from './ChoiceMulti.svelte';
 	import { Days, formatDayLetter, formatDayShort, type Day } from '$lib/utils/index.js';
+	import ChoiceMulti from './ChoiceMulti.svelte';
 
 	let { value = $bindable([]), ...props }: WeekdayChoiceMultiProps = $props();
 
@@ -26,4 +26,4 @@
 	});
 </script>
 
-<ChoiceMulti items={Days} bind:value {getLabel} getKey={identity} {...props} />
+<ChoiceMulti items={Days} bind:value {getLabel} getKey={identity} getValue={identity} {...props} />

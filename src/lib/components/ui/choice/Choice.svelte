@@ -1,27 +1,30 @@
 <script lang="ts" module>
-	export interface ChoiceProps<V, K extends string | number | symbol>
-		extends ChoiceInternalProps<V, K> {
+	export interface ChoiceProps<V, I, K extends string | number | symbol>
+		extends ChoiceInternalProps<V, I, K> {
 		value?: V;
 		onChange?: (value: V) => void;
 	}
 </script>
 
-<script lang="ts" generics="V, K extends string | number | symbol">
-	import ChoiceInternal, {
-		type ChoiceInternalProps as ChoiceInternalProps
-	} from './ChoiceInternal.svelte';
+<script lang="ts" generics="V, I,  K extends string | number | symbol">
+	import ChoiceInternal, { type ChoiceInternalProps } from './ChoiceInternal.svelte';
 
-	let { value = $bindable(undefined), onChange, ...props }: ChoiceProps<V, K> = $props();
+	let {
+		value = $bindable(undefined),
+		getValue,
+		onChange,
+		...props
+	}: ChoiceProps<V, I, K> = $props();
 
-	function handleItemClick(item: V) {
-		value = item;
+	function handleItemClick(item: I) {
+		value = getValue(item);
 		// Trigger event
-		onChange?.(item);
+		onChange?.(value);
 	}
 
-	function isActive(item: V) {
-		return value === item;
+	function isActive(item: I) {
+		return value === getValue?.(item);
 	}
 </script>
 
-<ChoiceInternal {handleItemClick} {isActive} {...props} />
+<ChoiceInternal {handleItemClick} {isActive} {getValue} {...props} />

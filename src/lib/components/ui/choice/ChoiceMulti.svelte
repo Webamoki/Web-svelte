@@ -1,25 +1,28 @@
 <script lang="ts" module>
-	export interface ChoiceMultiProps<V, K extends string | number | symbol>
-		extends ChoiceInternalProps<V, K> {
+	export interface ChoiceMultiProps<V, I, K extends string | number | symbol>
+		extends ChoiceInternalProps<V, I, K> {
 		value: V[];
 		onAdd?: (value: V) => void;
 		onRemove?: (value: V) => void;
 	}
 </script>
 
-<script lang="ts" generics="V, K extends string | number | symbol">
-	import ChoiceInternal, { type ChoiceInternalProps } from './ChoiceInternal.svelte';
+<script lang="ts" generics="V,I, K extends string | number | symbol">
 	import * as sorted from 'sorted-array-functions';
+	import ChoiceInternal, { type ChoiceInternalProps } from './ChoiceInternal.svelte';
 
 	let {
 		value = $bindable([]),
 		onAdd,
 		onRemove,
+		getValue,
 		items,
 		...props
-	}: ChoiceMultiProps<V, K> = $props();
+	}: ChoiceMultiProps<V, I, K> = $props();
 
-	const valueIndex = new Map<V, number>(items.map((item, index) => [item, index] as const));
+	const valueIndex = new Map<V, number>(
+		items.map((item, index) => [getValue(item), index] as const)
+	);
 
 	function compareItems(a: V, b: V) {
 		const index1 = valueIndex.get(a);
@@ -30,21 +33,21 @@
 		return Math.sign(index1 - index2) as -1 | 0 | 1;
 	}
 
-	function contains(item: V) {
+	function contains(item: I) {
 		// Sorted contains function
-		return sorted.has(value, item, compareItems);
+		return sorted.has(value, getValue(item), compareItems);
 	}
 
-	function handleItemClick(item: V) {
+	function handleItemClick(item: I) {
 		// Toggle add or remove
 		if (!contains(item)) {
-			sorted.add(value, item, compareItems);
+			sorted.add(value, getValue(item), compareItems);
 			// Trigger event
-			onAdd?.(item);
+			onAdd?.(getValue(item));
 		} else {
-			sorted.remove(value, item, compareItems);
+			sorted.remove(value, getValue(item), compareItems);
 			// Trigger event
-			onRemove?.(item);
+			onRemove?.(getValue(item));
 		}
 
 		// Re-assign value to trigger state update
@@ -52,4 +55,4 @@
 	}
 </script>
 
-<ChoiceInternal {handleItemClick} isActive={contains} {items} {...props} />
+<ChoiceInternal {handleItemClick} {getValue} isActive={contains} {items} {...props} />

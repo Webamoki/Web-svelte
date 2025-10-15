@@ -26,18 +26,16 @@
 
 <FieldWrapper {form} {name} {label} {description} class={className}>
 	{#snippet formElem(props)}
-		<div class="flex w-full items-center gap-2">
-			<WeekdayChoice
-				{onChange}
-				{vertical}
-				{disabled}
-				{readonly}
-				{letterLabels}
-				{longLabels}
-				bind:value
-				{...props}
-				class="w-full"
-			/>
-		</div>
+		<WeekdayChoice
+			{onChange}
+			{vertical}
+			{disabled}
+			{readonly}
+			{letterLabels}
+			{longLabels}
+			bind:value
+			{...props}
+			class="w-full"
+		/>
 	{/snippet}
 </FieldWrapper>

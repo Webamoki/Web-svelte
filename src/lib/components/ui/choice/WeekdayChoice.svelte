@@ -7,6 +7,7 @@
 		letterLabels?: boolean;
 		disabled?: boolean | null;
 		readonly?: boolean | null;
+		class?: string;
 	}
 </script>
 

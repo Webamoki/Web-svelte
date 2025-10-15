@@ -23,7 +23,7 @@
 	}
 
 	function isActive(item: I) {
-		return value === getValue?.(item);
+		return value === getValue(item);
 	}
 </script>
 

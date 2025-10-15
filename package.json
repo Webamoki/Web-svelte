@@ -57,6 +57,10 @@
 		"./utils/form": {
 			"types": "./dist/utils/form.d.ts",
 			"import": "./dist/utils/form.js"
+		},
+		"./utils/search": {
+			"types": "./dist/utils/search.d.ts",
+			"import": "./dist/utils/search.js"
 		}
 	},
 	"peerDependencies": {

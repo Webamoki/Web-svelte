@@ -1,17 +1,18 @@
 <script
 	lang="ts"
-	generics="V, K extends string | number | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
+	generics="V,I, K extends string | number | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
+	import Choice, { type ChoiceProps } from '$lib/components/ui/choice/Choice.svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
-	import Choice, { type ChoiceProps } from '$lib/components/ui/choice/Choice.svelte';
 
-	type Props = FieldWrapperProps<T, U, M> & ChoiceProps<V, K>;
+	type Props = FieldWrapperProps<T, U, M> & ChoiceProps<V, I, K>;
 
 	let {
 		items,
 		getKey,
 		getLabel,
+		getValue,
 		onChange,
 		vertical,
 		value = $bindable(undefined),
@@ -33,6 +34,7 @@
 				{items}
 				{getKey}
 				{getLabel}
+				{getValue}
 				{onChange}
 				{buttonContent}
 				{vertical}

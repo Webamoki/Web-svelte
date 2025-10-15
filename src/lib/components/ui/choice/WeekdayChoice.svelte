@@ -25,4 +25,4 @@
 	});
 </script>
 
-<Choice items={Days} bind:value {getLabel} getKey={identity} {...props} />
+<Choice items={Days} bind:value {getLabel} getValue={identity} getKey={identity} {...props} />

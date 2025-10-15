@@ -1,22 +1,23 @@
 <script lang="ts" module>
-	export interface ChoiceInternalProps<T, K extends string | number | symbol>
+	export interface ChoiceInternalProps<V, I, K extends string | number | symbol>
 		extends Partial<FormAttrs> {
-		items: readonly T[];
-		getKey: (item: T) => K;
-		getLabel: (item: T) => string;
+		items: readonly I[];
+		getKey: (item: I) => K;
+		getLabel: (item: I) => string;
+		getValue: (item: I) => V;
 		vertical?: boolean;
 		buttonContent?: Snippet<[label: string]>;
 	}
 </script>
 
-<script lang="ts" generics="T, K extends string | number | symbol">
+<script lang="ts" generics="V, I, K extends string | number | symbol">
 	import type { FormAttrs } from '$lib/components/form/FieldWrapper.svelte';
 	import { cn } from '$lib/shadcn/utils.js';
 	import type { Snippet } from 'svelte';
 
-	interface Props extends ChoiceInternalProps<T, K> {
-		handleItemClick: (item: T) => void;
-		isActive: (item: T) => boolean;
+	interface Props extends ChoiceInternalProps<V, I, K> {
+		handleItemClick: (item: I) => void;
+		isActive: (item: I) => boolean;
 	}
 
 	let {

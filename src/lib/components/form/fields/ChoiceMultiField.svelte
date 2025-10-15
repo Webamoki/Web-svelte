@@ -1,16 +1,17 @@
 <script
 	lang="ts"
-	generics="V, K extends string | number | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
+	generics="V,I, K extends string | number | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
 	import ChoiceMulti, { type ChoiceMultiProps } from '$lib/components/ui/choice/ChoiceMulti.svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
-	type Props = FieldWrapperProps<T, U, M> & ChoiceMultiProps<V, K>;
+	type Props = FieldWrapperProps<T, U, M> & ChoiceMultiProps<V, I, K>;
 	let {
 		items,
 		getKey,
 		getLabel,
+		getValue,
 		onAdd,
 		onRemove,
 		vertical,
@@ -33,6 +34,7 @@
 				{items}
 				{getKey}
 				{getLabel}
+				{getValue}
 				{onAdd}
 				{onRemove}
 				{buttonContent}

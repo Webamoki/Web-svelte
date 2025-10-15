@@ -14,17 +14,36 @@
 <div class="grid grid-cols-2 gap-4 p-4">
 	<div>
 		Single: {valueOne}
-		<Choice bind:value={valueOne} {items} getKey={identity} getLabel={identity} />
+		<Choice
+			bind:value={valueOne}
+			{items}
+			getKey={identity}
+			getValue={identity}
+			getLabel={identity}
+		/>
 	</div>
 
 	<div>
 		Multiple: {valueMultiple}
-		<ChoiceMulti bind:value={valueMultiple} {items} getKey={identity} getLabel={identity} />
+		<ChoiceMulti
+			bind:value={valueMultiple}
+			{items}
+			getKey={identity}
+			getValue={identity}
+			getLabel={identity}
+		/>
 	</div>
 
 	<div>
 		Single Vertical: {valueOneV}
-		<Choice bind:value={valueOneV} {items} getKey={identity} getLabel={identity} vertical />
+		<Choice
+			bind:value={valueOneV}
+			{items}
+			getKey={identity}
+			getValue={identity}
+			getLabel={identity}
+			vertical
+		/>
 	</div>
 
 	<div>
@@ -34,6 +53,7 @@
 			{items}
 			getKey={identity}
 			getLabel={identity}
+			getValue={identity}
 			vertical
 		/>
 	</div>

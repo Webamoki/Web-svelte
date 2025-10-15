@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.24
+
+### Patch Changes
+
+- fea7903: export seawrch
+
 ## 0.5.23
 
 ### Patch Changes

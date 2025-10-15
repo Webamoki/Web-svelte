@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.25
+
+### Patch Changes
+
+- a7ed53b: choice class prop
+
 ## 0.5.24
 
 ### Patch Changes

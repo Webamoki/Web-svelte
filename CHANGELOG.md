@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.20
+
+### Patch Changes
+
+- 93b5fde: improve choicefield functionality
+
 ## 0.5.19
 
 ### Patch Changes

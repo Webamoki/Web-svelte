@@ -6,7 +6,7 @@
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
-	type Props = FieldWrapperProps<T, U, M> & ChoiceMultiProps<V, I, K>;
+	type Props = { class?: string } & FieldWrapperProps<T, U, M> & ChoiceMultiProps<V, I, K>;
 	let {
 		items,
 		getKey,
@@ -23,27 +23,27 @@
 		description,
 		disabled,
 		readonly,
-		buttonContent
+		buttonContent,
+		class: className
 	}: Props = $props();
 </script>
 
-<FieldWrapper {form} {name} {label} {description}>
+<FieldWrapper {form} {name} {label} {description} class={className}>
 	{#snippet formElem(props)}
-		<div class="flex w-full items-center gap-2">
-			<ChoiceMulti
-				{items}
-				{getKey}
-				{getLabel}
-				{getValue}
-				{onAdd}
-				{onRemove}
-				{buttonContent}
-				{disabled}
-				{readonly}
-				{vertical}
-				{...props}
-				bind:value
-			/>
-		</div>
+		<ChoiceMulti
+			{items}
+			{getKey}
+			{getLabel}
+			{getValue}
+			{onAdd}
+			{onRemove}
+			{buttonContent}
+			{disabled}
+			{readonly}
+			{vertical}
+			{...props}
+			bind:value
+			class="w-full"
+		/>
 	{/snippet}
 </FieldWrapper>

@@ -7,6 +7,7 @@
 		getValue: (item: I) => V;
 		vertical?: boolean;
 		buttonContent?: Snippet<[label: string, item: I]>;
+		class?: string;
 	}
 </script>
 
@@ -31,6 +32,7 @@
 		readonly,
 		'aria-invalid': ariaInvalid,
 		buttonContent,
+		class: className,
 		...control
 	}: Props = $props();
 </script>
@@ -43,7 +45,8 @@
 		vertical ? 'grid-flow-row auto-rows-fr' : 'auto-cols-fr grid-flow-col',
 		disabled || readonly ? 'pointer-events-none' : 'cursor-pointer',
 		disabled && 'opacity-50',
-		ariaInvalid && 'border-destructive'
+		ariaInvalid && 'border-destructive',
+		className
 	)}
 >
 	{#each items as item (getKey(item))}

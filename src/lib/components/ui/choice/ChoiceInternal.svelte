@@ -67,7 +67,7 @@
 					handleItemClick(item);
 				}}
 				data-state={isActive(item) ? 'active' : 'inactive'}
-				class="1p-2 h-8 cursor-pointer rounded-lg bg-transparent text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+				class="h-8 cursor-pointer rounded-lg bg-transparent p-2 text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
 			>
 				{getLabel(item)}
 			</button>

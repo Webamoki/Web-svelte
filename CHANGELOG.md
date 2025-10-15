@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.23
+
+### Patch Changes
+
+- 34360a5: choice internal fix incorrect class
+
 ## 0.5.22
 
 ### Patch Changes

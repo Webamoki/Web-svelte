@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.26
+
+### Patch Changes
+
+- 2d8058c: implement toast message for form error
+
 ## 0.5.25
 
 ### Patch Changes

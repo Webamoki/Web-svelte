@@ -1,6 +1,6 @@
-import { toast } from 'svelte-sonner';
 import { dateTransport } from '$lib/utils/index.js';
 import { type } from 'arktype';
+import { toast } from 'svelte-sonner';
 import { defaults, superForm, superValidate, type SuperValidated } from 'sveltekit-superforms';
 import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
 
@@ -33,6 +33,11 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 			} else {
 				toast.error(text);
 			}
+		},
+		onError({ result }) {
+			const message = result.error.message ?? 'There was an error submitting the form';
+			const status = result.status ?? 500;
+			toast.error(`${status} - ${message}`);
 		}
 	});
 	const delayed = form.delayed;
@@ -69,6 +74,11 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 			} else {
 				toast.error(text);
 			}
+		},
+		onError({ result }) {
+			const message = result.error.message ?? 'There was an error submitting the form';
+			const status = result.status ?? 500;
+			toast.error(`${status} - ${message}`);
 		}
 	});
 	const delayed = form.delayed;

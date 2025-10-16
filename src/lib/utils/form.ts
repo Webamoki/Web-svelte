@@ -36,7 +36,7 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 		},
 		onError({ result }) {
 			const message = result.error.message ?? 'There was an error submitting the form';
-			const status = result.status ?? 501;
+			const status = result.status ?? 500;
 			toast.error(`${status} - ${message}`);
 		}
 	});
@@ -77,7 +77,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 		},
 		onError({ result }) {
 			const message = result.error.message ?? 'There was an error submitting the form';
-			const status = result.status ?? 501;
+			const status = result.status ?? 500;
 			toast.error(`${status} - ${message}`);
 		}
 	});

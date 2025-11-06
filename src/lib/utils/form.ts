@@ -26,9 +26,8 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 				options?.onSuccess?.(form);
 			}
 			const text = form.message?.text;
-			if (text === undefined) return;
-
-			if (form.message?.success) {
+			if (text === undefined || form.message?.showToast === false) return;
+			if (form.message!.success) {
 				toast.success(text);
 			} else {
 				toast.error(text);
@@ -67,9 +66,8 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 			}
 
 			const text = form.message?.text;
-			if (text === undefined) return;
-
-			if (form.message?.success) {
+			if (text === undefined || form.message?.showToast === false) return;
+			if (form.message!.success) {
 				toast.success(text);
 			} else {
 				toast.error(text);

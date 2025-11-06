@@ -6,6 +6,8 @@ declare global {
 			type Message = {
 				success: boolean;
 				text?: string;
+				data?: unknown;
+				showToast: boolean;
 			};
 		}
 		// interface Error {}

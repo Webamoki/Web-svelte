@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.27
+
+### Patch Changes
+
+- 58a4a5c: update packages and optional form toast message
+
 ## 0.5.26
 
 ### Patch Changes

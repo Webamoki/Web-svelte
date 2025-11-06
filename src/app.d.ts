@@ -5,8 +5,8 @@ declare global {
 		namespace Superforms {
 			type Message = {
 				success: boolean;
-				status: number;
 				text?: string;
+				data?: unknown;
 				showToast: boolean;
 			};
 		}

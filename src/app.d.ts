@@ -7,6 +7,7 @@ declare global {
 				success: boolean;
 				status: number;
 				text?: string;
+				showToast: boolean;
 			};
 		}
 		// interface Error {}

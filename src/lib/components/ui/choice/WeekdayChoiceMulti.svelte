@@ -15,8 +15,9 @@
 </script>
 
 <script lang="ts">
-	import { Days, formatDayLetter, formatDayShort, type Day } from '$lib/utils/index.js';
 	import ChoiceMulti from './ChoiceMulti.svelte';
+	import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
+	import type { Day } from '$lib/utils/types/arktype.js';
 
 	let { value = $bindable([]), ...props }: WeekdayChoiceMultiProps = $props();
 

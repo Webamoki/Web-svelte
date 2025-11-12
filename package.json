@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.5.28",
+	"version": "0.5.29",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",

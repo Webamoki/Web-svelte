@@ -78,8 +78,7 @@
 		"svelte": "^5.43.4",
 		"svelte-awesome-color-picker": "^4.1.0",
 		"svelte-sonner": "^1.0.5",
-		"sveltekit-superforms": "^2.28.1",
-		"tailwindcss": "^4.1.17"
+		"sveltekit-superforms": "^2.28.1"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.29.7",

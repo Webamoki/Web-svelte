@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.30
+
+### Patch Changes
+
+- 3259655: move packages
+
 ## 0.5.29
 
 ### Patch Changes

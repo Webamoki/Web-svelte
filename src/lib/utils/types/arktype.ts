@@ -4,6 +4,16 @@ import { Time as timeImport, CalendarDate as calendarImport } from '@internation
 import { EMAIL_MAX, FIRST_NAME_MAX, LAST_NAME_MAX, NAME_MAX } from './consts.js';
 import { toTitleCase } from '../string.js';
 
+// Phone arktype: allows "+", digits, and spaces only
+export const Phone = type('string').narrow((value, ctx) => {
+	if (!/^[+0-9 ]+$/.test(value)) {
+		return ctx.reject({
+			problem: 'invalid phone number. Only +, digits, and spaces are allowed.'
+		});
+	}
+	return true;
+});
+
 /** Type string which is trimmed before narrowing the type checking */
 export function trimTo(typeTo: Type<string>) {
 	return type('string.trim').to(typeTo);

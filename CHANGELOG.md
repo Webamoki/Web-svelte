@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.29
+
+### Patch Changes
+
+- 7abdfab: phone number arktype
+
 ## 0.5.28
 
 ### Patch Changes

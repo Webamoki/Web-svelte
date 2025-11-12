@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.28
+
+### Patch Changes
+
+- b260a7b: input and select ring colors
+
 ## 0.5.27
 
 ### Patch Changes

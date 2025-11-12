@@ -42,7 +42,12 @@
 					{#if label || description}
 						<div>
 							{#if label}
-								<Label class="text-sm font-medium">{label}</Label>
+								<Label class="text-sm font-medium">
+									{label}
+									{#if props['aria-required'] === 'true'}
+										<span class="text-red-500">*</span>
+									{/if}
+								</Label>
 							{/if}
 							{#if description}
 								<Description class="text-sm font-medium">{description}</Description>

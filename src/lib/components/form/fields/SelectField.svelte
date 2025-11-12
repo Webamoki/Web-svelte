@@ -63,7 +63,7 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<Select type="single" {...props} bind:value={getKeyFromValue, setValueFromKey}>
-			<SelectTrigger class={cn('w-[180px] cursor-pointer truncate', className)}>
+			<SelectTrigger class={cn('w-full cursor-pointer truncate', className)}>
 				<span class="block truncate">
 					{value ? getLabel(valueToItem.get(value)!) : placeholder}
 				</span>

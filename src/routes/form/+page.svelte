@@ -16,7 +16,7 @@
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
-	import { prepareEmptyForm } from '$lib/utils/form.js';
+	import { prepareEmptyForm } from '$lib/utils/form/index.js';
 	import { identity } from 'ramda';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
 	import { MasterSchema, TextNullSchema } from './schema.js';
@@ -71,12 +71,12 @@
 			<CodeBlock slot="code">
 				{`
 				<TextField | TextfieldNullable
-					{form} 
-					label="Email" 
-					name="email" 
-					type="email" 
-					placeholder="johndoe@gmail.com" 
-					bind:value={$formData.email} 
+					{form}
+					label="Email"
+					name="email"
+					type="email"
+					placeholder="johndoe@gmail.com"
+					bind:value={$formData.email}
 				/>
 			`}
 			</CodeBlock>
@@ -89,11 +89,11 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<PasswordField 
-					{form} 
-					label="Password" 
-					name="password" 
-					bind:value={$formData.password} 
+				<PasswordField
+					{form}
+					label="Password"
+					name="password"
+					bind:value={$formData.password}
 				/>
 			`}
 			</CodeBlock>
@@ -108,11 +108,11 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<HexColorField 
-					{form} 
-					label="Color" 
-					name="color" 
-					bind:value={$formData.color} 
+				<HexColorField
+					{form}
+					label="Color"
+					name="color"
+					bind:value={$formData.color}
 				/>
 			`}
 			</CodeBlock>
@@ -191,11 +191,11 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<TimeField 
-					{form} 
-					label="Time" 
-					name="time" 
-					bind:value={$formData.time} 
+				<TimeField
+					{form}
+					label="Time"
+					name="time"
+					bind:value={$formData.time}
 				/>
 			`}
 			</CodeBlock>
@@ -210,11 +210,11 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
-				<DateField 
-					{form} 
-					label="Date" 
-					name="date" 
-					bind:value={$formData.calendarDate} 
+				<DateField
+					{form}
+					label="Date"
+					name="date"
+					bind:value={$formData.calendarDate}
 				/>
 			`}
 			</CodeBlock>
@@ -305,12 +305,12 @@
 			<CodeBlock slot="code">
 				{`
 					<ChoiceField
-						{form} 
+						{form}
 						label="Tag"
 						name="tag"
-						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']} 
-						getKey={item => item} 
-						getLabel={item => item} 
+						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+						getKey={item => item}
+						getLabel={item => item}
 						bind:value={$formData.tag}
 					/>
 				`}
@@ -395,12 +395,12 @@
 			<CodeBlock slot="code">
 				{`
 					<ChoiceMultiField
-						{form} 
+						{form}
 						label="Tags"
 						name="tags"
-						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']} 
-						getKey={item => item} 
-						getLabel={item => item} 
+						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+						getKey={item => item}
+						getLabel={item => item}
 						bind:value={$formData.tags}
 						readonly?
 						disabled?
@@ -483,7 +483,7 @@
 			<CodeBlock slot="code">
 				{`
 					<WeekdayChoiceField
-						{form} 
+						{form}
 						label="Weekday"
 						name="weekday"
 						bind:value={$formData.weekday}
@@ -569,7 +569,7 @@
 			<CodeBlock slot="code">
 				{`
 					<WeekdayChoiceMultiField
-						{form} 
+						{form}
 						label="Weekdays"
 						name="weekdays"
 						bind:value={$formData.weekdays}

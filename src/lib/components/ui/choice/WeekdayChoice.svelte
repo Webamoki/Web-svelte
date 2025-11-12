@@ -12,10 +12,11 @@
 </script>
 
 <script lang="ts">
-	import { Days, formatDayLetter, formatDayShort, type Day } from '$lib/utils/index.js';
+	import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
 	import { identity } from 'ramda';
 
 	import Choice from './Choice.svelte';
+	import type { Day } from '$lib/utils/types/arktype.js';
 
 	let { value = $bindable(undefined), ...props }: WeekdayChoiceProps = $props();
 

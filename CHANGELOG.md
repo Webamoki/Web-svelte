@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.31
+
+### Patch Changes
+
+- 8e6e3d0: fix packages
+
 ## 0.5.30
 
 ### Patch Changes

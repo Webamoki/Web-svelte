@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.32
+
+### Patch Changes
+
+- 67e5905: fix highlight issue on inputs on error
+
 ## 0.5.31
 
 ### Patch Changes

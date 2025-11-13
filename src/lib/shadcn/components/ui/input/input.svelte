@@ -23,8 +23,9 @@
 		bind:this={ref}
 		data-slot="input"
 		class={cn(
-			'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50',
-			'aria-invalid:border-red-500',
+			'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50',
+			'focus:border-transparent focus:ring-2 focus:ring-primary',
+			'aria-invalid:border-red-500 aria-invalid:focus:ring-red-300',
 			className
 		)}
 		type="file"
@@ -37,8 +38,9 @@
 		bind:this={ref}
 		data-slot="input"
 		class={cn(
-			'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50',
-			'aria-invalid:border-red-500',
+			'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50',
+			'focus:border-transparent focus:ring-2 focus:ring-primary',
+			'aria-invalid:border-red-500 aria-invalid:focus:ring-red-300',
 			className
 		)}
 		{type}

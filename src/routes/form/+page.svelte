@@ -16,7 +16,7 @@
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
-	import { prepareEmptyForm } from '$lib/utils/form/index.js';
+	import { prepareEmptyForm } from '$lib/utils/form.js';
 	import { identity } from 'ramda';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
 	import { MasterSchema, TextNullSchema } from './schema.js';

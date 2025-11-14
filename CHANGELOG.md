@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.35
+
+### Patch Changes
+
+- e79b16a: fix searchbar ui
+
 ## 0.5.34
 
 ### Patch Changes

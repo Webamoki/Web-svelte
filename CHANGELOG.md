@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.5.34
+
+### Patch Changes
+
+- 0fe4412: Add MessageField component with resizable textarea and lock feature, fix PasswordField button height to match input styling, optimize textarea resize performance by removing transition-all, fix typos in SelectField and SelectMultiField components, and change SelectMultiField width from hardcoded w-[180px] to w-full
+
 ## 0.5.33
 
 ### Patch Changes

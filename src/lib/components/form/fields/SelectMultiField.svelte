@@ -38,7 +38,7 @@
 	let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
 	let keyToItem: Map<string, I> = new Map(items.map((item) => [getKey(item), item] as const));
 
-	// Enforce string key functino
+	// Enforce string key function
 	function getKey(item: I) {
 		const key = _getKey(item);
 		return key.toString();
@@ -70,7 +70,7 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<Select type="multiple" {...props} bind:value={getKeyFromValue, setValueFromKey}>
-			<SelectTrigger class={cn('w-[180px] cursor-pointer truncate', className)}>
+			<SelectTrigger class={cn('w-full cursor-pointer truncate', className)}>
 				<span class="block truncate">
 					{getPreview()}
 				</span>

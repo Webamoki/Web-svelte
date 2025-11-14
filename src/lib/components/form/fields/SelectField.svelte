@@ -38,7 +38,7 @@
 	let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
 	let keyToItem: Map<string, I> = new Map(items.map((item) => [getKey(item), item] as const));
 
-	// Enforce string key functino
+	// Enforce string key function
 	function getKey(item: I) {
 		const key = _getKey(item);
 		return key.toString();

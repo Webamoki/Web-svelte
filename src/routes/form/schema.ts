@@ -6,6 +6,7 @@ export const MasterSchema = type({
 	email: 'string.email',
 	emailNull: type('string.email').or(type.null).default(null),
 	password: PasswordType,
+	message: 'string',
 	tag: 'string',
 	tags: 'string[]>0',
 	weekday: Day,

@@ -4,6 +4,7 @@
 	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
 	import DateField from '$lib/components/form/fields/DateField.svelte';
 	import HexColorField from '$lib/components/form/fields/HexColorField.svelte';
+	import MessageField from '$lib/components/form/fields/MessageField.svelte';
 	import PasswordField from '$lib/components/form/fields/PasswordField.svelte';
 	import SelectField from '$lib/components/form/fields/SelectField.svelte';
 	import SelectMultiField from '$lib/components/form/fields/SelectMultiField.svelte';
@@ -31,6 +32,7 @@
 		<SidebarLink title="TextField" />
 		<SidebarLink title="TextFieldNullable" />
 		<SidebarLink title="PasswordField" />
+		<SidebarLink title="MessageField" />
 		<SidebarLink title="HexColorField" />
 		<SidebarLink title="SelectField" />
 		<SidebarLink title="SelectMultiField" />
@@ -94,6 +96,33 @@
 					label="Password"
 					name="password"
 					bind:value={$formData.password}
+				/>
+			`}
+			</CodeBlock>
+		</Container>
+
+		<Container title="MessageField" description="A textarea field with height lock feature">
+			<Preview slot="preview">
+				<form method="POST" use:enhance class="space-y-5">
+					<MessageField
+						{form}
+						label="Message"
+						name="message"
+						placeholder="Enter your message here..."
+						defaultHeight={150}
+						bind:value={$formData.message}
+					/>
+				</form>
+			</Preview>
+			<CodeBlock slot="code">
+				{`
+				<MessageField
+					{form}
+					label="Message"
+					name="message"
+					placeholder="Enter your message here..."
+					defaultHeight={150}
+					bind:value={$formData.message}
 				/>
 			`}
 			</CodeBlock>

@@ -9,6 +9,7 @@ import SelectField from './fields/SelectField.svelte';
 import SelectMultiField from './fields/SelectMultiField.svelte';
 import TextField from './fields/TextField.svelte';
 import TextFieldNullable from './fields/TextFieldNullable.svelte';
+import MessageField from './fields/MessageField.svelte';
 import TimeField from './fields/TimeField.svelte';
 import WeekdayChoiceField from './fields/WeekdayChoiceField.svelte';
 import WeekdayChoiceMultiField from './fields/WeekdayChoiceMultiField.svelte';
@@ -27,6 +28,7 @@ export {
 	SelectMultiField,
 	TextField,
 	TextFieldNullable,
+	MessageField,
 	TimeField,
 	WeekdayChoiceField,
 	WeekdayChoiceMultiField

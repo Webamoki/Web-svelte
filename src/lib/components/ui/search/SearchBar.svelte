@@ -13,7 +13,7 @@
 </script>
 
 <div class="relative w-full max-w-sm">
-	<Search class="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+	<Search class="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 	<Input
 		type="search"
 		{placeholder}

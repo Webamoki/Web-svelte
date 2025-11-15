@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.6.1
+
+### Patch Changes
+
+- cf06353: improve virtual form implementation and transport
+
 ## 0.6.0
 
 ### Minor Changes

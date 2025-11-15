@@ -11,6 +11,11 @@ export class VirtualFormError {
 	}
 }
 
+export type VirtualFormValidated<T extends Record<string, unknown>> = {
+	data: T;
+	virtual: boolean;
+};
+
 export async function processVirtualForm<S extends type.Any<Record<string, unknown>>>(
 	request: Request,
 	schema: S
@@ -36,7 +41,10 @@ export async function processVirtualForm<S extends type.Any<Record<string, unkno
 		}
 
 		// Return validated data
-		return validated as S['infer'];
+		return {
+			data: validated as S['infer'],
+			virtual: true
+		} as VirtualFormValidated<S['infer']>;
 	} catch (error) {
 		return new VirtualFormError(error instanceof Error ? error.message : 'Invalid form data');
 	}

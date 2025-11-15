@@ -1,4 +1,4 @@
-import { failFormValidation } from '$lib/server/form-handler.js';
+import { failFormValidation, successMessage } from '$lib/server/form-handler.js';
 import { processVirtualForm, VirtualFormError } from '$lib/server/form-processor.js';
 import { VirtualFormSchema } from './schema.js';
 
@@ -7,6 +7,8 @@ export const actions = {
 		console.log(request);
 		const form = await processVirtualForm(request, VirtualFormSchema);
 		if (form instanceof VirtualFormError) return failFormValidation(form);
+		return successMessage(form);
+
 		// const { toAdd, toRemove, force } = form.data;
 		// if (!force) {
 		// 	const errors = await areChangesCompliant(roster.id, toRemove, toAdd);

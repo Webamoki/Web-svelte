@@ -28,11 +28,15 @@
 	const enhance = form.enhance;
 	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
 
-	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'));
+	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'), {
+		onSuccess: (data) => {
+			console.log('Virtual form submitted successfully:', data);
+		}
+	});
 	function submitVirtualForm() {
 		virtualForm.submit({
 			email: 'example@example.com',
-			message: 'asd'
+			message: 'aasdasdasdsd'
 		});
 	}
 </script>

@@ -1,5 +1,10 @@
 import { DatabaseError } from 'pg';
-import { fail, message as superFormMessage, type SuperValidated } from 'sveltekit-superforms';
+import {
+	fail,
+	setError,
+	message as superFormMessage,
+	type SuperValidated
+} from 'sveltekit-superforms';
 import { FormError, type VirtualFormValidated } from './form-processor.js';
 import { fail as failKit } from '@sveltejs/kit';
 /**
@@ -20,7 +25,7 @@ export function handleDbErrorForm<T extends Record<string, unknown>>(
 	return fail(500, { form });
 }
 function isVirtualFormValidated<T extends Record<string, unknown>>(
-	form: SuperValidated<T> | VirtualFormValidated<T>
+	form: SuperValidated<T> | VirtualFormValidated<T> | FormError
 ): form is VirtualFormValidated<T> {
 	return 'virtual' in form && form.virtual;
 }
@@ -60,7 +65,7 @@ export function errorMessage<T extends Record<string, unknown>>(
 	if (isVirtualFormValidated(form)) {
 		return message;
 	}
-	return superFormMessage(form as SuperValidated<T>, message);
+	return superFormMessage(form, message);
 }
 
 export function failFormValidation<T extends Record<string, unknown>>(
@@ -75,4 +80,18 @@ export function failFormValidation<T extends Record<string, unknown>>(
 		return failKit(400, { message: form.message });
 	}
 	return fail(400, { form });
+}
+
+export function errorField<T extends Record<string, unknown>>(
+	form: SuperValidated<T> | VirtualFormValidated<T> | FormError,
+	field: keyof T,
+	message: string
+) {
+	if (isVirtualFormValidated(form)) {
+		return errorMessage(form, { text: String(field) + ' ' + message });
+	}
+	if (form instanceof FormError) {
+		throw new Error('Cannot set error on form error');
+	}
+	return setError(form, field as '', message);
 }

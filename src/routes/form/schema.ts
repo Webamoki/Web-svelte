@@ -21,3 +21,12 @@ export const MasterSchema = type({
 export const TextNullSchema = type({
 	emailNull: type('string.email').or(type.null).default(null)
 });
+
+export const VirtualFormSchema = type({
+	email: 'string.email',
+	message: type('string').atLeastLength(10)
+});
+export const FormSchema = type({
+	email: 'string.email',
+	message: type('string').atLeastLength(10)
+});

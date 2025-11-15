@@ -1,13 +1,29 @@
 import { type } from 'arktype';
 import { createSubscriber } from 'svelte/reactivity';
 
-type SuperFormResult = {
-	text: string;
-	data: unknown;
-	success: boolean;
-	showToast: boolean;
-};
+function decodeMessage(json: string): App.Superforms.Message {
+	const parsed = JSON.parse(json) as unknown[];
 
+	// Basic validation
+	if (!Array.isArray(parsed) || typeof parsed[0] !== 'object' || parsed[0] === null) {
+		throw new Error('Invalid encoded message format');
+	}
+
+	const schema = parsed[0] as Record<string, number>;
+
+	// resolve an index into the parsed array
+	const resolve = (idx: number): unknown => (idx >= 0 ? parsed[idx] : undefined);
+
+	const output: Record<string, unknown> = {};
+
+	// dynamically resolve each schema key
+	for (const key of Object.keys(schema)) {
+		const index = schema[key];
+		output[key] = resolve(index);
+	}
+
+	return output as App.Superforms.Message;
+}
 export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 	// state storage
 	#isLoading = false;
@@ -75,9 +91,13 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 				return;
 			}
 
-			const parsed: unknown = JSON.parse(result['data']);
-			console.log(parsed);
-			this.#onSuccess?.(result);
+			const message = decodeMessage(result['data']);
+
+			if (message.success) {
+				this.#onSuccess?.(message);
+			} else {
+				this.#onError?.(message);
+			}
 		} catch (err) {
 			console.error(err);
 			this.#onError?.({ text: 'Network error', data: err, success: false, showToast: false });

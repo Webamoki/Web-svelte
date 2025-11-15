@@ -31,6 +31,9 @@
 	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'), {
 		onSuccess: (data) => {
 			console.log('Virtual form submitted successfully:', data);
+		},
+		onError: (message) => {
+			console.error('Virtual form submission failed:', message);
 		}
 	});
 	function submitVirtualForm() {

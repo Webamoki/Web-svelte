@@ -51,6 +51,7 @@ export function errorMessage<T extends Record<string, unknown>>(
 	form: SuperValidated<T> | VirtualFormValidated<T>,
 	options?: { showToast?: boolean; text?: string; data?: unknown }
 ) {
+	console.log('errorMessage');
 	const message = {
 		success: false,
 		showToast: options?.showToast ?? false,

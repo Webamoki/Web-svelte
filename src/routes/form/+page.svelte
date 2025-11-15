@@ -30,7 +30,7 @@
 	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
 
 	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'), {
-		actionName: 'virtual',
+		actionName: 'normal',
 		onSuccess: (data) => {
 			console.log('Virtual form submitted successfully:', data);
 		},
@@ -101,7 +101,9 @@
 							)}</code
 						></pre>
 				</div>
-				<Button onclick={submitVirtualForm}>Submit Virtual Form</Button>
+				<Button loading={virtualForm.isLoading} onclick={submitVirtualForm}
+					>Submit Virtual Form</Button
+				>
 			</div>
 		</div>
 	</div>

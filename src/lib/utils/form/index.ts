@@ -13,6 +13,9 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 		onSuccess: (
 			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 		) => void;
+		onError: (
+			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+		) => void;
 	}>
 ) {
 	const form = superForm(validated, {
@@ -22,15 +25,16 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 		transport: dateTransport,
 		resetForm: options?.resetForm ?? true,
 		onUpdated({ form }) {
-			if (form.valid) {
+			if (form.valid && form.message!.success) {
 				options?.onSuccess?.(form);
-			}
-			const text = form.message?.text;
-			if (text === undefined || form.message?.showToast === false) return;
-			if (form.message!.success) {
-				toast.success(text);
+				if (form.message?.text && form.message?.showToast) {
+					toast.success(form.message.text);
+				}
 			} else {
-				toast.error(text);
+				options?.onError?.(form);
+				if (form.message?.text && form.message?.showToast) {
+					toast.error(form.message.text);
+				}
 			}
 		},
 		onError({ result }) {
@@ -52,6 +56,9 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 		onSuccess: (
 			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 		) => void;
+		onError: (
+			form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+		) => void;
 	}>
 ) {
 	const form = superForm(defaults(arktype(schema)), {
@@ -61,16 +68,16 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 		transport: dateTransport,
 		resetForm: options?.resetForm === undefined ? true : false,
 		onUpdated({ form }) {
-			if (form.valid) {
+			if (form.valid && form.message!.success) {
 				options?.onSuccess?.(form);
-			}
-
-			const text = form.message?.text;
-			if (text === undefined || form.message?.showToast === false) return;
-			if (form.message!.success) {
-				toast.success(text);
+				if (form.message?.text && form.message?.showToast) {
+					toast.success(form.message.text);
+				}
 			} else {
-				toast.error(text);
+				options?.onError?.(form);
+				if (form.message?.text && form.message?.showToast) {
+					toast.error(form.message.text);
+				}
 			}
 		},
 		onError({ result }) {

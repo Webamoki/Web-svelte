@@ -128,6 +128,7 @@
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"arktype": "^2.1.26",
 		"bits-ui": "^2.14.3",
+		"devalue": "^5.5.0",
 		"drizzle-orm": "^0.44.7",
 		"formsnap": "^2.0.1",
 		"pg": "^8.16.3",

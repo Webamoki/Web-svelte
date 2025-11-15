@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.6.0
+
+### Minor Changes
+
+- 547f82d: virtual form implementation
+
 ## 0.5.35
 
 ### Patch Changes

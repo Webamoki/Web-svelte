@@ -55,8 +55,8 @@
 			"import": "./dist/utils/types/db.js"
 		},
 		"./utils/form": {
-			"types": "./dist/utils/form.d.ts",
-			"import": "./dist/utils/form.js"
+			"types": "./dist/utils/form/index.d.ts",
+			"import": "./dist/utils/form/index.js"
 		},
 		"./server/form-handler": {
 			"types": "./dist/server/form-handler.d.ts",
@@ -78,7 +78,6 @@
 		"@changesets/cli": "^2.29.7",
 		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.39.1",
-		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.48.4",
 		"@sveltejs/package": "^2.5.4",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
@@ -122,6 +121,7 @@
 	"dependencies": {
 		"@internationalized/date": "^3.10.0",
 		"@lucide/svelte": "^0.553.0",
+		"@sveltejs/adapter-auto": "^7.0.0",
 		"arktype": "^2.1.26",
 		"bits-ui": "^2.14.3",
 		"drizzle-orm": "^0.44.7",

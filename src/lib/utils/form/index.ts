@@ -1,8 +1,8 @@
 import { type } from 'arktype';
 import { toast } from 'svelte-sonner';
-import { defaults, superForm, superValidate, type SuperValidated } from 'sveltekit-superforms';
+import { defaults, superForm, type SuperValidated } from 'sveltekit-superforms';
 import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
-import { dateTransport } from './datetime/index.js';
+import { dateTransport } from '../datetime/index.js';
 
 export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 	validated: SuperValidated<S['infer']> | S['infer'],
@@ -82,11 +82,4 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 	const delayed = form.delayed;
 	const errors = form.errors;
 	return { form, data: form.form, delayed, errors };
-}
-
-export async function getServerForm<S extends type.Any<Record<string, unknown>>>(
-	request: Request,
-	schema: S
-) {
-	return await superValidate(request, arktype(schema), { transport: dateTransport });
 }

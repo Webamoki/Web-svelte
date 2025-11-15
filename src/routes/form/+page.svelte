@@ -17,14 +17,24 @@
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
-	import { prepareEmptyForm } from '$lib/utils/form.js';
 	import { identity } from 'ramda';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
-	import { MasterSchema, TextNullSchema } from './schema.js';
+	import { MasterSchema, TextNullSchema, VirtualFormSchema } from './schema.js';
+	import { prepareEmptyForm } from '$lib/utils/form/index.js';
+	import { VirtualForm } from '$lib/utils/form/virtual-form.js';
+	import { resolve } from '$app/paths';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
 	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
+
+	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'));
+	function submitVirtualForm() {
+		virtualForm.submit({
+			email: 'example@example.com',
+			message: 'asd'
+		});
+	}
 </script>
 
 <div class="flex min-h-screen bg-gray-50">
@@ -42,8 +52,8 @@
 		<SidebarLink title="ChoiceMultiField" />
 		<SidebarLink title="WeekdayChoiceField" />
 		<SidebarLink title="WeekdayChoiceMultiField" />
+		<button on:click={submitVirtualForm}>Submit</button>
 	</Sidebar>
-
 	<!-- Main content -->
 	<main class="flex-1 p-8">
 		<h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>

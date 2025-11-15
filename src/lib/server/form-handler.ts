@@ -1,5 +1,6 @@
 import { DatabaseError } from 'pg';
 import { fail, message as superFormMessage, type SuperValidated } from 'sveltekit-superforms';
+import type { VirtualFormError } from './form-processor.js';
 
 /**
  * automatically handle database errors from catch.
@@ -42,6 +43,6 @@ export function errorMessage<T extends Record<string, unknown>>(
 	});
 }
 
-export function failFormValidation<T extends Record<string, unknown>>(form: SuperValidated<T>) {
+export function failFormValidation<T extends Record<string, unknown>>(form: SuperValidated<T> | VirtualFormError) {
 	return fail(400, { form });
 }

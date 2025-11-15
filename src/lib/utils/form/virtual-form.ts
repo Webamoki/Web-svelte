@@ -1,36 +1,20 @@
 import { type } from 'arktype';
 import { toast } from 'svelte-sonner';
 import { createSubscriber } from 'svelte/reactivity';
+import { parse, stringify } from 'devalue';
+import type { SuperValidated } from 'sveltekit-superforms/client';
+import type { Transport } from '@sveltejs/kit';
+import { dateTransport } from '../datetime/index.js';
 
-function decodeMessage(json: string): App.Superforms.Message {
-	const parsed = JSON.parse(json) as unknown[];
-
-	// Basic validation
-	if (!Array.isArray(parsed) || typeof parsed[0] !== 'object' || parsed[0] === null) {
-		throw new Error('Invalid encoded message format');
-	}
-
-	const schema = parsed[0] as Record<string, number>;
-
-	// resolve an index into the parsed array
-	const resolve = (idx: number): unknown => (idx >= 0 ? parsed[idx] : undefined);
-
-	const output: Record<string, unknown> = {};
-
-	// dynamically resolve each schema key
-	for (const key of Object.keys(schema)) {
-		const index = schema[key];
-		output[key] = resolve(index);
-	}
-
-	return output as App.Superforms.Message;
-}
 export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 	// state storage
 	#isLoading = false;
 	#url = '';
 	#schema: S;
-	#onSuccess?: (message: App.Superforms.Message) => void;
+	#transport: Transport;
+	#onSuccess?: (
+		form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+	) => void;
 	#onError?: (message: App.Superforms.Message) => void;
 
 	// svelte reactive tracking
@@ -42,18 +26,74 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 		action: string,
 		options: {
 			actionName?: string;
-			onSuccess?: (message: App.Superforms.Message) => void;
+			transport?: Transport;
+			onSuccess?: (
+				form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+			) => void;
 			onError?: (message: App.Superforms.Message) => void;
 		} = {}
 	) {
 		this.#url = `${action}${options.actionName ? '?/' + options.actionName : ''}`;
 		this.#schema = schema;
+		this.#transport = options.transport ?? dateTransport;
 		this.#onSuccess = options.onSuccess;
 		this.#onError = options.onError;
 		this.#subscribe = createSubscriber((update) => {
 			this.#update = update;
 			return () => {};
 		});
+	}
+
+	// Apply transport encoding to data before sending
+	#encodeTransport(data: unknown): unknown {
+		if (!this.#transport || typeof data !== 'object' || data === null) {
+			return data;
+		}
+
+		// Handle arrays
+		if (Array.isArray(data)) {
+			return data.map((item) => this.#encodeTransport(item));
+		}
+
+		// Try each transport encoder
+		for (const [key, encoder] of Object.entries(this.#transport)) {
+			const encoded = encoder.encode(data);
+			if (encoded !== false) {
+				return { __type: key, __value: encoded };
+			}
+		}
+
+		// Recursively encode nested objects
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(data)) {
+			result[key] = this.#encodeTransport(value);
+		}
+		return result;
+	}
+
+	// Apply transport decoding to received data
+	#decodeTransport(data: unknown): unknown {
+		if (!this.#transport || typeof data !== 'object' || data === null) {
+			return data;
+		}
+
+		// Handle arrays
+		if (Array.isArray(data)) {
+			return data.map((item) => this.#decodeTransport(item));
+		}
+
+		// Check if this is a transport-encoded value
+		const obj = data as Record<string, unknown>;
+		if (obj.__type && obj.__value && this.#transport[obj.__type as string]) {
+			return this.#transport[obj.__type as string].decode(obj.__value);
+		}
+
+		// Recursively decode nested objects
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(obj)) {
+			result[key] = this.#decodeTransport(value);
+		}
+		return result;
 	}
 
 	async submit(data: S['infer']) {
@@ -71,11 +111,14 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			});
 			return;
 		}
-
 		try {
+			// Apply transport encoding before sending
+			const encodedData = this.#encodeTransport(validated);
+
 			// Encode JSON as form data (like superforms does)
 			const formData = new FormData();
-			formData.append('data', JSON.stringify(validated));
+			formData.append('__superform_id', '1');
+			formData.append('__superform_json', stringify(encodedData));
 
 			const res = await fetch(this.#url, {
 				method: 'POST',
@@ -83,7 +126,6 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			});
 
 			const result = await res.json();
-
 			if (!res.ok || result.status === 400) {
 				console.error('Request failed:', result);
 				this.#onError?.(result);
@@ -91,17 +133,24 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 				this.#update();
 				return;
 			}
-
-			const message = decodeMessage(result['data']);
-
-			const text = message?.text;
-
-			if (message.success) {
-				this.#onSuccess?.(message);
-				if (text && message?.showToast) toast.success(text);
+			// Parse and decode the response
+			const parsedData = parse(result['data']);
+			const decodedData = this.#decodeTransport(parsedData);
+			const form = (decodedData as Record<string, unknown>)['form'] as SuperValidated<
+				S['infer'],
+				App.Superforms.Message,
+				S['infer']
+			>;
+			if (form.valid && form.message?.success) {
+				this.#onSuccess?.(form);
+				if (form.message.text && form.message.showToast) {
+					toast.success(form.message.text);
+				}
 			} else {
-				this.#onError?.(message);
-				if (text && message?.showToast) toast.error(text);
+				this.#onError?.(form.message!);
+				if (form.message?.text && form.message?.showToast) {
+					toast.error(form.message.text);
+				}
 			}
 		} catch (err) {
 			console.error(err);

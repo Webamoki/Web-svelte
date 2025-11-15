@@ -62,6 +62,10 @@
 			"types": "./dist/server/form-handler.d.ts",
 			"import": "./dist/server/form-handler.js"
 		},
+		"./server/form-processor": {
+			"types": "./dist/server/form-processor.d.ts",
+			"import": "./dist/server/form-processor.js"
+		},
 		"./utils/search": {
 			"types": "./dist/utils/search.d.ts",
 			"import": "./dist/utils/search.js"

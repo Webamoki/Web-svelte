@@ -1,4 +1,5 @@
 import { type } from 'arktype';
+import { toast } from 'svelte-sonner';
 import { createSubscriber } from 'svelte/reactivity';
 
 function decodeMessage(json: string): App.Superforms.Message {
@@ -93,10 +94,14 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 
 			const message = decodeMessage(result['data']);
 
+			const text = message?.text;
+
 			if (message.success) {
 				this.#onSuccess?.(message);
+				if (text && message?.showToast) toast.success(text);
 			} else {
 				this.#onError?.(message);
+				if (text && message?.showToast) toast.error(text);
 			}
 		} catch (err) {
 			console.error(err);

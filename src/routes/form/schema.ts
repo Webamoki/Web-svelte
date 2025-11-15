@@ -26,3 +26,7 @@ export const VirtualFormSchema = type({
 	email: 'string.email',
 	message: type('string').atLeastLength(10)
 });
+export const FormSchema = type({
+	email: 'string.email',
+	message: type('string').atLeastLength(10)
+});

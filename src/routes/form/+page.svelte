@@ -19,16 +19,18 @@
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
 	import { identity } from 'ramda';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
-	import { MasterSchema, TextNullSchema, VirtualFormSchema } from './schema.js';
+	import { FormSchema, MasterSchema, TextNullSchema, VirtualFormSchema } from './schema.js';
 	import { prepareEmptyForm } from '$lib/utils/form/index.js';
 	import { VirtualForm } from '$lib/utils/form/virtual-form.js';
 	import { resolve } from '$app/paths';
+	import Form from '$lib/components/form/Form.svelte';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
 	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
 
 	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'), {
+		actionName: 'virtual',
 		onSuccess: (data) => {
 			console.log('Virtual form submitted successfully:', data);
 		},
@@ -42,7 +44,68 @@
 			message: 'aasdasdasdsd'
 		});
 	}
+	const { form: testForm, data: testData } = prepareEmptyForm(FormSchema);
 </script>
+
+<div class="mx-auto max-w-6xl p-8">
+	<div class="mb-8">
+		<h1 class="mb-2 text-4xl font-bold text-gray-900">Form Showcase</h1>
+		<p class="text-gray-600">Explore different form submission methods and components</p>
+	</div>
+
+	<div class="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+		<!-- Normal Form Submission Card -->
+		<div
+			class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+		>
+			<div class="mb-4">
+				<h2 class="mb-1 text-2xl font-semibold text-gray-900">Normal Form Submission</h2>
+				<p class="text-sm text-gray-500">
+					Traditional server-side form handling with progressive enhancement
+				</p>
+			</div>
+
+			<Form action={resolve('/form')} actionName="normal" form={testForm}>
+				<div class="space-y-4">
+					<TextField form={testForm} bind:value={$testData.email} name="email" label="Email" />
+					<MessageField
+						form={testForm}
+						bind:value={$testData.message}
+						name="message"
+						label="Message"
+					/>
+					<Button type="submit">Submit Form</Button>
+				</div>
+			</Form>
+		</div>
+
+		<!-- Virtual Form Submission Card -->
+		<div
+			class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+		>
+			<div class="mb-4">
+				<h2 class="mb-1 text-2xl font-semibold text-gray-900">Virtual Form Submission</h2>
+				<p class="text-sm text-gray-500">
+					Client-side form handling with custom success/error callbacks
+				</p>
+			</div>
+
+			<div class="space-y-4">
+				<div class="rounded-md border border-gray-200 bg-gray-50 p-4">
+					<p class="mb-2 text-sm font-medium text-gray-700">Submission Data:</p>
+					<pre class="overflow-x-auto text-xs text-gray-600"><code
+							>{JSON.stringify(
+								{ email: 'example@example.com', message: 'aasdasdasdsd' },
+								null,
+								2
+							)}</code
+						></pre>
+				</div>
+				<Button onclick={submitVirtualForm}>Submit Virtual Form</Button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="flex min-h-screen bg-gray-50">
 	<Sidebar>
@@ -59,7 +122,6 @@
 		<SidebarLink title="ChoiceMultiField" />
 		<SidebarLink title="WeekdayChoiceField" />
 		<SidebarLink title="WeekdayChoiceMultiField" />
-		<button on:click={submitVirtualForm}>Submit</button>
 	</Sidebar>
 	<!-- Main content -->
 	<main class="flex-1 p-8">

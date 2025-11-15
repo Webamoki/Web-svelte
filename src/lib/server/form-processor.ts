@@ -3,30 +3,42 @@ import { type } from 'arktype';
 import { superValidate } from 'sveltekit-superforms';
 import { arktype } from 'sveltekit-superforms/adapters';
 
-export class VirtualFormError {
+export class FormError {
 	message: string;
-
+	valid: false;
 	constructor(message: string) {
 		this.message = message;
+		this.valid = false;
 	}
 }
 
 export type VirtualFormValidated<T extends Record<string, unknown>> = {
 	data: T;
 	virtual: boolean;
+	valid: boolean;
 };
 
-export async function processVirtualForm<S extends type.Any<Record<string, unknown>>>(
+export async function processForm<S extends type.Any<Record<string, unknown>>>(
 	request: Request,
 	schema: S
 ) {
+	let formData;
+	try {
+		formData = await request.formData();
+	} catch (error) {
+		return new FormError(error instanceof Error ? error.message : 'Invalid form data');
+	}
+
+	if ('__superform_id' in formData) {
+		return await superValidate(request, arktype(schema), { transport: dateTransport });
+	}
+
 	try {
 		// Parse form data and extract the JSON string
-		const formData = await request.formData();
 		const dataString = formData.get('data');
 
 		if (typeof dataString !== 'string') {
-			return new VirtualFormError('Missing or invalid data field');
+			return new FormError('Missing or invalid data field');
 		}
 
 		// Parse the JSON string
@@ -37,22 +49,16 @@ export async function processVirtualForm<S extends type.Any<Record<string, unkno
 
 		// Check if validation failed
 		if (validated instanceof type.errors) {
-			return new VirtualFormError(validated.summary);
+			return new FormError(validated.summary);
 		}
 
 		// Return validated data
 		return {
 			data: validated as S['infer'],
-			virtual: true
+			virtual: true,
+			valid: true
 		} as VirtualFormValidated<S['infer']>;
 	} catch (error) {
-		return new VirtualFormError(error instanceof Error ? error.message : 'Invalid form data');
+		return new FormError(error instanceof Error ? error.message : 'Invalid form data');
 	}
-}
-
-export async function processForm<S extends type.Any<Record<string, unknown>>>(
-	request: Request,
-	schema: S
-) {
-	return await superValidate(request, arktype(schema), { transport: dateTransport });
 }

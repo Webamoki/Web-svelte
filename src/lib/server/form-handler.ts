@@ -1,6 +1,6 @@
 import { DatabaseError } from 'pg';
 import { fail, message as superFormMessage, type SuperValidated } from 'sveltekit-superforms';
-import { VirtualFormError, type VirtualFormValidated } from './form-processor.js';
+import { FormError, type VirtualFormValidated } from './form-processor.js';
 import { fail as failKit } from '@sveltejs/kit';
 /**
  * automatically handle database errors from catch.
@@ -51,7 +51,6 @@ export function errorMessage<T extends Record<string, unknown>>(
 	form: SuperValidated<T> | VirtualFormValidated<T>,
 	options?: { showToast?: boolean; text?: string; data?: unknown }
 ) {
-	console.log('errorMessage');
 	const message = {
 		success: false,
 		showToast: options?.showToast ?? false,
@@ -65,11 +64,15 @@ export function errorMessage<T extends Record<string, unknown>>(
 }
 
 export function failFormValidation<T extends Record<string, unknown>>(
-	form: SuperValidated<T> | VirtualFormError
+	form:
+		| SuperValidated<T>
+		| {
+				valid: boolean;
+		  }
 ) {
-	if (form instanceof VirtualFormError) {
+	if (form.valid) throw new Error('Invalid form passed');
+	if (form instanceof FormError) {
 		return failKit(400, { message: form.message });
 	}
-	console.log('Form validation failed:', form);
 	return fail(400, { form });
 }

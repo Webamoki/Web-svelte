@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.6.2
+
+### Patch Changes
+
+- a21f29d: export virtual form
+
 ## 0.6.1
 
 ### Patch Changes

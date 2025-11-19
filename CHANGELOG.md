@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.6.3
+
+### Patch Changes
+
+- 97678f9: context menu + dragdrop
+
 ## 0.6.2
 
 ### Patch Changes

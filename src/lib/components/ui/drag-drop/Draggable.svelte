@@ -49,6 +49,9 @@
 	}
 
 	onDestroy(() => {
+		if (isDragging) {
+			manager.stop();
+		}
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('mousemove', moveDrag);
 			window.removeEventListener('mouseup', endDrag);

@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.7.0
+
+### Minor Changes
+
+- 6c40940: rename form handling attributes
+
 ## 0.6.3
 
 ### Patch Changes

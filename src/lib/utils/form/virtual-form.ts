@@ -8,7 +8,7 @@ import { dateTransport } from '../datetime/index.js';
 
 export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 	// state storage
-	#isLoading = false;
+	#isProcessing = false;
 	#url = '';
 	#schema: S;
 	#transport: Transport;
@@ -97,7 +97,7 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 	}
 
 	async submit(data: S['infer']) {
-		this.#isLoading = true;
+		this.#isProcessing = true;
 		this.#update();
 		// Validate data against schema
 		const validated = this.#schema(data);
@@ -129,7 +129,7 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			if (!res.ok || result.status === 400) {
 				console.error('Request failed:', result);
 				this.#onError?.(result);
-				this.#isLoading = false;
+				this.#isProcessing = false;
 				this.#update();
 				return;
 			}
@@ -156,12 +156,12 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			console.error(err);
 			this.#onError?.({ text: 'Network error', data: err, success: false, showToast: false });
 		}
-		this.#isLoading = false;
+		this.#isProcessing = false;
 		this.#update();
 	}
 
-	get isLoading(): boolean {
+	get isProcessing(): boolean {
 		this.#subscribe();
-		return this.#isLoading;
+		return this.#isProcessing;
 	}
 }

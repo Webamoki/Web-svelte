@@ -101,7 +101,7 @@
 							)}</code
 						></pre>
 				</div>
-				<Button loading={virtualForm.isLoading} onclick={submitVirtualForm}
+				<Button loading={virtualForm.isProcessing} onclick={submitVirtualForm}
 					>Submit Virtual Form</Button
 				>
 			</div>

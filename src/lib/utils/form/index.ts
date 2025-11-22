@@ -5,8 +5,8 @@ import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
 import { dateTransport } from '../datetime/index.js';
 export * from './virtual-form.js';
 export function prepareForm<S extends type.Any<Record<string, unknown>>>(
-	validated: SuperValidated<S['infer']> | S['infer'],
 	schema: S,
+	validated: SuperValidated<S['infer']> | S['infer'],
 	options?: Partial<{
 		invalidateAll: boolean;
 		resetForm: boolean;
@@ -43,9 +43,9 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
 			toast.error(`${status} - ${message}`);
 		}
 	});
-	const delayed = form.delayed;
+	const isProcessing = form.delayed;
 	const errors = form.errors;
-	return { form, data: form.form, delayed, errors };
+	return { form, data: form.form, isProcessing, errors };
 }
 
 export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
@@ -86,7 +86,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 			toast.error(`${status} - ${message}`);
 		}
 	});
-	const delayed = form.delayed;
+	const isProcessing = form.delayed;
 	const errors = form.errors;
-	return { form, data: form.form, delayed, errors };
+	return { form, data: form.form, isProcessing, errors };
 }

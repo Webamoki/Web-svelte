@@ -58,6 +58,10 @@
 			"types": "./dist/utils/form/index.d.ts",
 			"import": "./dist/utils/form/index.js"
 		},
+		"./utils/email": {
+			"types": "./dist/utils/email/index.d.ts",
+			"import": "./dist/utils/email/index.js"
+		},
 		"./server/form-handler": {
 			"types": "./dist/server/form-handler.d.ts",
 			"import": "./dist/server/form-handler.js"
@@ -123,6 +127,7 @@
 		]
 	},
 	"dependencies": {
+		"@aws-sdk/client-ses": "^3.948.0",
 		"@internationalized/date": "^3.10.0",
 		"@lucide/svelte": "^0.553.0",
 		"@sveltejs/adapter-auto": "^7.0.0",

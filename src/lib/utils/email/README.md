@@ -88,9 +88,12 @@ await sendEmail({
 
 Sends an email via AWS SES.
 
-**Returns:** Promise that resolves to the SES message ID on success.
+**Returns:** Promise that resolves to the SES message ID (string) on success.
 
-**Throws:** Error with descriptive message if sending fails or validation errors occur.
+**Throws:** Error with descriptive message if:
+- Validation fails (missing required fields, invalid recipients, etc.)
+- AWS SES returns an error (credentials, permissions, service issues)
+- SES response does not contain a MessageId (unlikely but handled explicitly)
 
 ### `SendEmailOptions`
 
@@ -113,8 +116,10 @@ interface SendEmailOptions {
 The `sendEmail` function validates inputs and will throw errors for:
 
 - Missing required fields (`to`, `from`, `subject`, at least one of `text` or `html`)
-- Empty recipient list
+- Empty recipient list (no valid email addresses after filtering)
 - AWS SES errors (credentials, permissions, service issues)
+
+**Note:** The function automatically filters out empty strings and whitespace-only values from recipient arrays (`to`, `cc`, `bcc`, `replyTo`). For example, `['', 'valid@example.com', '  ']` will be processed as `['valid@example.com']`.
 
 Always wrap calls in try-catch:
 

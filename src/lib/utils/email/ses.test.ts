@@ -1,21 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { sendEmail } from './ses.js';
 
-// Mock AWS SES Client
+// Mock AWS SES Client before importing the module
+const mockSend = vi.hoisted(() => vi.fn());
 vi.mock('@aws-sdk/client-ses', () => {
-	const mockSend = vi.fn();
 	return {
 		SESClient: vi.fn(() => ({
 			send: mockSend
 		})),
-		SendEmailCommand: vi.fn((params) => params),
-		mockSend
+		SendEmailCommand: vi.fn((params) => params)
 	};
 });
 
+// Import after mocking
+import { sendEmail } from './ses.js';
+
 describe('sendEmail', () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
+		mockSend.mockClear();
 		// Set up default environment variables
 		process.env.AWS_REGION = 'us-east-1';
 	});
@@ -29,10 +30,11 @@ describe('sendEmail', () => {
 		await expect(
 			sendEmail({
 				subject: 'Test',
-				text: 'Test message'
+				text: 'Test message',
+				from: 'sender@example.com'
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
-		).rejects.toThrow('at least one recipient is required');
+		).rejects.toThrow('at least one valid recipient is required');
 	});
 
 	it('should throw error if "to" field is empty string', async () => {
@@ -43,7 +45,7 @@ describe('sendEmail', () => {
 				text: 'Test message',
 				from: 'sender@example.com'
 			})
-		).rejects.toThrow('at least one recipient is required');
+		).rejects.toThrow('at least one valid recipient is required');
 	});
 
 	it('should throw error if "to" field is empty array', async () => {
@@ -54,7 +56,85 @@ describe('sendEmail', () => {
 				text: 'Test message',
 				from: 'sender@example.com'
 			})
-		).rejects.toThrow('at least one recipient is required');
+		).rejects.toThrow('at least one valid recipient is required');
+	});
+
+	it('should throw error if "to" field contains only empty strings', async () => {
+		await expect(
+			sendEmail({
+				to: ['', '   ', ''],
+				subject: 'Test',
+				text: 'Test message',
+				from: 'sender@example.com'
+			})
+		).rejects.toThrow('at least one valid recipient is required');
+	});
+
+	it('should filter out empty strings from "to" array and accept valid emails', async () => {
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+
+		await sendEmail({
+			to: ['', 'valid@example.com', '   ', 'another@example.com'],
+			subject: 'Test',
+			text: 'Test message',
+			from: 'sender@example.com'
+		});
+
+		expect(SendEmailCommand).toHaveBeenCalledWith(
+			expect.objectContaining({
+				Destination: expect.objectContaining({
+					ToAddresses: ['valid@example.com', 'another@example.com']
+				})
+			})
+		);
+	});
+
+	it('should filter out empty strings from cc and bcc arrays', async () => {
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+
+		await sendEmail({
+			to: 'test@example.com',
+			cc: ['', 'cc@example.com', '  '],
+			bcc: ['  ', 'bcc@example.com'],
+			subject: 'Test',
+			text: 'Test message',
+			from: 'sender@example.com'
+		});
+
+		expect(SendEmailCommand).toHaveBeenCalledWith(
+			expect.objectContaining({
+				Destination: expect.objectContaining({
+					CcAddresses: ['cc@example.com'],
+					BccAddresses: ['bcc@example.com']
+				})
+			})
+		);
+	});
+
+	it('should omit cc/bcc if all values are empty strings', async () => {
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+
+		await sendEmail({
+			to: 'test@example.com',
+			cc: ['', '  '],
+			bcc: ['   '],
+			subject: 'Test',
+			text: 'Test message',
+			from: 'sender@example.com'
+		});
+
+		expect(SendEmailCommand).toHaveBeenCalledWith(
+			expect.objectContaining({
+				Destination: expect.objectContaining({
+					ToAddresses: ['test@example.com'],
+					CcAddresses: undefined,
+					BccAddresses: undefined
+				})
+			})
+		);
 	});
 
 	it('should throw error if subject is missing', async () => {
@@ -89,10 +169,7 @@ describe('sendEmail', () => {
 	});
 
 	it('should accept single recipient as string', async () => {
-		const { SESClient } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -105,10 +182,7 @@ describe('sendEmail', () => {
 	});
 
 	it('should accept multiple recipients as array', async () => {
-		const { SESClient } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: ['test1@example.com', 'test2@example.com'],
@@ -121,10 +195,8 @@ describe('sendEmail', () => {
 	});
 
 	it('should format source with fromName when provided', async () => {
-		const { SESClient, SendEmailCommand } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -142,10 +214,8 @@ describe('sendEmail', () => {
 	});
 
 	it('should handle CC and BCC recipients', async () => {
-		const { SESClient, SendEmailCommand } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -167,10 +237,8 @@ describe('sendEmail', () => {
 	});
 
 	it('should include both HTML and text body when provided', async () => {
-		const { SESClient, SendEmailCommand } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -197,10 +265,7 @@ describe('sendEmail', () => {
 	});
 
 	it('should return MessageId on success', async () => {
-		const { SESClient } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id-123' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id-123' });
 
 		const result = await sendEmail({
 			to: 'test@example.com',
@@ -212,14 +277,24 @@ describe('sendEmail', () => {
 		expect(result).toBe('test-message-id-123');
 	});
 
+	it('should throw error when SES response is missing MessageId', async () => {
+		mockSend.mockResolvedValue({}); // No MessageId in response
+
+		await expect(
+			sendEmail({
+				to: 'test@example.com',
+				subject: 'Test',
+				text: 'Test message',
+				from: 'sender@example.com'
+			})
+		).rejects.toThrow('SES response did not contain a MessageId');
+	});
+
 	it('should handle SES errors gracefully', async () => {
-		const { SESClient } = await import('@aws-sdk/client-ses');
 		const mockError = new Error('SES Service Error');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(mockError as any).name = 'MessageRejected';
-		const mockSend = vi.fn().mockRejectedValue(mockError);
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		mockSend.mockRejectedValue(mockError);
 
 		await expect(
 			sendEmail({
@@ -232,10 +307,8 @@ describe('sendEmail', () => {
 	});
 
 	it('should handle reply-to addresses', async () => {
-		const { SESClient, SendEmailCommand } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -253,10 +326,8 @@ describe('sendEmail', () => {
 	});
 
 	it('should handle multiple reply-to addresses', async () => {
-		const { SESClient, SendEmailCommand } = await import('@aws-sdk/client-ses');
-		const mockSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(SESClient as any).mockImplementation(() => ({ send: mockSend }));
+		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
+		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
 
 		await sendEmail({
 			to: 'test@example.com',

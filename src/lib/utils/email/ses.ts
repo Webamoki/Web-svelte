@@ -5,6 +5,9 @@ import {
 	type SendEmailCommandOutput
 } from '@aws-sdk/client-ses';
 
+// Create SES client once at module level for reuse across function calls
+const sesClient = new SESClient({ region: process.env.AWS_REGION });
+
 export interface SendEmailOptions {
 	to: string | string[];
 	cc?: string | string[];
@@ -31,10 +34,6 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 	if (!options) throw new Error('sendEmail: options is required');
 	const { to, cc, bcc, subject, text, html, from, fromName, replyTo } = options;
 
-	if (!to || (Array.isArray(to) ? to.length === 0 : to.trim() === '')) {
-		throw new Error('sendEmail: at least one recipient is required (to)');
-	}
-
 	if (!subject) {
 		throw new Error('sendEmail: subject is required');
 	}
@@ -47,20 +46,25 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		throw new Error('sendEmail: sender `from` is required');
 	}
 
+	// Normalize and validate addresses: convert to array and filter out empty/whitespace strings
+	const normalizeAddresses = (addr?: string | string[]): string[] | undefined => {
+		if (addr === undefined) return undefined;
+		const addresses = Array.isArray(addr) ? addr : [addr];
+		const filtered = addresses.filter((a) => a && a.trim() !== '');
+		return filtered.length > 0 ? filtered : undefined;
+	};
+
+	const toAddresses = normalizeAddresses(to);
+	const ccAddresses = normalizeAddresses(cc);
+	const bccAddresses = normalizeAddresses(bcc);
+	const replyToAddresses = normalizeAddresses(replyTo);
+
+	if (!toAddresses || toAddresses.length === 0) {
+		throw new Error('sendEmail: at least one valid recipient is required (to)');
+	}
+
 	// Format source with optional fromName
 	const source = fromName ? `${fromName} <${from}>` : from;
-
-	// Normalize address arrays to string arrays
-	const normalize = (addr?: string | string[]) =>
-		addr === undefined ? undefined : Array.isArray(addr) ? addr : [addr];
-
-	const toAddresses = normalize(to)!;
-	const ccAddresses = normalize(cc);
-	const bccAddresses = normalize(bcc);
-	const replyToAddresses = normalize(replyTo);
-
-	const region = process.env.AWS_REGION;
-	const client = new SESClient({ region });
 
 	// Build message body
 	const Message: SendEmailCommandInput['Message'] = {
@@ -71,15 +75,13 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		Body: {}
 	};
 	if (html) {
-		Message.Body = Message.Body ?? {};
-		Message.Body.Html = {
+		Message.Body!.Html = {
 			Charset: 'UTF-8',
 			Data: html
 		};
 	}
 	if (text) {
-		Message.Body = Message.Body ?? {};
-		Message.Body.Text = {
+		Message.Body!.Text = {
 			Charset: 'UTF-8',
 			Data: text
 		};
@@ -98,11 +100,11 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 
 	try {
 		const command = new SendEmailCommand(params);
-		const res: SendEmailCommandOutput = await client.send(command);
-		// res.MessageId is the SES message id when successful
-		if (res.MessageId) return res.MessageId;
-		// If no MessageId, still return a stringified response so callers get something useful.
-		return JSON.stringify(res);
+		const res: SendEmailCommandOutput = await sesClient.send(command);
+		if (!res.MessageId) {
+			throw new Error('sendEmail: SES response did not contain a MessageId');
+		}
+		return res.MessageId;
 	} catch (err: unknown) {
 		// Normalize error for callers
 		const message = err instanceof Error ? err.message : String(err);

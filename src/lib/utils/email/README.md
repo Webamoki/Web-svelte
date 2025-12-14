@@ -91,6 +91,7 @@ Sends an email via AWS SES.
 **Returns:** Promise that resolves to the SES message ID (string) on success.
 
 **Throws:** Error with descriptive message if:
+
 - Validation fails (missing required fields, invalid recipients, etc.)
 - AWS SES returns an error (credentials, permissions, service issues)
 - SES response does not contain a MessageId (unlikely but handled explicitly)

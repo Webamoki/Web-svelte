@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.7.1
+
+### Patch Changes
+
+- 96e0c56: email functionality
+
 ## 0.7.0
 
 ### Minor Changes

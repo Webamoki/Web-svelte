@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Button from '$lib/components/form/Button.svelte';
 	import ChoiceField from '$lib/components/form/fields/ChoiceField.svelte';
 	import ChoiceMultiField from '$lib/components/form/fields/ChoiceMultiField.svelte';
@@ -13,17 +14,17 @@
 	import TimeField from '$lib/components/form/fields/TimeField.svelte';
 	import WeekdayChoiceField from '$lib/components/form/fields/WeekdayChoiceField.svelte';
 	import WeekdayChoiceMultiField from '$lib/components/form/fields/WeekdayChoiceMultiField.svelte';
+	import Form from '$lib/components/form/Form.svelte';
 	import Container from '$lib/components/showcase/Container.svelte';
 	import Preview from '$lib/components/showcase/Preview.svelte';
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
+	import { prepareEmptyForm } from '$lib/utils/form/index.js';
+	import { VirtualForm } from '$lib/utils/form/virtual-form.js';
+	import { Calendar, Clock, Lock, Mail, MessageSquare, Tag } from '@lucide/svelte';
 	import { identity } from 'ramda';
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
 	import { FormSchema, MasterSchema, TextNullSchema, VirtualFormSchema } from './schema.js';
-	import { prepareEmptyForm } from '$lib/utils/form/index.js';
-	import { VirtualForm } from '$lib/utils/form/virtual-form.js';
-	import { resolve } from '$app/paths';
-	import Form from '$lib/components/form/Form.svelte';
 
 	const { form, data: formData } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
@@ -139,6 +140,15 @@
 						placeholder="johndoe@gmail.com"
 						bind:value={$formData.email}
 					/>
+					<TextField
+						{form}
+						label="Email with Icon"
+						name="email"
+						type="email"
+						placeholder="johndoe@gmail.com"
+						icon={Mail}
+						bind:value={$formData.email}
+					/>
 				</form>
 				<form method="POST" use:textNullForm.enhance class="space-y-5">
 					<TextFieldNullable
@@ -153,12 +163,15 @@
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { Mail } from '@lucide/svelte';
+
 				<TextField | TextfieldNullable
 					{form}
 					label="Email"
 					name="email"
 					type="email"
 					placeholder="johndoe@gmail.com"
+					icon={Mail}
 					bind:value={$formData.email}
 				/>
 			`}
@@ -168,14 +181,24 @@
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">
 					<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />
+					<PasswordField
+						{form}
+						label="Password with Icon"
+						name="password"
+						icon={Lock}
+						bind:value={$formData.password}
+					/>
 				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { Lock } from '@lucide/svelte';
+
 				<PasswordField
 					{form}
 					label="Password"
 					name="password"
+					icon={Lock}
 					bind:value={$formData.password}
 				/>
 			`}
@@ -193,16 +216,28 @@
 						defaultHeight={150}
 						bind:value={$formData.message}
 					/>
+					<MessageField
+						{form}
+						label="Message with Icon"
+						name="message"
+						placeholder="Enter your message here..."
+						defaultHeight={150}
+						icon={MessageSquare}
+						bind:value={$formData.message}
+					/>
 				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { MessageSquare } from '@lucide/svelte';
+
 				<MessageField
 					{form}
 					label="Message"
 					name="message"
 					placeholder="Enter your message here..."
 					defaultHeight={150}
+					icon={MessageSquare}
 					bind:value={$formData.message}
 				/>
 			`}
@@ -242,10 +277,24 @@
 						placeholder="Please select"
 						bind:value={$formData.select}
 					/>
+					<SelectField
+						{form}
+						label="Select with Icon"
+						name="select"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => (n * 2).toString()}
+						getValue={identity}
+						placeholder="Please select"
+						icon={Tag}
+						bind:value={$formData.select}
+					/>
 				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { Tag } from '@lucide/svelte';
+
 				<SelectField
 						{form}
 						label="Select"
@@ -255,6 +304,7 @@
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
 						placeholder="Please select"
+						icon={Tag}
 						bind:value={$formData.select}
 					/>
 			`}
@@ -272,6 +322,18 @@
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
 						placeholder="Please select"
+						bind:values={$formData.selects}
+					/>
+					<SelectMultiField
+						{form}
+						label="Select Multi with Icon"
+						name="selects"
+						items={[1, 2, 3]}
+						getKey={identity}
+						getLabel={(n: number) => (n * 2).toString()}
+						getValue={identity}
+						placeholder="Please select"
+						icon={Tag}
 						bind:values={$formData.selects}
 					/>
 				</form>
@@ -296,15 +358,25 @@
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">
 					<TimeField {form} label="Time" name="time" bind:value={$formData.time} />
+					<TimeField
+						{form}
+						label="Time with Icon"
+						name="time"
+						icon={Clock}
+						bind:value={$formData.time}
+					/>
 					<Button type="submit">Submit</Button>
 				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { Clock } from '@lucide/svelte';
+
 				<TimeField
 					{form}
 					label="Time"
 					name="time"
+					icon={Clock}
 					bind:value={$formData.time}
 				/>
 			`}
@@ -315,15 +387,25 @@
 			<Preview slot="preview">
 				<form method="POST" use:enhance class="space-y-5">
 					<DateField {form} label="Date" name="calendarDate" bind:value={$formData.calendarDate} />
+					<DateField
+						{form}
+						label="Date with Icon"
+						name="calendarDate"
+						icon={Calendar}
+						bind:value={$formData.calendarDate}
+					/>
 					<Button type="submit">Submit</Button>
 				</form>
 			</Preview>
 			<CodeBlock slot="code">
 				{`
+				import { Calendar } from '@lucide/svelte';
+
 				<DateField
 					{form}
 					label="Date"
 					name="date"
+					icon={Calendar}
 					bind:value={$formData.calendarDate}
 				/>
 			`}

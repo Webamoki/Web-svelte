@@ -1,8 +1,11 @@
 <script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
+	import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
+	import { cn } from '$lib/shadcn/utils.js';
+	import { Lock, LockOpen } from '@lucide/svelte';
+	import type { Component } from 'svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
-	import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
-	import { Lock, LockOpen } from '@lucide/svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: string;
@@ -11,6 +14,7 @@
 		defaultHeight?: number;
 		showLock?: boolean;
 		defaultLocked?: boolean;
+		icon?: Component;
 	}
 	let {
 		value = $bindable(),
@@ -19,6 +23,7 @@
 		defaultHeight = 100,
 		showLock = true,
 		defaultLocked = false,
+		icon,
 		...fieldProps
 	}: Props = $props();
 
@@ -28,14 +33,18 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<div class="flex w-full items-start gap-2">
-			<!-- Textarea itself -->
-			<Textarea
-				bind:value
-				class={`${className || ''} ${locked ? 'resize-none' : 'resize-y'}`}
-				{placeholder}
-				style={defaultHeight ? `height: ${defaultHeight}px` : undefined}
-				{...props}
-			/>
+			<!-- Textarea itself with optional left icon -->
+			<IconInputWrapper {icon} iconPosition="top" flex>
+				{#snippet children({ class: iconClass })}
+					<Textarea
+						bind:value
+						class={cn(iconClass, className || '', locked ? 'resize-none' : 'resize-y')}
+						{placeholder}
+						style={defaultHeight ? `height: ${defaultHeight}px` : undefined}
+						{...props}
+					/>
+				{/snippet}
+			</IconInputWrapper>
 
 			<!-- Lock/unlock button -->
 			{#if showLock}

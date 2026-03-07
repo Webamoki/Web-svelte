@@ -2,6 +2,7 @@
 	lang="ts"
 	generics="I,V, K extends string | number,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
+	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
 	import {
 		Select,
 		SelectContent,
@@ -11,6 +12,7 @@
 		SelectTrigger
 	} from '$lib/shadcn/components/ui/select/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
+	import type { Component } from 'svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
@@ -23,6 +25,7 @@
 		onchange?: (value: V[]) => void;
 		class?: string;
 		placeholder: string;
+		icon?: Component;
 	}
 	let {
 		values = $bindable([]),
@@ -33,6 +36,7 @@
 		onchange,
 		placeholder,
 		items,
+		icon,
 		...fieldProps
 	}: Props = $props();
 	let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
@@ -70,11 +74,15 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<Select type="multiple" {...props} bind:value={getKeyFromValue, setValueFromKey}>
-			<SelectTrigger class={cn('w-full cursor-pointer truncate', className)}>
-				<span class="block truncate">
-					{getPreview()}
-				</span>
-			</SelectTrigger>
+			<IconInputWrapper {icon}>
+				{#snippet children({ class: iconClass })}
+					<SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)}>
+						<span class="block truncate">
+							{getPreview()}
+						</span>
+					</SelectTrigger>
+				{/snippet}
+			</IconInputWrapper>
 			<SelectContent>
 				<SelectGroup>
 					<SelectLabel>{fieldProps.label}</SelectLabel>

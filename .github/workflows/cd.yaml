@@ -23,6 +23,9 @@ jobs:
     # This job should always run, as long as the 'checks' job didn't fail.
     # It will proceed if 'checks' succeeded or was skipped.
     if: always() && needs.checks.result != 'failure'
+    permissions:
+      id-token: write # Required for OIDC
+      contents: read
 
     steps:
       - name: Generate GitHub App Token
@@ -48,4 +51,3 @@ jobs:
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

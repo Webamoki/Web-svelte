@@ -1,13 +1,18 @@
 <script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
+	import { Input } from '$lib/shadcn/components/ui/input/index.js';
+	import { cn } from '$lib/shadcn/utils.js';
+	import { Eye, EyeOff } from '@lucide/svelte';
+	import type { Component } from 'svelte';
 	import type { FormPath } from 'sveltekit-superforms';
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
-	import { Input } from '$lib/shadcn/components/ui/input/index.js';
-	import { Eye, EyeOff } from '@lucide/svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		value?: string;
+		class?: string;
+		icon?: Component;
 	}
-	let { value = $bindable(), ...fieldProps }: Props = $props();
+	let { value = $bindable(), class: className, icon, ...fieldProps }: Props = $props();
 
 	let show = $state(false);
 	let inputType = $derived(show ? 'text' : 'password');
@@ -16,8 +21,12 @@
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
 		<div class="flex w-full items-stretch gap-2">
-			<!-- Input itself -->
-			<Input type={inputType} bind:value {...props} />
+			<!-- Input itself with optional left icon -->
+			<IconInputWrapper {icon} flex>
+				{#snippet children({ class: iconClass })}
+					<Input type={inputType} bind:value class={cn(iconClass, className)} {...props} />
+				{/snippet}
+			</IconInputWrapper>
 
 			<!-- Show/hide button outside input -->
 			<button

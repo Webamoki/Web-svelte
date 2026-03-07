@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.7.2
+
+### Patch Changes
+
+- c43ad00: icons for fields
+
 ## 0.7.1
 
 ### Patch Changes

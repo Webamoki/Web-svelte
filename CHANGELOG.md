@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.7.3
+
+### Patch Changes
+
+- 2086b7a: implement aws ses + CLOUDFLARE Pages ready
+
 ## 0.7.2
 
 ### Patch Changes

@@ -75,10 +75,7 @@ export async function signRequest(
 
 	// Create timestamp
 	const now = new Date();
-	const amzDate = now
-		.toISOString()
-		.replace(/[:-]|\.\d{3}/g, '')
-		.slice(0, -1); // Format: YYYYMMDD'T'HHMMSS'Z'
+	const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, ''); // Format: YYYYMMDDTHHMMSSZ
 	const dateStamp = amzDate.slice(0, 8); // Format: YYYYMMDD
 
 	// Hash the request body

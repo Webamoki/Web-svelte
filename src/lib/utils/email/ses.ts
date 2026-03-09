@@ -133,17 +133,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		const responseText = await response.text();
 
 		if (!response.ok) {
-			// Parse error response
+			// Parse error response using regex (works in Node.js and browsers)
 			let errorMessage = 'Unknown error';
 			let errorCode: string | undefined;
 			try {
-				const parser = new DOMParser();
-				const xmlDoc = parser.parseFromString(responseText, 'text/xml');
-				const errorNode = xmlDoc.querySelector('Error');
-				if (errorNode) {
-					errorCode = errorNode.querySelector('Code')?.textContent || undefined;
-					errorMessage = errorNode.querySelector('Message')?.textContent || errorMessage;
-				}
+				const codeMatch = responseText.match(/<Code>(.*?)<\/Code>/);
+				const messageMatch = responseText.match(/<Message>(.*?)<\/Message>/);
+				if (codeMatch) errorCode = codeMatch[1];
+				if (messageMatch) errorMessage = messageMatch[1];
 			} catch {
 				errorMessage = responseText || `HTTP ${response.status} ${response.statusText}`;
 			}
@@ -153,17 +150,15 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 			);
 		}
 
-		// Parse success response for MessageId
+		// Parse success response for MessageId using regex (works in Node.js and browsers)
 		try {
-			const parser = new DOMParser();
-			const xmlDoc = parser.parseFromString(responseText, 'text/xml');
-			const messageId = xmlDoc.querySelector('MessageId')?.textContent;
+			const messageIdMatch = responseText.match(/<MessageId>(.*?)<\/MessageId>/);
 
-			if (!messageId) {
+			if (!messageIdMatch || !messageIdMatch[1]) {
 				throw new Error('sendEmail: SES response did not contain a MessageId');
 			}
 
-			return messageId;
+			return messageIdMatch[1];
 		} catch (err) {
 			if (err instanceof Error && err.message.includes('MessageId')) {
 				throw err;

@@ -1,5 +1,11 @@
 # @webamoki/web-svelte
 
+## 0.7.4
+
+### Patch Changes
+
+- 03ea0ea: Fix SES for workers
+
 ## 0.7.3
 
 ### Patch Changes

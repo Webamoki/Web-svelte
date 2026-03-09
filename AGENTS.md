@@ -102,7 +102,7 @@ Date and time manipulation with `@internationalized/date` integration
 
 #### Email (`./utils/email`)
 
-Email sending utilities with AWS SES integration
+Email sending utilities using AWS SES API directly (Cloudflare Workers compatible)
 
 #### Form Utils (`./utils/form`)
 
@@ -135,12 +135,12 @@ Form preparation, validation, and virtual form management
 
 ### Additional Features
 
-- **@aws-sdk/client-ses** - Email sending
 - **@internationalized/date** - Date/time handling
 - **drizzle-orm** - Database ORM integration
 - **@lucide/svelte** - Icon library
 - **svelte-sonner** - Toast notifications
 - **svelte-awesome-color-picker** - Color picker
+- **Web Crypto API** - AWS Signature V4 signing for SES (no SDK needed)
 
 ## Installation & Usage
 

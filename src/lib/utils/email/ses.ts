@@ -1,12 +1,4 @@
-import {
-	SESClient,
-	SendEmailCommand,
-	type SendEmailCommandInput,
-	type SendEmailCommandOutput
-} from '@aws-sdk/client-ses';
-
-// Create SES client once at module level for reuse across function calls
-const sesClient = new SESClient({ region: process.env.AWS_REGION });
+import { signRequest } from './aws-signer.js';
 
 export interface SendEmailOptions {
 	to: string | string[];
@@ -21,7 +13,8 @@ export interface SendEmailOptions {
 }
 
 /**
- * Send an email using AWS SES.
+ * Send an email using AWS SES API.
+ * Uses AWS Signature V4 signing and fetch API for Cloudflare Workers compatibility.
  *
  * Environment variables required:
  * - AWS_REGION
@@ -63,50 +56,128 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		throw new Error('sendEmail: at least one valid recipient is required (to)');
 	}
 
+	// Get AWS credentials from environment
+	const region = process.env.AWS_REGION;
+	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+	if (!region || !accessKeyId || !secretAccessKey) {
+		throw new Error(
+			'sendEmail: missing required environment variables (AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)'
+		);
+	}
+
 	// Format source with optional fromName
 	const source = fromName ? `${fromName} <${from}>` : from;
 
-	// Build message body
-	const Message: SendEmailCommandInput['Message'] = {
-		Subject: {
-			Charset: 'UTF-8',
-			Data: subject
-		},
-		Body: {}
-	};
+	// Build form-encoded request body for SES API
+	const params = new URLSearchParams();
+	params.append('Action', 'SendEmail');
+	params.append('Source', source);
+
+	// Add destination addresses
+	toAddresses.forEach((addr, i) => params.append(`Destination.ToAddresses.member.${i + 1}`, addr));
+	if (ccAddresses) {
+		ccAddresses.forEach((addr, i) =>
+			params.append(`Destination.CcAddresses.member.${i + 1}`, addr)
+		);
+	}
+	if (bccAddresses) {
+		bccAddresses.forEach((addr, i) =>
+			params.append(`Destination.BccAddresses.member.${i + 1}`, addr)
+		);
+	}
+
+	// Add reply-to addresses
+	if (replyToAddresses) {
+		replyToAddresses.forEach((addr, i) => params.append(`ReplyToAddresses.member.${i + 1}`, addr));
+	}
+
+	// Add message subject
+	params.append('Message.Subject.Data', subject);
+	params.append('Message.Subject.Charset', 'UTF-8');
+
+	// Add message body
 	if (html) {
-		Message.Body!.Html = {
-			Charset: 'UTF-8',
-			Data: html
-		};
+		params.append('Message.Body.Html.Data', html);
+		params.append('Message.Body.Html.Charset', 'UTF-8');
 	}
 	if (text) {
-		Message.Body!.Text = {
-			Charset: 'UTF-8',
-			Data: text
-		};
+		params.append('Message.Body.Text.Data', text);
+		params.append('Message.Body.Text.Charset', 'UTF-8');
 	}
 
-	const params: SendEmailCommandInput = {
-		Source: source,
-		Destination: {
-			ToAddresses: toAddresses,
-			CcAddresses: ccAddresses,
-			BccAddresses: bccAddresses
-		},
-		Message,
-		ReplyToAddresses: replyToAddresses
-	};
+	const body = params.toString();
+	const host = `email.${region}.amazonaws.com`;
+	const path = '/';
 
 	try {
-		const command = new SendEmailCommand(params);
-		const res: SendEmailCommandOutput = await sesClient.send(command);
-		if (!res.MessageId) {
-			throw new Error('sendEmail: SES response did not contain a MessageId');
+		// Sign the request
+		const { headers } = await signRequest('POST', host, path, body, {
+			accessKeyId,
+			secretAccessKey,
+			region
+		});
+
+		// Make the API request
+		const response = await fetch(`https://${host}${path}`, {
+			method: 'POST',
+			headers: {
+				...headers,
+				Host: host,
+				'Content-Length': body.length.toString()
+			},
+			body
+		});
+
+		const responseText = await response.text();
+
+		if (!response.ok) {
+			// Parse error response
+			let errorMessage = 'Unknown error';
+			let errorCode: string | undefined;
+			try {
+				const parser = new DOMParser();
+				const xmlDoc = parser.parseFromString(responseText, 'text/xml');
+				const errorNode = xmlDoc.querySelector('Error');
+				if (errorNode) {
+					errorCode = errorNode.querySelector('Code')?.textContent || undefined;
+					errorMessage = errorNode.querySelector('Message')?.textContent || errorMessage;
+				}
+			} catch {
+				errorMessage = responseText || `HTTP ${response.status} ${response.statusText}`;
+			}
+
+			throw new Error(
+				`sendEmail: failed to send email: ${JSON.stringify({ message: errorMessage, code: errorCode })}`
+			);
 		}
-		return res.MessageId;
+
+		// Parse success response for MessageId
+		try {
+			const parser = new DOMParser();
+			const xmlDoc = parser.parseFromString(responseText, 'text/xml');
+			const messageId = xmlDoc.querySelector('MessageId')?.textContent;
+
+			if (!messageId) {
+				throw new Error('sendEmail: SES response did not contain a MessageId');
+			}
+
+			return messageId;
+		} catch (err) {
+			if (err instanceof Error && err.message.includes('MessageId')) {
+				throw err;
+			}
+			throw new Error(
+				`sendEmail: failed to parse SES response: ${err instanceof Error ? err.message : String(err)}`
+			);
+		}
 	} catch (err: unknown) {
-		// Normalize error for callers
+		// Re-throw if already formatted
+		if (err instanceof Error && err.message.startsWith('sendEmail:')) {
+			throw err;
+		}
+		// Normalize other errors
 		const message = err instanceof Error ? err.message : String(err);
 		let code: string | undefined;
 		if (err && typeof err === 'object') {
@@ -114,7 +185,6 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 			if (typeof e['name'] === 'string') code = e['name'] as string;
 		}
 		const details = { message, code };
-		// Re-throw a clear error for the caller to handle
 		throw new Error(`sendEmail: failed to send email: ${JSON.stringify(details)}`);
 	}
 }

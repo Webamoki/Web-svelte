@@ -1,4 +1,3 @@
-import { DatabaseError } from 'pg';
 import { fail, message as superFormMessage, type SuperValidated } from 'sveltekit-superforms';
 /**
  * automatically handle database errors from catch.
@@ -9,11 +8,10 @@ export function handleDbErrorForm<T extends Record<string, unknown>>(
 	message: string,
 	err: unknown
 ) {
-	if (err instanceof DatabaseError) {
-		console.error(`Database Error ${message}:`, err);
-		return fail(500, { form });
-	}
-
+	// if (err instanceof DatabaseError) {
+	// 	console.error(`Database Error ${message}:`, err);
+	// 	return fail(500, { form });
+	// }
 	console.error(`Unexpected Error ${message}:`, err);
 	return fail(500, { form });
 }
@@ -22,7 +20,9 @@ export function handleDbErrorForm<T extends Record<string, unknown>>(
  * check if an error returned by a try catch is a duplicate value error in postgre
  */
 export function isDuplicateDbError(err: unknown) {
-	return err instanceof DatabaseError && err.code === '23505';
+	console.error('Checking for duplicate error:', err);
+	console.error('Error type:', err instanceof Error ? err.name : typeof err);
+	return false;
 }
 
 export function successMessage<T extends Record<string, unknown>>(

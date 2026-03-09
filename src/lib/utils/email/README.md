@@ -1,10 +1,20 @@
 # Email Utility Package
 
-This package provides utilities for sending emails using AWS Simple Email Service (SES).
+This package provides utilities for sending emails using AWS Simple Email Service (SES) API.
+
+## Key Features
+
+- **Cloudflare Workers Compatible**: Uses direct AWS SES API calls with fetch instead of AWS SDK
+- **AWS Signature V4**: Implements proper AWS authentication for secure API requests
+- **Zero Heavy Dependencies**: No AWS SDK required, works in any JavaScript runtime with fetch support
 
 ## Installation
 
-The AWS SES SDK is already included as a dependency. You'll need to configure your AWS credentials and region.
+No additional dependencies required beyond the standard JavaScript runtime. The implementation uses:
+
+- Native `fetch` API for HTTP requests
+- Web Crypto API for AWS Signature V4 signing
+- Native `DOMParser` for XML response parsing
 
 ## Configuration
 

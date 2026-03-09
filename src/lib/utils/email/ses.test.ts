@@ -1,24 +1,52 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock AWS SES Client before importing the module
-const mockSend = vi.hoisted(() => vi.fn());
-vi.mock('@aws-sdk/client-ses', () => {
-	return {
-		SESClient: vi.fn(() => ({
-			send: mockSend
-		})),
-		SendEmailCommand: vi.fn((params) => params)
-	};
-});
+// Mock global fetch and DOMParser
+const mockFetch = vi.fn();
+global.fetch = mockFetch as unknown as typeof fetch;
+
+// Mock DOMParser for XML parsing
+const mockDOMParser = vi.fn(() => ({
+	parseFromString: vi.fn((xmlString: string) => {
+		// Simple mock XML parser for testing
+		const messageIdMatch = xmlString.match(/<MessageId>(.*?)<\/MessageId>/);
+		const errorCodeMatch = xmlString.match(/<Code>(.*?)<\/Code>/);
+		const errorMessageMatch = xmlString.match(/<Message>(.*?)<\/Message>/);
+
+		return {
+			querySelector: (selector: string) => {
+				if (selector === 'MessageId' && messageIdMatch) {
+					return { textContent: messageIdMatch[1] };
+				}
+				if (selector === 'Error' && (errorCodeMatch || errorMessageMatch)) {
+					return {
+						querySelector: (innerSelector: string) => {
+							if (innerSelector === 'Code' && errorCodeMatch) {
+								return { textContent: errorCodeMatch[1] };
+							}
+							if (innerSelector === 'Message' && errorMessageMatch) {
+								return { textContent: errorMessageMatch[1] };
+							}
+							return null;
+						}
+					};
+				}
+				return null;
+			}
+		};
+	})
+}));
+global.DOMParser = mockDOMParser as unknown as typeof DOMParser;
 
 // Import after mocking
 import { sendEmail } from './ses.js';
 
 describe('sendEmail', () => {
 	beforeEach(() => {
-		mockSend.mockClear();
+		mockFetch.mockClear();
 		// Set up default environment variables
 		process.env.AWS_REGION = 'us-east-1';
+		process.env.AWS_ACCESS_KEY_ID = 'test-access-key';
+		process.env.AWS_SECRET_ACCESS_KEY = 'test-secret-key';
 	});
 
 	it('should throw error if options is not provided', async () => {
@@ -71,8 +99,11 @@ describe('sendEmail', () => {
 	});
 
 	it('should filter out empty strings from "to" array and accept valid emails', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: ['', 'valid@example.com', '   ', 'another@example.com'],
@@ -81,18 +112,19 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Destination: expect.objectContaining({
-					ToAddresses: ['valid@example.com', 'another@example.com']
-				})
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('Destination.ToAddresses.member.1=valid%40example.com');
+		expect(body).toContain('Destination.ToAddresses.member.2=another%40example.com');
 	});
 
 	it('should filter out empty strings from cc and bcc arrays', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -103,19 +135,19 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Destination: expect.objectContaining({
-					CcAddresses: ['cc@example.com'],
-					BccAddresses: ['bcc@example.com']
-				})
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('Destination.CcAddresses.member.1=cc%40example.com');
+		expect(body).toContain('Destination.BccAddresses.member.1=bcc%40example.com');
 	});
 
 	it('should omit cc/bcc if all values are empty strings', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -126,15 +158,11 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Destination: expect.objectContaining({
-					ToAddresses: ['test@example.com'],
-					CcAddresses: undefined,
-					BccAddresses: undefined
-				})
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).not.toContain('Destination.CcAddresses');
+		expect(body).not.toContain('Destination.BccAddresses');
 	});
 
 	it('should throw error if subject is missing', async () => {
@@ -169,7 +197,11 @@ describe('sendEmail', () => {
 	});
 
 	it('should accept single recipient as string', async () => {
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -178,11 +210,15 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(mockSend).toHaveBeenCalledTimes(1);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
 	});
 
 	it('should accept multiple recipients as array', async () => {
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: ['test1@example.com', 'test2@example.com'],
@@ -191,12 +227,15 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(mockSend).toHaveBeenCalledTimes(1);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
 	});
 
 	it('should format source with fromName when provided', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -206,16 +245,18 @@ describe('sendEmail', () => {
 			fromName: 'Test Sender'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Source: 'Test Sender <sender@example.com>'
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('Source=Test+Sender+%3Csender%40example.com%3E');
 	});
 
 	it('should handle CC and BCC recipients', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -226,19 +267,20 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Destination: expect.objectContaining({
-					CcAddresses: ['cc@example.com'],
-					BccAddresses: ['bcc1@example.com', 'bcc2@example.com']
-				})
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('Destination.CcAddresses.member.1=cc%40example.com');
+		expect(body).toContain('Destination.BccAddresses.member.1=bcc1%40example.com');
+		expect(body).toContain('Destination.BccAddresses.member.2=bcc2%40example.com');
 	});
 
 	it('should include both HTML and text body when provided', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -248,24 +290,19 @@ describe('sendEmail', () => {
 			from: 'sender@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				Message: expect.objectContaining({
-					Body: expect.objectContaining({
-						Text: expect.objectContaining({
-							Data: 'Plain text version'
-						}),
-						Html: expect.objectContaining({
-							Data: '<p>HTML version</p>'
-						})
-					})
-				})
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('Message.Body.Text.Data=Plain+text+version');
+		expect(body).toContain('Message.Body.Html.Data=%3Cp%3EHTML+version%3C%2Fp%3E');
 	});
 
 	it('should return MessageId on success', async () => {
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id-123' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id-123</MessageId></SendEmailResponse>'
+		});
 
 		const result = await sendEmail({
 			to: 'test@example.com',
@@ -278,7 +315,10 @@ describe('sendEmail', () => {
 	});
 
 	it('should throw error when SES response is missing MessageId', async () => {
-		mockSend.mockResolvedValue({}); // No MessageId in response
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () => '<SendEmailResponse></SendEmailResponse>'
+		});
 
 		await expect(
 			sendEmail({
@@ -291,10 +331,13 @@ describe('sendEmail', () => {
 	});
 
 	it('should handle SES errors gracefully', async () => {
-		const mockError = new Error('SES Service Error');
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(mockError as any).name = 'MessageRejected';
-		mockSend.mockRejectedValue(mockError);
+		mockFetch.mockResolvedValue({
+			ok: false,
+			status: 400,
+			statusText: 'Bad Request',
+			text: async () =>
+				'<ErrorResponse><Error><Code>MessageRejected</Code><Message>Email address is not verified</Message></Error></ErrorResponse>'
+		});
 
 		await expect(
 			sendEmail({
@@ -307,8 +350,11 @@ describe('sendEmail', () => {
 	});
 
 	it('should handle reply-to addresses', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -318,16 +364,18 @@ describe('sendEmail', () => {
 			replyTo: 'reply@example.com'
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				ReplyToAddresses: ['reply@example.com']
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('ReplyToAddresses.member.1=reply%40example.com');
 	});
 
 	it('should handle multiple reply-to addresses', async () => {
-		const { SendEmailCommand } = await import('@aws-sdk/client-ses');
-		mockSend.mockResolvedValue({ MessageId: 'test-message-id' });
+		mockFetch.mockResolvedValue({
+			ok: true,
+			text: async () =>
+				'<SendEmailResponse><MessageId>test-message-id</MessageId></SendEmailResponse>'
+		});
 
 		await sendEmail({
 			to: 'test@example.com',
@@ -337,10 +385,10 @@ describe('sendEmail', () => {
 			replyTo: ['reply1@example.com', 'reply2@example.com']
 		});
 
-		expect(SendEmailCommand).toHaveBeenCalledWith(
-			expect.objectContaining({
-				ReplyToAddresses: ['reply1@example.com', 'reply2@example.com']
-			})
-		);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const fetchCall = mockFetch.mock.calls[0];
+		const body = fetchCall[1].body as string;
+		expect(body).toContain('ReplyToAddresses.member.1=reply1%40example.com');
+		expect(body).toContain('ReplyToAddresses.member.2=reply2%40example.com');
 	});
 });

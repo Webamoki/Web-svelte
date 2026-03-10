@@ -382,7 +382,7 @@ export function formatAbsolute(datetime: ZonedDateTime): string {
  * @param raw - The snapshot of the CalendarDate object.
  * @returns The unfrozen CalendarDate object.
  */
-export function unfreezeDate(raw: $state.Snapshot<CalendarDate>): CalendarDate {
+export function unfreezeDate(raw: ReturnType<typeof $state.snapshot<CalendarDate>>): CalendarDate {
 	return new CalendarDate(raw.year, raw.month, raw.day);
 }
 
@@ -391,7 +391,7 @@ export function unfreezeDate(raw: $state.Snapshot<CalendarDate>): CalendarDate {
  * @param raw - The snapshot of the Time object.
  * @returns The unfrozen Time object.
  */
-export function unfreezeTime(raw: $state.Snapshot<Time>): Time {
+export function unfreezeTime(raw: ReturnType<typeof $state.snapshot<Time>>): Time {
 	return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
 }
 

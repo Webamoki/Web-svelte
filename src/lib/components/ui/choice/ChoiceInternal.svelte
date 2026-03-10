@@ -1,6 +1,9 @@
 <script lang="ts" module>
-	export interface ChoiceInternalProps<V, I, K extends string | number | symbol>
-		extends Partial<FormAttrs> {
+	export interface ChoiceInternalProps<
+		V,
+		I,
+		K extends string | number | symbol
+	> extends Partial<FormAttrs> {
 		items: readonly I[];
 		getKey: (item: I) => K;
 		getLabel: (item: I) => string;

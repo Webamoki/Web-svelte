@@ -1,6 +1,9 @@
 <script lang="ts" module>
-	export interface ChoiceMultiProps<V, I, K extends string | number | symbol>
-		extends ChoiceInternalProps<V, I, K> {
+	export interface ChoiceMultiProps<
+		V,
+		I,
+		K extends string | number | symbol
+	> extends ChoiceInternalProps<V, I, K> {
 		value: V[];
 		onAdd?: (value: V) => void;
 		onRemove?: (value: V) => void;

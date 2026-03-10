@@ -1,6 +1,9 @@
 <script lang="ts" module>
-	export interface ChoiceProps<V, I, K extends string | number | symbol>
-		extends ChoiceInternalProps<V, I, K> {
+	export interface ChoiceProps<
+		V,
+		I,
+		K extends string | number | symbol
+	> extends ChoiceInternalProps<V, I, K> {
 		value?: V;
 		onChange?: (value: V) => void;
 	}

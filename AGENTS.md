@@ -151,7 +151,7 @@ pnpm add @webamoki/web-svelte
 Add to your `app.css`:
 
 ```css
-@source "../...path/node_modules/@webamoki/web-svelte/dist/**/*.{js,svelte,ts}";
+@source '../...path/node_modules/@webamoki/web-svelte/dist/**/*.{js,svelte,ts}';
 ```
 
 ## Import Paths

@@ -10,22 +10,34 @@ export interface SendEmailOptions {
 	from: string;
 	fromName?: string;
 	replyTo?: string | string[];
+	// AWS credentials (required)
+	awsRegion: string;
+	awsAccessKeyId: string;
+	awsSecretAccessKey: string;
 }
 
 /**
  * Send an email using AWS SES API.
  * Uses AWS Signature V4 signing and fetch API for Cloudflare Workers compatibility.
  *
- * Environment variables required:
- * - AWS_REGION
- * - AWS_ACCESS_KEY_ID
- * - AWS_SECRET_ACCESS_KEY
- *
  * @returns messageId returned by SES
  */
 export async function sendEmail(options: SendEmailOptions): Promise<string> {
 	if (!options) throw new Error('sendEmail: options is required');
-	const { to, cc, bcc, subject, text, html, from, fromName, replyTo } = options;
+	const {
+		to,
+		cc,
+		bcc,
+		subject,
+		text,
+		html,
+		from,
+		fromName,
+		replyTo,
+		awsRegion,
+		awsAccessKeyId,
+		awsSecretAccessKey
+	} = options;
 
 	if (!subject) {
 		throw new Error('sendEmail: subject is required');
@@ -56,14 +68,10 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		throw new Error('sendEmail: at least one valid recipient is required (to)');
 	}
 
-	// Get AWS credentials from environment
-	const region = process.env.AWS_REGION;
-	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
-	if (!region || !accessKeyId || !secretAccessKey) {
+	// Validate AWS credentials
+	if (!awsRegion || !awsAccessKeyId || !awsSecretAccessKey) {
 		throw new Error(
-			'sendEmail: missing required environment variables (AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)'
+			'sendEmail: missing required AWS credentials (awsRegion, awsAccessKeyId, awsSecretAccessKey)'
 		);
 	}
 
@@ -108,18 +116,18 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 	}
 
 	const body = params.toString();
-	const host = `email.${region}.amazonaws.com`;
+	const host = `email.${awsRegion}.amazonaws.com`;
 	const path = '/';
 
 	try {
 		// Sign the request
 		const { headers } = await signRequest('POST', host, path, body, {
-			accessKeyId,
-			secretAccessKey,
-			region
+			accessKeyId: awsAccessKeyId,
+			secretAccessKey: awsSecretAccessKey,
+			region: awsRegion
 		});
 
-		// Make the API request
+		// Make the request
 		const response = await fetch(`https://${host}${path}`, {
 			method: 'POST',
 			headers: {

@@ -40,13 +40,15 @@ global.DOMParser = mockDOMParser as unknown as typeof DOMParser;
 // Import after mocking
 import { sendEmail } from './ses.js';
 
+const testAwsCredentials = {
+	awsRegion: 'us-east-1',
+	awsAccessKeyId: 'test-access-key',
+	awsSecretAccessKey: 'test-secret-key'
+};
+
 describe('sendEmail', () => {
 	beforeEach(() => {
 		mockFetch.mockClear();
-		// Set up default environment variables
-		process.env.AWS_REGION = 'us-east-1';
-		process.env.AWS_ACCESS_KEY_ID = 'test-access-key';
-		process.env.AWS_SECRET_ACCESS_KEY = 'test-secret-key';
 	});
 
 	it('should throw error if options is not provided', async () => {
@@ -59,7 +61,8 @@ describe('sendEmail', () => {
 			sendEmail({
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
 		).rejects.toThrow('at least one valid recipient is required');
@@ -71,7 +74,8 @@ describe('sendEmail', () => {
 				to: '   ',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
 	});
@@ -82,7 +86,8 @@ describe('sendEmail', () => {
 				to: [],
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
 	});
@@ -93,7 +98,8 @@ describe('sendEmail', () => {
 				to: ['', '   ', ''],
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
 	});
@@ -109,7 +115,8 @@ describe('sendEmail', () => {
 			to: ['', 'valid@example.com', '   ', 'another@example.com'],
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -132,7 +139,8 @@ describe('sendEmail', () => {
 			bcc: ['  ', 'bcc@example.com'],
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -155,7 +163,8 @@ describe('sendEmail', () => {
 			bcc: ['   '],
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -169,7 +178,8 @@ describe('sendEmail', () => {
 		await expect(
 			sendEmail({
 				to: 'test@example.com',
-				text: 'Test message'
+				text: 'Test message',
+				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
 		).rejects.toThrow('subject is required');
@@ -179,7 +189,8 @@ describe('sendEmail', () => {
 		await expect(
 			sendEmail({
 				to: 'test@example.com',
-				subject: 'Test'
+				subject: 'Test',
+				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
 		).rejects.toThrow('at least one of text or html body must be provided');
@@ -190,7 +201,8 @@ describe('sendEmail', () => {
 			sendEmail({
 				to: 'test@example.com',
 				subject: 'Test',
-				text: 'Test message'
+				text: 'Test message',
+				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
 		).rejects.toThrow('sender `from` is required');
@@ -207,7 +219,8 @@ describe('sendEmail', () => {
 			to: 'test@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -224,7 +237,8 @@ describe('sendEmail', () => {
 			to: ['test1@example.com', 'test2@example.com'],
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -242,7 +256,8 @@ describe('sendEmail', () => {
 			subject: 'Test',
 			text: 'Test message',
 			from: 'sender@example.com',
-			fromName: 'Test Sender'
+			fromName: 'Test Sender',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -264,7 +279,8 @@ describe('sendEmail', () => {
 			bcc: ['bcc1@example.com', 'bcc2@example.com'],
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -287,7 +303,8 @@ describe('sendEmail', () => {
 			subject: 'Test',
 			text: 'Plain text version',
 			html: '<p>HTML version</p>',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -308,7 +325,8 @@ describe('sendEmail', () => {
 			to: 'test@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com'
+			from: 'sender@example.com',
+			...testAwsCredentials
 		});
 
 		expect(result).toBe('test-message-id-123');
@@ -325,7 +343,8 @@ describe('sendEmail', () => {
 				to: 'test@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 			})
 		).rejects.toThrow('SES response did not contain a MessageId');
 	});
@@ -344,7 +363,8 @@ describe('sendEmail', () => {
 				to: 'test@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com'
+				from: 'sender@example.com',
+				...testAwsCredentials
 			})
 		).rejects.toThrow(/failed to send email/);
 	});
@@ -361,7 +381,8 @@ describe('sendEmail', () => {
 			subject: 'Test',
 			text: 'Test message',
 			from: 'sender@example.com',
-			replyTo: 'reply@example.com'
+			replyTo: 'reply@example.com',
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -382,7 +403,8 @@ describe('sendEmail', () => {
 			subject: 'Test',
 			text: 'Test message',
 			from: 'sender@example.com',
-			replyTo: ['reply1@example.com', 'reply2@example.com']
+			replyTo: ['reply1@example.com', 'reply2@example.com'],
+			...testAwsCredentials
 		});
 
 		expect(mockFetch).toHaveBeenCalledTimes(1);

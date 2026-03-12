@@ -48,6 +48,25 @@ Run the following command in your project root:
 pnpm add @webamoki/web-svelte@workspace:*
 ```
 
+Install any dependencies required by the library.
+
+```bash
+pnpm install
+```
+
+### 4. Vite Config
+
+Add the following to your Vite config to use the library as source code.
+
+```ts
+export default defineConfig({
+  // ... other configs
+  ssr: {
+    noExternal: ['@webamoki/web-svelte']
+  }
+});
+```
+
 ---
 
 ## 🎨 Styling

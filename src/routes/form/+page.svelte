@@ -219,6 +219,15 @@
 					/>
 					<MessageField
 						name="message"
+						defaultHeight={100}
+						{form}
+						label="Message Resisable"
+						placeholder="Enter your message here..."
+						resize
+						bind:value={$formData.message}
+					/>
+					<MessageField
+						name="message"
 						defaultHeight={150}
 						{form}
 						icon={MessageSquare}

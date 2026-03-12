@@ -22,7 +22,7 @@
 
 <FieldWrapper {...fieldProps}>
 	{#snippet formElem(props)}
-		<div class="flex w-full items-stretch gap-2">
+		<div class="flex h-fit w-full items-center gap-2">
 			<!-- Input itself with optional left icon -->
 			<IconInputWrapper flex {icon}>
 				{#snippet children({ class: iconClass })}
@@ -32,15 +32,19 @@
 
 			<!-- Show/hide button outside input -->
 			<button
-				class="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-300 px-4 text-gray-500 transition-all hover:bg-gray-50 focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none"
+				class={cn(
+					'aspect-square h-full items-center justify-center p-3',
+					'rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 focus:border-transparent',
+					'cursor-pointer transition-all focus:ring-2 focus:ring-primary focus:outline-none'
+				)}
 				aria-label={show ? 'Hide password' : 'Show password'}
 				onclick={() => (show = !show)}
 				type="button"
 			>
 				{#if show}
-					<EyeOff class="size-5" />
+					<EyeOff class="size-6" />
 				{:else}
-					<Eye class="size-5" />
+					<Eye class="size-6" />
 				{/if}
 			</button>
 		</div>

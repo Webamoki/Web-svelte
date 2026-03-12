@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup CI Environment
         uses: ./.github/actions/setup-ci
 
       - name: Restore Caches
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             .cache/.eslintcache
@@ -40,13 +40,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup CI Environment
         uses: ./.github/actions/setup-ci
 
       - name: Restore Vitest Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache/.vite
           key: ${{ runner.os }}-vitest-${{ hashFiles('**/pnpm-lock.yaml') }}

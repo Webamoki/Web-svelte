@@ -3,6 +3,9 @@ name: Pages
 on:
   workflow_call:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   deploy-to-pages:
     name: Deploy to GitHub Pages

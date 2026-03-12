@@ -1,9 +1,6 @@
 name: 'Setup CI'
 description: 'Check out code, setup pnpm, and setup Node.js'
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 runs:
   using: 'composite'
   steps:

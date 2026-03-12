@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext, type Snippet } from 'svelte';
+
 	import type { ContextMenuState } from './ContextMenu.svelte';
 
 	interface Props {
@@ -18,6 +19,6 @@
 	}
 </script>
 
-<div role="button" tabindex="-1" oncontextmenu={handleContextMenu}>
+<div oncontextmenu={handleContextMenu} role="button" tabindex="-1">
 	{@render children()}
 </div>

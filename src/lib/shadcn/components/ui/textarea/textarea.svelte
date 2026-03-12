@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { cn, type WithElementRef, type WithoutChildren } from '$lib/shadcn/utils.js';
 	import type { HTMLTextareaAttributes } from 'svelte/elements';
 
+	import { cn, type WithElementRef, type WithoutChildren } from '$lib/shadcn/utils.js';
+
 	let {
-		ref = $bindable(null),
-		value = $bindable(),
 		class: className,
 		'data-slot': dataSlot = 'textarea',
+		ref = $bindable(null),
+		value = $bindable(),
 		...restProps
 	}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> = $props();
 </script>
 
 <textarea
 	bind:this={ref}
-	data-slot={dataSlot}
 	class={cn(
 		'w-full resize-y rounded-lg border border-gray-300 px-4 py-3 outline-none',
 		'transition-[border-color,box-shadow,opacity]',
@@ -22,6 +22,7 @@
 		'aria-invalid:border-red-500 aria-invalid:focus:ring-red-300',
 		className
 	)}
+	data-slot={dataSlot}
 	bind:value
 	{...restProps}
 ></textarea>

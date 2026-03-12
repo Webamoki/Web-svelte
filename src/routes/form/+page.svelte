@@ -23,20 +23,21 @@
 	import { VirtualForm } from '$lib/utils/form/virtual-form.js';
 	import { Calendar, Clock, Lock, Mail, MessageSquare, Tag } from '@lucide/svelte';
 	import { identity } from 'ramda';
+
 	import CodeBlock from '../../lib/components/showcase/CodeBlock.svelte';
 	import { FormSchema, MasterSchema, TextNullSchema, VirtualFormSchema } from './schema.js';
 
-	const { form, data: formData } = prepareEmptyForm(MasterSchema);
+	const { data: formData, form } = prepareEmptyForm(MasterSchema);
 	const enhance = form.enhance;
-	const { form: textNullForm, data: textNullData } = prepareEmptyForm(TextNullSchema);
+	const { data: textNullData, form: textNullForm } = prepareEmptyForm(TextNullSchema);
 
 	const virtualForm = new VirtualForm(VirtualFormSchema, resolve('/form'), {
 		actionName: 'normal',
-		onSuccess: (data) => {
-			console.log('Virtual form submitted successfully:', data);
-		},
 		onError: (message) => {
 			console.error('Virtual form submission failed:', message);
+		},
+		onSuccess: (data) => {
+			console.log('Virtual form submitted successfully:', data);
 		}
 	});
 	function submitVirtualForm() {
@@ -45,7 +46,7 @@
 			message: 'aasdasdasdsd'
 		});
 	}
-	const { form: testForm, data: testData } = prepareEmptyForm(FormSchema);
+	const { data: testData, form: testForm } = prepareEmptyForm(FormSchema);
 </script>
 
 <div class="mx-auto max-w-6xl p-8">
@@ -66,14 +67,14 @@
 				</p>
 			</div>
 
-			<Form action={resolve('/form')} actionName="normal" form={testForm}>
+			<Form actionName="normal" actionPath={resolve('/form')} form={testForm}>
 				<div class="space-y-4">
-					<TextField form={testForm} bind:value={$testData.email} name="email" label="Email" />
+					<TextField name="email" form={testForm} label="Email" bind:value={$testData.email} />
 					<MessageField
-						form={testForm}
-						bind:value={$testData.message}
 						name="message"
+						form={testForm}
 						label="Message"
+						bind:value={$testData.message}
 					/>
 					<Button type="submit">Submit Form</Button>
 				</div>
@@ -113,7 +114,6 @@
 <div class="flex min-h-screen bg-gray-50">
 	<Sidebar>
 		<SidebarLink title="TextField" />
-		<SidebarLink title="TextFieldNullable" />
 		<SidebarLink title="PasswordField" />
 		<SidebarLink title="MessageField" />
 		<SidebarLink title="HexColorField" />
@@ -129,34 +129,34 @@
 	<!-- Main content -->
 	<main class="flex-1 p-8">
 		<h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>
-		<Container title="TextField" description="A basic input field with validation support">
+		<Container description="A basic input field with validation support" title="TextField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
+				<form class="space-y-5" method="POST" use:enhance>
 					<TextField
+						name="email"
 						{form}
 						label="Email"
-						name="email"
-						type="email"
 						placeholder="johndoe@gmail.com"
+						type="email"
 						bind:value={$formData.email}
 					/>
 					<TextField
-						{form}
-						label="Email with Icon"
 						name="email"
-						type="email"
-						placeholder="johndoe@gmail.com"
+						{form}
 						icon={Mail}
+						label="Email with Icon"
+						placeholder="johndoe@gmail.com"
+						type="email"
 						bind:value={$formData.email}
 					/>
 				</form>
-				<form method="POST" use:textNullForm.enhance class="space-y-5">
+				<form class="space-y-5" method="POST" use:textNullForm.enhance>
 					<TextFieldNullable
+						name="emailNull"
 						form={textNullForm}
 						label="Email"
-						name="emailNull"
-						type="email"
 						placeholder="johndoe@gmail.com"
+						type="email"
 						bind:value={$textNullData.emailNull}
 					/>
 				</form>
@@ -177,15 +177,15 @@
 			`}
 			</CodeBlock>
 		</Container>
-		<Container title="PasswordField" description="A password input with show/hide toggle">
+		<Container description="A password input with show/hide toggle" title="PasswordField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
-					<PasswordField {form} label="Password" name="password" bind:value={$formData.password} />
+				<form class="space-y-5" method="POST" use:enhance>
+					<PasswordField name="password" {form} label="Password" bind:value={$formData.password} />
 					<PasswordField
-						{form}
-						label="Password with Icon"
 						name="password"
+						{form}
 						icon={Lock}
+						label="Password with Icon"
 						bind:value={$formData.password}
 					/>
 				</form>
@@ -205,24 +205,33 @@
 			</CodeBlock>
 		</Container>
 
-		<Container title="MessageField" description="A textarea field with height lock feature">
+		<Container description="A textarea field with height lock feature" title="MessageField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
+				<form class="space-y-5" method="POST" use:enhance>
 					<MessageField
+						name="message"
+						defaultHeight={150}
 						{form}
 						label="Message"
-						name="message"
 						placeholder="Enter your message here..."
-						defaultHeight={150}
 						bind:value={$formData.message}
 					/>
 					<MessageField
-						{form}
-						label="Message with Icon"
 						name="message"
+						defaultHeight={100}
+						{form}
+						label="Message Resisable"
 						placeholder="Enter your message here..."
+						resize
+						bind:value={$formData.message}
+					/>
+					<MessageField
+						name="message"
 						defaultHeight={150}
+						{form}
 						icon={MessageSquare}
+						label="Message with Icon"
+						placeholder="Enter your message here..."
 						bind:value={$formData.message}
 					/>
 				</form>
@@ -244,10 +253,10 @@
 			</CodeBlock>
 		</Container>
 
-		<Container title="HexColorField" description="A hex color input">
+		<Container description="A hex color input" title="HexColorField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
-					<HexColorField {form} label="Color" name="color" bind:value={$formData.color} />
+				<form class="space-y-5" method="POST" use:enhance>
+					<HexColorField name="color" {form} label="Color" bind:value={$formData.color} />
 					<Button type="submit">Submit</Button>
 				</form>
 			</Preview>
@@ -263,30 +272,30 @@
 			</CodeBlock>
 		</Container>
 
-		<Container title="SelectField" description="select field">
+		<Container description="select field" title="SelectField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
+				<form class="space-y-5" method="POST" use:enhance>
 					<SelectField
-						{form}
-						label="Select"
 						name="select"
-						items={[1, 2, 3]}
+						{form}
 						getKey={identity}
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
+						items={[1, 2, 3]}
+						label="Select"
 						placeholder="Please select"
 						bind:value={$formData.select}
 					/>
 					<SelectField
-						{form}
-						label="Select with Icon"
 						name="select"
-						items={[1, 2, 3]}
+						{form}
 						getKey={identity}
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
-						placeholder="Please select"
 						icon={Tag}
+						items={[1, 2, 3]}
+						label="Select with Icon"
+						placeholder="Please select"
 						bind:value={$formData.select}
 					/>
 				</form>
@@ -310,30 +319,30 @@
 			`}
 			</CodeBlock>
 		</Container>
-		<Container title="SelectMultiField" description="select multi field">
+		<Container description="select multi field" title="SelectMultiField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
+				<form class="space-y-5" method="POST" use:enhance>
 					<SelectMultiField
-						{form}
-						label="Select Multi"
 						name="selects"
-						items={[1, 2, 3]}
+						{form}
 						getKey={identity}
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
+						items={[1, 2, 3]}
+						label="Select Multi"
 						placeholder="Please select"
 						bind:values={$formData.selects}
 					/>
 					<SelectMultiField
-						{form}
-						label="Select Multi with Icon"
 						name="selects"
-						items={[1, 2, 3]}
+						{form}
 						getKey={identity}
 						getLabel={(n: number) => (n * 2).toString()}
 						getValue={identity}
-						placeholder="Please select"
 						icon={Tag}
+						items={[1, 2, 3]}
+						label="Select Multi with Icon"
+						placeholder="Please select"
 						bind:values={$formData.selects}
 					/>
 				</form>
@@ -354,15 +363,15 @@
 			`}
 			</CodeBlock>
 		</Container>
-		<Container title="TimeField" description="time field">
+		<Container description="time field" title="TimeField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
-					<TimeField {form} label="Time" name="time" bind:value={$formData.time} />
+				<form class="space-y-5" method="POST" use:enhance>
+					<TimeField name="time" {form} label="Time" bind:value={$formData.time} />
 					<TimeField
-						{form}
-						label="Time with Icon"
 						name="time"
+						{form}
 						icon={Clock}
+						label="Time with Icon"
 						bind:value={$formData.time}
 					/>
 					<Button type="submit">Submit</Button>
@@ -383,15 +392,15 @@
 			</CodeBlock>
 		</Container>
 
-		<Container title="DateField" description="date field">
+		<Container description="date field" title="DateField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y-5">
-					<DateField {form} label="Date" name="calendarDate" bind:value={$formData.calendarDate} />
+				<form class="space-y-5" method="POST" use:enhance>
+					<DateField name="calendarDate" {form} label="Date" bind:value={$formData.calendarDate} />
 					<DateField
-						{form}
-						label="Date with Icon"
 						name="calendarDate"
+						{form}
 						icon={Calendar}
+						label="Date with Icon"
 						bind:value={$formData.calendarDate}
 					/>
 					<Button type="submit">Submit</Button>
@@ -412,57 +421,57 @@
 			</CodeBlock>
 		</Container>
 		<Container
-			title="ChoiceField"
 			description="A multiple choice selection component (one value only)"
+			title="ChoiceField"
 		>
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y">
+				<form class="space-y" method="POST" use:enhance>
 					<div class="flex w-full space-x-5">
 						<ChoiceField
+							name="tag"
 							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							label="Vertical"
-							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
-							bind:value={$formData.tag}
 							vertical
+							bind:value={$formData.tag}
 						/>
 						<ChoiceField
-							{form}
-							label="Vertical Disabled"
 							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
-							bind:value={$formData.tag}
-							vertical
 							disabled
-						/>
-						<ChoiceField
 							{form}
-							label="Vertical Readonly"
-							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
-							bind:value={$formData.tag}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Vertical Disabled"
 							vertical
+							bind:value={$formData.tag}
+						/>
+						<ChoiceField
+							name="tag"
+							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Vertical Readonly"
 							readonly
+							vertical
+							bind:value={$formData.tag}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<ChoiceField
-							{form}
-							label="Horizontal"
 							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							{form}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Horizontal"
 							bind:value={$formData.tag}
 						>
 							{#snippet buttonContent(label)}
@@ -470,26 +479,26 @@
 							{/snippet}
 						</ChoiceField>
 						<ChoiceField
-							{form}
-							label="Horizontal Disabled"
 							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							disabled
+							{form}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Horizontal Disabled"
 							bind:value={$formData.tag}
-							disabled
 						/>
 						<ChoiceField
-							{form}
-							label="Horizontal Readonly"
 							name="tag"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							{form}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
-							bind:value={$formData.tag}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Horizontal Readonly"
 							readonly
+							bind:value={$formData.tag}
 						/>
 					</div>
 				</form>
@@ -508,78 +517,78 @@
 				`}
 			</CodeBlock>
 		</Container>
-		<Container title="ChoiceMultiField" description="A multiple choice selection component">
+		<Container description="A multiple choice selection component" title="ChoiceMultiField">
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y">
+				<form class="space-y" method="POST" use:enhance>
 					<div class="flex w-full space-x-5">
 						<ChoiceMultiField
+							name="tags"
 							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							label="Vertical"
-							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
-							bind:value={$formData.tags}
 							vertical
+							bind:value={$formData.tags}
 						/>
 						<ChoiceMultiField
-							{form}
-							label="Vertical Disabled"
 							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
-							bind:value={$formData.tags}
-							vertical
 							disabled
-						/>
-						<ChoiceMultiField
 							{form}
-							label="Vertical Readonly"
-							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
-							bind:value={$formData.tags}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Vertical Disabled"
 							vertical
+							bind:value={$formData.tags}
+						/>
+						<ChoiceMultiField
+							name="tags"
+							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Vertical Readonly"
 							readonly
+							vertical
+							bind:value={$formData.tags}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<ChoiceMultiField
+							name="tags"
 							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							label="Horizontal"
-							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
 							bind:value={$formData.tags}
 						/>
 						<ChoiceMultiField
-							{form}
-							label="Horizontal Disabled"
 							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
-							getKey={identity}
-							getLabel={identity}
-							getValue={identity}
-							bind:value={$formData.tags}
 							disabled
-						/>
-						<ChoiceMultiField
 							{form}
-							label="Horizontal Readonly"
-							name="tags"
-							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
 							getKey={identity}
 							getLabel={identity}
 							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Horizontal Disabled"
 							bind:value={$formData.tags}
+						/>
+						<ChoiceMultiField
+							name="tags"
+							{form}
+							getKey={identity}
+							getLabel={identity}
+							getValue={identity}
+							items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+							label="Horizontal Readonly"
 							readonly
+							bind:value={$formData.tags}
 						/>
 					</div>
 				</form>
@@ -602,72 +611,72 @@
 		</Container>
 
 		<Container
-			title="WeekdayChoiceField"
 			description="A multiple choice selection component  for weekdays (single value)"
+			title="WeekdayChoiceField"
 		>
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y">
+				<form class="space-y" method="POST" use:enhance>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Vertical"
-							name="weekday"
-							bind:value={$formData.weekday}
 							vertical
+							bind:value={$formData.weekday}
 						/>
 						<WeekdayChoiceField
+							name="weekday"
+							disabled
 							{form}
 							label="Vertical Disabled"
-							name="weekday"
-							bind:value={$formData.weekday}
 							vertical
-							disabled
+							bind:value={$formData.weekday}
 						/>
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Vertical Readonly"
-							name="weekday"
-							bind:value={$formData.weekday}
-							vertical
 							readonly
+							vertical
+							bind:value={$formData.weekday}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Horizontal"
-							name="weekday"
 							bind:value={$formData.weekday}
 						/>
 						<WeekdayChoiceField
+							name="weekday"
+							disabled
 							{form}
 							label="Horizontal Disabled"
-							name="weekday"
 							bind:value={$formData.weekday}
-							disabled
 						/>
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Horizontal Readonly"
-							name="weekday"
-							bind:value={$formData.weekday}
 							readonly
+							bind:value={$formData.weekday}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Horizontal LetterLabels"
-							name="weekday"
-							bind:value={$formData.weekday}
 							letterLabels
+							bind:value={$formData.weekday}
 						/>
 						<WeekdayChoiceField
+							name="weekday"
 							{form}
 							label="Horizontal LongLabels"
-							name="weekday"
-							bind:value={$formData.weekday}
 							longLabels
+							bind:value={$formData.weekday}
 						/>
 					</div>
 				</form>
@@ -688,72 +697,72 @@
 			</CodeBlock>
 		</Container>
 		<Container
-			title="WeekdayChoiceMultiField"
 			description="A multiple choice selection component  for weekdays"
+			title="WeekdayChoiceMultiField"
 		>
 			<Preview slot="preview">
-				<form method="POST" use:enhance class="space-y">
+				<form class="space-y" method="POST" use:enhance>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Vertical"
-							name="weekdays"
-							bind:value={$formData.weekdays}
 							vertical
+							bind:value={$formData.weekdays}
 						/>
 						<WeekdayChoiceMultiField
+							name="weekdays"
+							disabled
 							{form}
 							label="Vertical Disabled"
-							name="weekdays"
-							bind:value={$formData.weekdays}
 							vertical
-							disabled
+							bind:value={$formData.weekdays}
 						/>
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Vertical Readonly"
-							name="weekdays"
-							bind:value={$formData.weekdays}
-							vertical
 							readonly
+							vertical
+							bind:value={$formData.weekdays}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Horizontal"
-							name="weekdays"
 							bind:value={$formData.weekdays}
 						/>
 						<WeekdayChoiceMultiField
+							name="weekdays"
+							disabled
 							{form}
 							label="Horizontal Disabled"
-							name="weekdays"
 							bind:value={$formData.weekdays}
-							disabled
 						/>
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Horizontal Readonly"
-							name="weekdays"
-							bind:value={$formData.weekdays}
 							readonly
+							bind:value={$formData.weekdays}
 						/>
 					</div>
 					<div class="flex w-full space-x-5">
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Horizontal LetterLabels"
-							name="weekdays"
-							bind:value={$formData.weekdays}
 							letterLabels
+							bind:value={$formData.weekdays}
 						/>
 						<WeekdayChoiceMultiField
+							name="weekdays"
 							{form}
 							label="Horizontal LongLabels"
-							name="weekdays"
-							bind:value={$formData.weekdays}
 							longLabels
+							bind:value={$formData.weekdays}
 						/>
 					</div>
 				</form>

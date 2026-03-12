@@ -41,8 +41,8 @@ global.DOMParser = mockDOMParser as unknown as typeof DOMParser;
 import { sendEmail } from './ses.js';
 
 const testAwsCredentials = {
-	awsRegion: 'us-east-1',
 	awsAccessKeyId: 'test-access-key',
+	awsRegion: 'us-east-1',
 	awsSecretAccessKey: 'test-secret-key'
 };
 
@@ -59,9 +59,9 @@ describe('sendEmail', () => {
 	it('should throw error if "to" field is missing', async () => {
 		await expect(
 			sendEmail({
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
 				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
@@ -71,10 +71,10 @@ describe('sendEmail', () => {
 	it('should throw error if "to" field is empty string', async () => {
 		await expect(
 			sendEmail({
-				to: '   ',
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
+				to: '   ',
 				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
@@ -83,10 +83,10 @@ describe('sendEmail', () => {
 	it('should throw error if "to" field is empty array', async () => {
 		await expect(
 			sendEmail({
-				to: [],
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
+				to: [],
 				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
@@ -95,10 +95,10 @@ describe('sendEmail', () => {
 	it('should throw error if "to" field contains only empty strings', async () => {
 		await expect(
 			sendEmail({
-				to: ['', '   ', ''],
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
+				to: ['', '   ', ''],
 				...testAwsCredentials
 			})
 		).rejects.toThrow('at least one valid recipient is required');
@@ -112,10 +112,10 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: ['', 'valid@example.com', '   ', 'another@example.com'],
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: ['', 'valid@example.com', '   ', 'another@example.com'],
 			...testAwsCredentials
 		});
 
@@ -134,12 +134,12 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			cc: ['', 'cc@example.com', '  '],
 			bcc: ['  ', 'bcc@example.com'],
+			cc: ['', 'cc@example.com', '  '],
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -158,12 +158,12 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			cc: ['', '  '],
 			bcc: ['   '],
+			cc: ['', '  '],
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -177,8 +177,8 @@ describe('sendEmail', () => {
 	it('should throw error if subject is missing', async () => {
 		await expect(
 			sendEmail({
-				to: 'test@example.com',
 				text: 'Test message',
+				to: 'test@example.com',
 				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
@@ -188,8 +188,8 @@ describe('sendEmail', () => {
 	it('should throw error if both text and html are missing', async () => {
 		await expect(
 			sendEmail({
-				to: 'test@example.com',
 				subject: 'Test',
+				to: 'test@example.com',
 				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
@@ -199,9 +199,9 @@ describe('sendEmail', () => {
 	it('should throw error if from is not provided', async () => {
 		await expect(
 			sendEmail({
-				to: 'test@example.com',
 				subject: 'Test',
 				text: 'Test message',
+				to: 'test@example.com',
 				...testAwsCredentials
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any)
@@ -216,10 +216,10 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -234,10 +234,10 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: ['test1@example.com', 'test2@example.com'],
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: ['test1@example.com', 'test2@example.com'],
 			...testAwsCredentials
 		});
 
@@ -252,11 +252,11 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			subject: 'Test',
-			text: 'Test message',
 			from: 'sender@example.com',
 			fromName: 'Test Sender',
+			subject: 'Test',
+			text: 'Test message',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -274,12 +274,12 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			cc: 'cc@example.com',
 			bcc: ['bcc1@example.com', 'bcc2@example.com'],
+			cc: 'cc@example.com',
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -299,11 +299,11 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
+			from: 'sender@example.com',
+			html: '<p>HTML version</p>',
 			subject: 'Test',
 			text: 'Plain text version',
-			html: '<p>HTML version</p>',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -322,10 +322,10 @@ describe('sendEmail', () => {
 		});
 
 		const result = await sendEmail({
-			to: 'test@example.com',
+			from: 'sender@example.com',
 			subject: 'Test',
 			text: 'Test message',
-			from: 'sender@example.com',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -340,10 +340,10 @@ describe('sendEmail', () => {
 
 		await expect(
 			sendEmail({
-				to: 'test@example.com',
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
+				to: 'test@example.com',
 				...testAwsCredentials
 			})
 		).rejects.toThrow('SES response did not contain a MessageId');
@@ -360,10 +360,10 @@ describe('sendEmail', () => {
 
 		await expect(
 			sendEmail({
-				to: 'test@example.com',
+				from: 'sender@example.com',
 				subject: 'Test',
 				text: 'Test message',
-				from: 'sender@example.com',
+				to: 'test@example.com',
 				...testAwsCredentials
 			})
 		).rejects.toThrow(/failed to send email/);
@@ -377,11 +377,11 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			subject: 'Test',
-			text: 'Test message',
 			from: 'sender@example.com',
 			replyTo: 'reply@example.com',
+			subject: 'Test',
+			text: 'Test message',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 
@@ -399,11 +399,11 @@ describe('sendEmail', () => {
 		});
 
 		await sendEmail({
-			to: 'test@example.com',
-			subject: 'Test',
-			text: 'Test message',
 			from: 'sender@example.com',
 			replyTo: ['reply1@example.com', 'reply2@example.com'],
+			subject: 'Test',
+			text: 'Test message',
+			to: 'test@example.com',
 			...testAwsCredentials
 		});
 

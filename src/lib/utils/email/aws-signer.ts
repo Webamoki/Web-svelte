@@ -5,59 +5,8 @@
 
 interface AwsCredentials {
 	accessKeyId: string;
-	secretAccessKey: string;
 	region: string;
-}
-
-/**
- * Create a SHA-256 hash
- */
-async function sha256(message: string): Promise<ArrayBuffer> {
-	const encoder = new TextEncoder();
-	const data = encoder.encode(message);
-	return await crypto.subtle.digest('SHA-256', data);
-}
-
-/**
- * Create a SHA-256 HMAC
- */
-async function hmacSha256(key: ArrayBuffer | Uint8Array, message: string): Promise<ArrayBuffer> {
-	const encoder = new TextEncoder();
-	const keyData = key instanceof ArrayBuffer ? new Uint8Array(key) : key;
-	const cryptoKey = await crypto.subtle.importKey(
-		'raw',
-		keyData as BufferSource,
-		{ name: 'HMAC', hash: 'SHA-256' },
-		false,
-		['sign']
-	);
-	return await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(message));
-}
-
-/**
- * Convert ArrayBuffer to hex string
- */
-function bufferToHex(buffer: ArrayBuffer): string {
-	return Array.from(new Uint8Array(buffer))
-		.map((b) => b.toString(16).padStart(2, '0'))
-		.join('');
-}
-
-/**
- * Get signing key for AWS Signature V4
- */
-async function getSignatureKey(
-	key: string,
-	dateStamp: string,
-	regionName: string,
-	serviceName: string
-): Promise<ArrayBuffer> {
-	const encoder = new TextEncoder();
-	const kDate = await hmacSha256(encoder.encode('AWS4' + key), dateStamp);
-	const kRegion = await hmacSha256(kDate, regionName);
-	const kService = await hmacSha256(kRegion, serviceName);
-	const kSigning = await hmacSha256(kService, 'aws4_request');
-	return kSigning;
+	secretAccessKey: string;
 }
 
 /**
@@ -71,7 +20,7 @@ export async function signRequest(
 	credentials: AwsCredentials,
 	service: string = 'ses'
 ): Promise<{ headers: Record<string, string>; signedHeaders: string }> {
-	const { accessKeyId, secretAccessKey, region } = credentials;
+	const { accessKeyId, region, secretAccessKey } = credentials;
 
 	// Create timestamp
 	const now = new Date();
@@ -116,9 +65,60 @@ export async function signRequest(
 	return {
 		headers: {
 			Authorization: authorizationHeader,
-			'X-Amz-Date': amzDate,
-			'Content-Type': 'application/x-www-form-urlencoded'
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'X-Amz-Date': amzDate
 		},
 		signedHeaders
 	};
+}
+
+/**
+ * Convert ArrayBuffer to hex string
+ */
+function bufferToHex(buffer: ArrayBuffer): string {
+	return Array.from(new Uint8Array(buffer))
+		.map((b) => b.toString(16).padStart(2, '0'))
+		.join('');
+}
+
+/**
+ * Get signing key for AWS Signature V4
+ */
+async function getSignatureKey(
+	key: string,
+	dateStamp: string,
+	regionName: string,
+	serviceName: string
+): Promise<ArrayBuffer> {
+	const encoder = new TextEncoder();
+	const kDate = await hmacSha256(encoder.encode('AWS4' + key), dateStamp);
+	const kRegion = await hmacSha256(kDate, regionName);
+	const kService = await hmacSha256(kRegion, serviceName);
+	const kSigning = await hmacSha256(kService, 'aws4_request');
+	return kSigning;
+}
+
+/**
+ * Create a SHA-256 HMAC
+ */
+async function hmacSha256(key: ArrayBuffer | Uint8Array, message: string): Promise<ArrayBuffer> {
+	const encoder = new TextEncoder();
+	const keyData = key instanceof ArrayBuffer ? new Uint8Array(key) : key;
+	const cryptoKey = await crypto.subtle.importKey(
+		'raw',
+		keyData as BufferSource,
+		{ hash: 'SHA-256', name: 'HMAC' },
+		false,
+		['sign']
+	);
+	return await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(message));
+}
+
+/**
+ * Create a SHA-256 hash
+ */
+async function sha256(message: string): Promise<ArrayBuffer> {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(message);
+	return await crypto.subtle.digest('SHA-256', data);
 }

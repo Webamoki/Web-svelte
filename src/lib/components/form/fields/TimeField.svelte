@@ -1,25 +1,27 @@
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
+	import type { Component } from 'svelte';
+	import type { FormPath } from 'sveltekit-superforms';
+
 	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
 	import { Input } from '$lib/shadcn/components/ui/input/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
 	import { Time } from '@internationalized/date';
-	import type { Component } from 'svelte';
-	import type { FormPath } from 'sveltekit-superforms';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
-		value?: Time;
 		class?: string;
-		step?: HTMLInputElement['step'];
-		placeholder?: string;
 		icon?: Component;
+		placeholder?: string;
+		step?: HTMLInputElement['step'];
+		value?: Time;
 	}
 	let {
-		value = $bindable(),
 		class: className,
-		step,
-		placeholder,
 		icon,
+		placeholder,
+		step,
+		value = $bindable(),
 		...fieldProps
 	}: Props = $props();
 	// Getter: format Time as string depending on step
@@ -59,11 +61,11 @@
 		<IconInputWrapper {icon}>
 			{#snippet children({ class: iconClass })}
 				<Input
-					type="time"
-					bind:value={get, set}
 					class={cn(iconClass, className)}
 					{placeholder}
 					{step}
+					type="time"
+					bind:value={get, set}
 					{...props}
 				/>
 			{/snippet}

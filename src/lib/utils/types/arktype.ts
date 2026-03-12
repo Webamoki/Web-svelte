@@ -1,8 +1,11 @@
-import { Type, type } from 'arktype';
+import type { Type } from 'arktype';
+
+import { CalendarDate as calendarImport, Time as timeImport } from '@internationalized/date';
+import { type } from 'arktype';
+
 import { Days } from '../datetime/index.js';
-import { Time as timeImport, CalendarDate as calendarImport } from '@internationalized/date';
-import { EMAIL_MAX, FIRST_NAME_MAX, LAST_NAME_MAX, NAME_MAX } from './consts.js';
 import { toTitleCase } from '../string.js';
+import { EMAIL_MAX, FIRST_NAME_MAX, LAST_NAME_MAX, NAME_MAX } from './consts.js';
 
 // Phone arktype: allows "+", digits, and spaces only
 export const Phone = type('string').narrow((value, ctx) => {

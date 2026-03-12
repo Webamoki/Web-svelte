@@ -5,6 +5,7 @@
 	import Sidebar from '$lib/components/showcase/Sidebar.svelte';
 	import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
 	import SearchBar from '$lib/components/ui/search/SearchBar.svelte';
+
 	import ChoiceShowcase from './helpers/ChoiceShowcase.svelte';
 
 	let searchValue = '';
@@ -21,16 +22,16 @@
 	<main class="flex-1 p-8">
 		<h1 class="mb-8 text-3xl font-bold text-gray-900">UI Components Showcase</h1>
 
-		<Container title="Search" description="A search input field with icon">
+		<Container description="A search input field with icon" title="Search">
 			<Preview slot="preview">
 				<div class="w-full max-w-sm">
 					<SearchBar
 						defaultValue={searchValue}
-						placeholder="Search items..."
 						onChange={(value) => {
 							searchValue = value;
 							console.log('Search value:', value);
 						}}
+						placeholder="Search items..."
 					/>
 				</div>
 			</Preview>
@@ -48,7 +49,7 @@
 			</CodeBlock>
 		</Container>
 
-		<div class="mt-8">
+		<div id="choice" class="mt-8">
 			<ChoiceShowcase />
 		</div>
 	</main>

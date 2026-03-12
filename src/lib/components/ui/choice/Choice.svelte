@@ -2,20 +2,20 @@
 	export interface ChoiceProps<
 		V,
 		I,
-		K extends string | number | symbol
+		K extends number | string | symbol
 	> extends ChoiceInternalProps<V, I, K> {
-		value?: V;
 		onChange?: (value: V) => void;
+		value?: V;
 	}
 </script>
 
-<script lang="ts" generics="V, I,  K extends string | number | symbol">
+<script generics="V, I,  K extends number | string | symbol" lang="ts">
 	import ChoiceInternal, { type ChoiceInternalProps } from './ChoiceInternal.svelte';
 
 	let {
-		value = $bindable(undefined),
 		getValue,
 		onChange,
+		value = $bindable(undefined),
 		...props
 	}: ChoiceProps<V, I, K> = $props();
 
@@ -30,4 +30,4 @@
 	}
 </script>
 
-<ChoiceInternal {handleItemClick} {isActive} {getValue} {...props} />
+<ChoiceInternal {getValue} {handleItemClick} {isActive} {...props} />

@@ -2,27 +2,30 @@
 	export interface ChoiceMultiProps<
 		V,
 		I,
-		K extends string | number | symbol
+		K extends number | string | symbol
 	> extends ChoiceInternalProps<V, I, K> {
-		value: V[];
 		onAdd?: (value: V) => void;
 		onRemove?: (value: V) => void;
+		value: V[];
 	}
 </script>
 
-<script lang="ts" generics="V,I, K extends string | number | symbol">
+<script generics="V,I, K extends number | string | symbol" lang="ts">
 	import * as sorted from 'sorted-array-functions';
+
 	import ChoiceInternal, { type ChoiceInternalProps } from './ChoiceInternal.svelte';
 
 	let {
-		value = $bindable([]),
-		onAdd,
-		onRemove,
 		getValue,
 		items,
+		onAdd,
+		onRemove,
+		value = $bindable([]),
 		...props
 	}: ChoiceMultiProps<V, I, K> = $props();
 
+	// Items property shouldn't be updated, ignore warning
+	// svelte-ignore state_referenced_locally
 	const valueIndex = new Map<V, number>(
 		items.map((item, index) => [getValue(item), index] as const)
 	);
@@ -58,4 +61,4 @@
 	}
 </script>
 
-<ChoiceInternal {handleItemClick} {getValue} isActive={contains} {items} {...props} />
+<ChoiceInternal {getValue} {handleItemClick} isActive={contains} {items} {...props} />

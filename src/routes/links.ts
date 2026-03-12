@@ -1,14 +1,14 @@
 import { resolve } from '$app/paths';
 
 type Link = {
-	name: string;
 	href: ReturnType<typeof resolve>;
+	name: string;
 };
 
 export const links: Link[] = [
-	{ name: 'form', href: resolve('/form') },
+	{ href: resolve('/form'), name: 'form' },
 	{
-		name: 'ui',
-		href: resolve('/ui')
+		href: resolve('/ui'),
+		name: 'ui'
 	}
 ];

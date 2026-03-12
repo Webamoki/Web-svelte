@@ -1,42 +1,56 @@
-import prettier from 'eslint-config-prettier';
-import { fileURLToPath } from 'node:url';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
+import prettier from 'eslint-config-prettier';
+import perfectionist from 'eslint-plugin-perfectionist';
 import svelte from 'eslint-plugin-svelte';
-import { defineConfig } from 'eslint/config';
 import globals from 'globals';
+import { fileURLToPath } from 'node:url';
+import * as svelteParser from 'svelte-eslint-parser';
 import ts from 'typescript-eslint';
-import svelteConfig from './svelte.config.js';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
-export default defineConfig(
+export default ts.config(
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
 	...ts.configs.recommended,
-	...svelte.configs.recommended,
+	...svelte.configs['flat/recommended'],
+	...svelte.configs['flat/prettier'],
 	prettier,
-	...svelte.configs.prettier,
+	perfectionist.configs['recommended-natural'],
 	{
 		languageOptions: {
-			globals: { ...globals.browser, ...globals.node }
-		},
-		rules: {
-			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off',
-			'svelte/no-navigation-without-resolve': 'off'
+			globals: { ...globals.browser, ...globals.node },
+			parserOptions: {
+				extraFileExtensions: ['.svelte'],
+				projectService: {
+					allowDefaultProject: [
+						'eslint.config.js',
+						'vitest.config.ts',
+						'svelte.config.js',
+						'scripts/*.ts'
+					]
+				},
+				tsconfigRootDir: import.meta.dirname
+			}
 		}
 	},
 	{
-		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
+		files: ['**/*.svelte', '**/*.svelte.ts'],
 		languageOptions: {
+			parser: svelteParser,
 			parserOptions: {
-				projectService: true,
-				extraFileExtensions: ['.svelte'],
-				parser: ts.parser,
-				svelteConfig
+				parser: ts.parser
 			}
+		},
+		rules: {
+			'svelte/sort-attributes': 'error'
+		}
+	},
+	{
+		rules: {
+			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/no-import-type-side-effects': 'error'
 		}
 	}
 );

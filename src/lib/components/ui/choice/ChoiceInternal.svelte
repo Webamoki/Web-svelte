@@ -2,22 +2,23 @@
 	export interface ChoiceInternalProps<
 		V,
 		I,
-		K extends string | number | symbol
+		K extends number | string | symbol
 	> extends Partial<FormAttrs> {
-		items: readonly I[];
+		buttonContent?: Snippet<[label: string, item: I]>;
+		class?: string;
 		getKey: (item: I) => K;
 		getLabel: (item: I) => string;
 		getValue: (item: I) => V;
+		items: readonly I[];
 		vertical?: boolean;
-		buttonContent?: Snippet<[label: string, item: I]>;
-		class?: string;
 	}
 </script>
 
-<script lang="ts" generics="V, I, K extends string | number | symbol">
+<script generics="V, I, K extends number | string | symbol" lang="ts">
 	import type { FormAttrs } from '$lib/components/form/FieldWrapper.svelte';
-	import { cn } from '$lib/shadcn/utils.js';
 	import type { Snippet } from 'svelte';
+
+	import { cn } from '$lib/shadcn/utils.js';
 
 	interface Props extends ChoiceInternalProps<V, I, K> {
 		handleItemClick: (item: I) => void;
@@ -25,17 +26,17 @@
 	}
 
 	let {
-		items = [],
-		getKey,
-		getLabel,
-		vertical,
-		handleItemClick,
-		isActive,
-		disabled,
-		readonly,
 		'aria-invalid': ariaInvalid,
 		buttonContent,
 		class: className,
+		disabled,
+		getKey,
+		getLabel,
+		handleItemClick,
+		isActive,
+		items = [],
+		readonly,
+		vertical,
 		...control
 	}: Props = $props();
 </script>
@@ -55,25 +56,25 @@
 	{#each items as item (getKey(item))}
 		{#if buttonContent}
 			<button
-				type="button"
+				class="cursor-pointer rounded-lg bg-transparent text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+				data-state={isActive(item) ? 'active' : 'inactive'}
 				onclick={() => {
 					if (disabled || readonly) return;
 					handleItemClick(item);
 				}}
-				data-state={isActive(item) ? 'active' : 'inactive'}
-				class="cursor-pointer rounded-lg bg-transparent text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+				type="button"
 			>
 				{@render buttonContent(getLabel(item), item)}
 			</button>
 		{:else}
 			<button
-				type="button"
+				class="h-8 cursor-pointer rounded-lg bg-transparent p-2 text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+				data-state={isActive(item) ? 'active' : 'inactive'}
 				onclick={() => {
 					if (disabled || readonly) return;
 					handleItemClick(item);
 				}}
-				data-state={isActive(item) ? 'active' : 'inactive'}
-				class="h-8 cursor-pointer rounded-lg bg-transparent p-2 text-muted-foreground hover:text-foreground hover:outline-2 focus-visible:outline-ring data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+				type="button"
 			>
 				{getLabel(item)}
 			</button>

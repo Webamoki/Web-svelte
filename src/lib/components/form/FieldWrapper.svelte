@@ -1,10 +1,10 @@
 <script lang="ts" module>
 	export interface FieldWrapperProps<T extends Record<string, unknown>, U extends FormPath<T>, M> {
-		form: FsSuperForm<T, M>;
-		name: U;
-		label?: string;
-		description?: string;
 		class?: string;
+		description?: string;
+		form: FsSuperForm<T, M>;
+		label?: string;
+		name: U;
 	}
 
 	export interface FormAttrs extends ControlAttrs {
@@ -13,28 +13,30 @@
 	}
 </script>
 
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
-	import { cn } from '$lib/shadcn/utils.js';
-	import {
-		Control,
-		Description,
-		Field,
-		Label,
-		type ControlAttrs,
-		type FsSuperForm
-	} from 'formsnap';
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { FormPath } from 'sveltekit-superforms';
+
+	import { cn } from '$lib/shadcn/utils.js';
+	import {
+		Control,
+		type ControlAttrs,
+		Description,
+		Field,
+		type FsSuperForm,
+		Label
+	} from 'formsnap';
+
 	import Errors from './Errors.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
 		formElem: Snippet<[ControlAttrs]>;
 	}
-	let { form, name, label, description, formElem, class: className }: Props = $props();
+	let { class: className, description, form, formElem, label, name }: Props = $props();
 </script>
 
-<Field {form} {name}>
+<Field {name} {form}>
 	<div class={cn('space-y-1', className)}>
 		<Control>
 			{#snippet children({ props })}

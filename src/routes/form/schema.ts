@@ -1,21 +1,22 @@
-import { type } from 'arktype';
-import { PasswordType } from './types/password.js';
 import { CalendarDate, Day, Time } from '$lib/utils/types/arktype.js';
+import { type } from 'arktype';
+
+import { PasswordType } from './types/password.js';
 
 export const MasterSchema = type({
+	calendarDate: CalendarDate,
+	color: type('string').atLeastLength(4).atMostLength(7),
 	email: 'string.email',
 	emailNull: type('string.email').or(type.null).default(null),
-	password: PasswordType,
 	message: 'string',
-	tag: 'string',
-	tags: 'string[]>0',
-	weekday: Day,
-	weekdays: Day.array().moreThanLength(0),
-	color: type('string').atLeastLength(4).atMostLength(7),
+	password: PasswordType,
 	select: 'number',
 	selects: type('number').array(),
+	tag: 'string',
+	tags: 'string[]>0',
 	time: Time,
-	calendarDate: CalendarDate
+	weekday: Day,
+	weekdays: Day.array().moreThanLength(0)
 });
 
 export const TextNullSchema = type({

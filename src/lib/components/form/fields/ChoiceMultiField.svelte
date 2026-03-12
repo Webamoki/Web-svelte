@@ -1,49 +1,51 @@
 <script
+	generics="V,I, K extends number | string | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
 	lang="ts"
-	generics="V,I, K extends string | number | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
-	import ChoiceMulti, { type ChoiceMultiProps } from '$lib/components/ui/choice/ChoiceMulti.svelte';
 	import type { FormPath } from 'sveltekit-superforms';
+
+	import ChoiceMulti, { type ChoiceMultiProps } from '$lib/components/ui/choice/ChoiceMulti.svelte';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
-	type Props = { class?: string } & FieldWrapperProps<T, U, M> & ChoiceMultiProps<V, I, K>;
+	type Props = ChoiceMultiProps<V, I, K> & FieldWrapperProps<T, U, M> & { class?: string };
 	let {
-		items,
+		buttonContent,
+		class: className,
+		description,
+		disabled,
+		form,
 		getKey,
 		getLabel,
 		getValue,
+
+		items,
+		label,
+		name,
 		onAdd,
 		onRemove,
-		vertical,
-		value = $bindable([]),
-
-		form,
-		name,
-		label,
-		description,
-		disabled,
 		readonly,
-		buttonContent,
-		class: className
+		value = $bindable([]),
+		vertical
 	}: Props = $props();
 </script>
 
-<FieldWrapper {form} {name} {label} {description} class={className}>
+<FieldWrapper {name} class={className} {description} {form} {label}>
 	{#snippet formElem(props)}
 		<ChoiceMulti
-			{items}
+			{buttonContent}
+			{disabled}
 			{getKey}
 			{getLabel}
 			{getValue}
+			{items}
 			{onAdd}
 			{onRemove}
-			{buttonContent}
-			{disabled}
 			{readonly}
 			{vertical}
 			{...props}
-			bind:value
 			class="w-full"
+			bind:value
 		/>
 	{/snippet}
 </FieldWrapper>

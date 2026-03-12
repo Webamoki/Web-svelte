@@ -1,16 +1,18 @@
-<script lang="ts" generics="T">
+<script generics="T" lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { DragManager } from './drag-manager.js';
+
 	import { LucideArrowDown } from '@lucide/svelte';
 
+	import type { DragManager } from './drag-manager.js';
+
 	interface Props {
-		isDroppable: (data: T) => boolean;
-		onDrop: (data: T) => void;
-		manager: DragManager<T>;
 		children: Snippet<[]>;
 		class?: string;
+		isDroppable: (data: T) => boolean;
+		manager: DragManager<T>;
+		onDrop: (data: T) => void;
 	}
-	let { isDroppable, onDrop, manager, children, class: className = '' }: Props = $props();
+	let { children, class: className = '', isDroppable, manager, onDrop }: Props = $props();
 
 	let isOver = $state(false);
 
@@ -40,9 +42,6 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	onmouseenter={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
-	onmouseup={handleMouseUp}
 	class={`relative p-4 transition-colors duration-150 ${className}
     ${
 			// Zero Layout Shift: always reserve the same border width to prevent layout flicker.
@@ -53,6 +52,9 @@
 					? 'border-2 border-dashed border-gray-400'
 					: 'border-2 border-dashed border-transparent'
 		}`}
+	onmouseenter={handleMouseEnter}
+	onmouseleave={handleMouseLeave}
+	onmouseup={handleMouseUp}
 >
 	{@render children()}
 

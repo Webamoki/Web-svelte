@@ -8,7 +8,10 @@ const config = {
 	},
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
-	preprocess: vitePreprocess()
+	preprocess: vitePreprocess(),
+	vitePlugin: {
+		inspector: true
+	}
 };
 
 export default config;

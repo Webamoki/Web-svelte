@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/setup-ci
 
       - name: Build SvelteKit site
-        run: pnpm build
+        run: pnpm build:site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

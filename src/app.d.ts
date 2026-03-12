@@ -1,21 +1,21 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
-	namespace App {
-		namespace Superforms {
-			type Message = {
-				data?: unknown;
-				showToast: boolean;
-				success: boolean;
-				text?: string;
-			};
-		}
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface PageState {}
-		// interface Platform {}
-	}
+  namespace App {
+    namespace Superforms {
+      type Message = {
+        data?: unknown;
+        showToast: boolean;
+        success: boolean;
+        text?: string;
+      };
+    }
+    // interface Error {}
+    // interface Locals {}
+    // interface PageData {}
+    // interface PageState {}
+    // interface Platform {}
+  }
 }
 
 export {};

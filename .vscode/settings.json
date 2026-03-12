@@ -1,4 +1,4 @@
 {
-	"tailwindCSS.classFunctions": ["cn"],
-	"editor.formatOnSave": true
+  "tailwindCSS.classFunctions": ["cn"],
+  "editor.formatOnSave": true
 }

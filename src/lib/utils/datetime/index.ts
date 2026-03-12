@@ -1,18 +1,18 @@
 import type { Transport } from '@sveltejs/kit';
 
 import {
-	CalendarDate,
-	type DateDuration,
-	DateFormatter,
-	fromDate,
-	getDayOfWeek,
-	getLocalTimeZone,
-	startOfMonth,
-	Time,
-	toCalendarDate,
-	today,
-	toTime,
-	ZonedDateTime
+  CalendarDate,
+  type DateDuration,
+  DateFormatter,
+  fromDate,
+  getDayOfWeek,
+  getLocalTimeZone,
+  startOfMonth,
+  Time,
+  toCalendarDate,
+  today,
+  toTime,
+  ZonedDateTime
 } from '@internationalized/date';
 import { map, range } from 'ramda';
 
@@ -24,17 +24,17 @@ const DEFAULT_LOCALE = 'en-GB';
 // Day of the week
 
 export const Days = [
-	'Monday',
-	'Tuesday',
-	'Wednesday',
-	'Thursday',
-	'Friday',
-	'Saturday',
-	'Sunday'
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
 ] as const;
 
 export const DayIndex: Record<Day, number> = Object.fromEntries(
-	Days.map((day, index) => [day, index])
+  Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
 
 /**
@@ -44,22 +44,22 @@ export const DayIndex: Record<Day, number> = Object.fromEntries(
  * @throws Error if the date of birth is in the future.
  */
 export function ageFromDob(dob: CalendarDate, timezone: string): number {
-	const todayDate = today(timezone);
+  const todayDate = today(timezone);
 
-	if (todayDate.compare(dob) < 0) {
-		throw new Error('Date of birth is in the future');
-	}
+  if (todayDate.compare(dob) < 0) {
+    throw new Error('Date of birth is in the future');
+  }
 
-	let years = todayDate.year - dob.year;
-	const monthDiff = todayDate.month - dob.month;
-	const dayDiff = todayDate.day - dob.day;
+  let years = todayDate.year - dob.year;
+  const monthDiff = todayDate.month - dob.month;
+  const dayDiff = todayDate.day - dob.day;
 
-	// Adjust years down if birthday hasn't occurred this year
-	if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-		years--;
-	}
+  // Adjust years down if birthday hasn't occurred this year
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    years--;
+  }
 
-	return years;
+  return years;
 }
 
 /**
@@ -71,7 +71,7 @@ export function ageFromDob(dob: CalendarDate, timezone: string): number {
  * @returns True if the ranges overlap, false otherwise.
  */
 export function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time): boolean {
-	return start1.compare(end2) < 0 && start2.compare(end1) < 0;
+  return start1.compare(end2) < 0 && start2.compare(end1) < 0;
 }
 
 /**
@@ -82,20 +82,20 @@ export function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time)
  * @returns True if the dates are within duration, false otherwise.
  */
 export function datesWithin(
-	date1: CalendarDate,
-	date2: CalendarDate,
-	duration: DateDuration
+  date1: CalendarDate,
+  date2: CalendarDate,
+  duration: DateDuration
 ): boolean {
-	// reject invalid order
-	if (date1.compare(date2) > 0) return false;
+  // reject invalid order
+  if (date1.compare(date2) > 0) return false;
 
-	return date1.add(duration).compare(date2) >= 0;
+  return date1.add(duration).compare(date2) >= 0;
 }
 
 /** Gets the day index of the date */
 export function getDayIndex(date: CalendarDate): number {
-	// Always start 0 on Monday
-	return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
+  // Always start 0 on Monday
+  return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
 }
 
 /**
@@ -104,7 +104,7 @@ export function getDayIndex(date: CalendarDate): number {
  * @returns The day of the week
  */
 export function getDayOfDate(date: CalendarDate): Day {
-	return Days[getDayIndex(date)];
+  return Days[getDayIndex(date)];
 }
 
 /**
@@ -115,15 +115,15 @@ export function getDayOfDate(date: CalendarDate): Day {
  * @throws An error if the day of the week is invalid.
  */
 export function getLastDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
-	const dayIndex = DayIndex[dayOfWeek];
-	const startIndex = getDayIndex(startDate);
+  const dayIndex = DayIndex[dayOfWeek];
+  const startIndex = getDayIndex(startDate);
 
-	// Already on the day
-	if (startIndex === dayIndex) return startDate;
+  // Already on the day
+  if (startIndex === dayIndex) return startDate;
 
-	// Calculate how many days to subtract to get to the previous occurrence
-	const subtraction = (startIndex + 7 - dayIndex) % 7;
-	return startDate.subtract({ days: subtraction });
+  // Calculate how many days to subtract to get to the previous occurrence
+  const subtraction = (startIndex + 7 - dayIndex) % 7;
+  return startDate.subtract({ days: subtraction });
 }
 
 /**
@@ -135,17 +135,17 @@ export function getLastDateOfDay(dayOfWeek: Day, startDate: CalendarDate): Calen
  * @throws An error if the day of the week is invalid.
  */
 export function getLastDatesOfDay(
-	dayOfWeek: Day,
-	count: number,
-	startDate: CalendarDate
+  dayOfWeek: Day,
+  count: number,
+  startDate: CalendarDate
 ): CalendarDate[] {
-	// Set up the array of dates
-	if (count < 1) return [];
+  // Set up the array of dates
+  if (count < 1) return [];
 
-	// Get the most recent date
-	const latestDate = getLastDateOfDay(dayOfWeek, startDate);
-	// Calculate all dates subtracted, oldest -> most recent
-	return map((i) => latestDate.subtract({ weeks: count - 1 - i }), range(0, count));
+  // Get the most recent date
+  const latestDate = getLastDateOfDay(dayOfWeek, startDate);
+  // Calculate all dates subtracted, oldest -> most recent
+  return map((i) => latestDate.subtract({ weeks: count - 1 - i }), range(0, count));
 }
 
 /**
@@ -155,13 +155,13 @@ export function getLastDatesOfDay(
  * @returns The array of dates from oldest to most recent.
  */
 export function getLastMonths(count: number, startDate: CalendarDate): CalendarDate[] {
-	if (count < 1) return [];
+  if (count < 1) return [];
 
-	// Get the most recent date
-	const latestDate = startOfMonth(startDate);
+  // Get the most recent date
+  const latestDate = startOfMonth(startDate);
 
-	// Calculate the previous dates
-	return map((i) => latestDate.subtract({ months: count - 1 - i }), range(0, count));
+  // Calculate the previous dates
+  return map((i) => latestDate.subtract({ months: count - 1 - i }), range(0, count));
 }
 
 /**
@@ -171,15 +171,15 @@ export function getLastMonths(count: number, startDate: CalendarDate): CalendarD
  * @returns The date of the next occurrence of the specified day.
  */
 export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
-	const dayIndex = DayIndex[dayOfWeek];
-	const startIndex = getDayIndex(startDate);
+  const dayIndex = DayIndex[dayOfWeek];
+  const startIndex = getDayIndex(startDate);
 
-	// Already on the day
-	if (startIndex === dayIndex) return startDate;
+  // Already on the day
+  if (startIndex === dayIndex) return startDate;
 
-	// Calculate how many days to add to get to the next occurrence
-	const addition = (dayIndex - startIndex + 7) % 7;
-	return startDate.add({ days: addition });
+  // Calculate how many days to add to get to the next occurrence
+  const addition = (dayIndex - startIndex + 7) % 7;
+  return startDate.add({ days: addition });
 }
 
 /* Intervals */
@@ -191,8 +191,8 @@ export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): Calen
  * @returns True if the date is the specified day, false otherwise.
  */
 export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
-	const dateDay = getDayOfDate(date);
-	return dateDay === dayOfWeek;
+  const dateDay = getDayOfDate(date);
+  return dateDay === dayOfWeek;
 }
 
 /**
@@ -201,7 +201,7 @@ export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
  * @returns True if the date is today, false otherwise.
  */
 export function isDateToday(date: CalendarDate, timezone: string): boolean {
-	return today(timezone).compare(date) === 0;
+  return today(timezone).compare(date) === 0;
 }
 
 const msPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -212,10 +212,10 @@ const msPerWeek = 7 * 24 * 60 * 60 * 1000;
  * @param date2 - The second date in order.
  */
 export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number {
-	const date1Abs = date1.toDate(DEFAULT_TIME_ZONE).getTime();
-	const date2Abs = date2.toDate(DEFAULT_TIME_ZONE).getTime();
+  const date1Abs = date1.toDate(DEFAULT_TIME_ZONE).getTime();
+  const date2Abs = date2.toDate(DEFAULT_TIME_ZONE).getTime();
 
-	return Math.floor((date2Abs - date1Abs) / msPerWeek);
+  return Math.floor((date2Abs - date1Abs) / msPerWeek);
 }
 
 /* Formatting */
@@ -229,8 +229,8 @@ export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number 
  * @returns Formatted letter of the day of the week.
  */
 export function formatDayLetter(day: Day): string {
-	// Use the first letters of the day
-	return day.slice(0, 1);
+  // Use the first letters of the day
+  return day.slice(0, 1);
 }
 
 /**
@@ -240,32 +240,32 @@ export function formatDayLetter(day: Day): string {
  * @returns Formatted string of the day of the week.
  */
 export function formatDayShort(day: Day): string {
-	// Use the first three letters of the day
-	return day.slice(0, 3);
+  // Use the first three letters of the day
+  return day.slice(0, 3);
 }
 
 /* Calendar Dates */
 
 const FullDateFormatter = new DateFormatter(DEFAULT_LOCALE, {
-	day: 'numeric',
-	month: 'short',
-	year: 'numeric'
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric'
 });
 
 const ShortDateFormatter = new DateFormatter(DEFAULT_LOCALE, {
-	day: 'numeric',
-	month: 'short'
+  day: 'numeric',
+  month: 'short'
 });
 
 const MonthFormatter = new DateFormatter(DEFAULT_LOCALE, {
-	month: 'short',
-	year: '2-digit'
+  month: 'short',
+  year: '2-digit'
 });
 
 const NumFormatter = new DateFormatter(DEFAULT_LOCALE, {
-	day: '2-digit',
-	month: '2-digit',
-	year: 'numeric'
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
 });
 
 /**
@@ -275,9 +275,9 @@ const NumFormatter = new DateFormatter(DEFAULT_LOCALE, {
  * @example "05/10/2023 14:30:00"
  */
 export function formatAbsolute(datetime: ZonedDateTime): string {
-	const date = toCalendarDate(datetime);
-	const time = toTime(datetime);
-	return `${formatDateNum(date)} ${formatTimeFull(time)}`;
+  const date = toCalendarDate(datetime);
+  const time = toTime(datetime);
+  return `${formatDateNum(date)} ${formatTimeFull(time)}`;
 }
 
 /**
@@ -286,7 +286,7 @@ export function formatAbsolute(datetime: ZonedDateTime): string {
  * @example "5 Oct 2023"
  */
 export function formatDateFull(date: CalendarDate) {
-	return formatDate(date, FullDateFormatter);
+  return formatDate(date, FullDateFormatter);
 }
 
 /**
@@ -296,7 +296,7 @@ export function formatDateFull(date: CalendarDate) {
  * @example "2023-10-05"
  */
 export function formatDateISO(date: CalendarDate): string {
-	return date.toString();
+  return date.toString();
 }
 
 /**
@@ -305,7 +305,7 @@ export function formatDateISO(date: CalendarDate): string {
  * @example "05/10/2023"
  */
 export function formatDateNum(date: CalendarDate): string {
-	return formatDate(date, NumFormatter);
+  return formatDate(date, NumFormatter);
 }
 
 /**
@@ -314,7 +314,7 @@ export function formatDateNum(date: CalendarDate): string {
  * @example "Oct 5"
  */
 export function formatDateShort(date: CalendarDate) {
-	return formatDate(date, ShortDateFormatter);
+  return formatDate(date, ShortDateFormatter);
 }
 
 /**
@@ -324,7 +324,7 @@ export function formatDateShort(date: CalendarDate) {
  * @example "Oct"
  */
 export function formatMonth(date: CalendarDate): string {
-	return formatDate(date, MonthFormatter);
+  return formatDate(date, MonthFormatter);
 }
 
 /* Times */
@@ -336,8 +336,8 @@ export function formatMonth(date: CalendarDate): string {
  * @returns end time in HH:MM format
  */
 export function formatTimeEnd(timeStart: Time, durationMinutes: number): string {
-	const timeEnd = timeStart.add({ minutes: durationMinutes });
-	return formatTimeShort(timeEnd);
+  const timeEnd = timeStart.add({ minutes: durationMinutes });
+  return formatTimeShort(timeEnd);
 }
 
 /**
@@ -346,10 +346,10 @@ export function formatTimeEnd(timeStart: Time, durationMinutes: number): string 
  * @returns string of time in that format
  */
 export function formatTimeFull(time: Time): string {
-	const hours = padNum(time.hour, 2);
-	const minutes = padNum(time.minute, 2);
-	const seconds = padNum(time.second, 2);
-	return `${hours}:${minutes}:${seconds}`;
+  const hours = padNum(time.hour, 2);
+  const minutes = padNum(time.minute, 2);
+  const seconds = padNum(time.second, 2);
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 /**
@@ -358,9 +358,9 @@ export function formatTimeFull(time: Time): string {
  * @returns string of time in that format
  */
 export function formatTimeShort(time: Time): string {
-	const hours = padNum(time.hour, 2);
-	const minutes = padNum(time.minute, 2);
-	return `${hours}:${minutes}`;
+  const hours = padNum(time.hour, 2);
+  const minutes = padNum(time.minute, 2);
+  return `${hours}:${minutes}`;
 }
 
 /**
@@ -369,7 +369,7 @@ export function formatTimeShort(time: Time): string {
  * @returns The unfrozen CalendarDate object.
  */
 export function unfreezeDate(raw: ReturnType<typeof $state.snapshot<CalendarDate>>): CalendarDate {
-	return new CalendarDate(raw.year, raw.month, raw.day);
+  return new CalendarDate(raw.year, raw.month, raw.day);
 }
 
 /**
@@ -378,42 +378,42 @@ export function unfreezeDate(raw: ReturnType<typeof $state.snapshot<CalendarDate
  * @returns The unfrozen Time object.
  */
 export function unfreezeTime(raw: ReturnType<typeof $state.snapshot<Time>>): Time {
-	return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
+  return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
 }
 
 /* State handling */
 
 function formatDate(date: CalendarDate, formatter: DateFormatter): string {
-	const nativeDate = date.toDate(getLocalTimeZone());
-	return formatter.format(nativeDate);
+  const nativeDate = date.toDate(getLocalTimeZone());
+  return formatter.format(nativeDate);
 }
 
 // Pad number with zeroes to the left
 function padNum(num: number, len: number): string {
-	if (isNaN(num)) {
-		return '0'.repeat(len);
-	}
+  if (isNaN(num)) {
+    return '0'.repeat(len);
+  }
 
-	return num.toString().padStart(len, '0');
+  return num.toString().padStart(len, '0');
 }
 
 // SerDe
 
 export const dateTransport: Transport = {
-	CalendarDate: {
-		decode: ([year, month, day]: [number, number, number]) => new CalendarDate(year, month, day),
-		encode: (d) => d instanceof CalendarDate && [d.year, d.month, d.day]
-	},
-	Time: {
-		decode: ([hour, minute, second, millisecond]: [number, number, number, number]) =>
-			new Time(hour, minute, second, millisecond),
-		encode: (t) => t instanceof Time && [t.hour, t.minute, t.second, t.millisecond]
-	},
-	ZonedDateTime: {
-		decode: ([absoluteString, timezone]: [string, string]) => {
-			const nativeDate = new Date(absoluteString);
-			return fromDate(nativeDate, timezone);
-		},
-		encode: (value) => value instanceof ZonedDateTime && [value.toAbsoluteString(), value.timeZone]
-	}
+  CalendarDate: {
+    decode: ([year, month, day]: [number, number, number]) => new CalendarDate(year, month, day),
+    encode: (d) => d instanceof CalendarDate && [d.year, d.month, d.day]
+  },
+  Time: {
+    decode: ([hour, minute, second, millisecond]: [number, number, number, number]) =>
+      new Time(hour, minute, second, millisecond),
+    encode: (t) => t instanceof Time && [t.hour, t.minute, t.second, t.millisecond]
+  },
+  ZonedDateTime: {
+    decode: ([absoluteString, timezone]: [string, string]) => {
+      const nativeDate = new Date(absoluteString);
+      return fromDate(nativeDate, timezone);
+    },
+    encode: (value) => value instanceof ZonedDateTime && [value.toAbsoluteString(), value.timeZone]
+  }
 };

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Toaster } from 'svelte-sonner';
+  import { Toaster } from 'svelte-sonner';
 
-	import '../app.css';
+  import '../app.css';
 
-	let { children } = $props();
+  let { children } = $props();
 </script>
 
 {@render children()}

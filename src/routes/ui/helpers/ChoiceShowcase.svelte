@@ -15,46 +15,46 @@
 	<div>
 		Single: {valueOne}
 		<Choice
-			bind:value={valueOne}
-			{items}
 			getKey={identity}
-			getValue={identity}
 			getLabel={identity}
+			getValue={identity}
+			{items}
+			bind:value={valueOne}
 		/>
 	</div>
 
 	<div>
 		Multiple: {valueMultiple}
 		<ChoiceMulti
-			bind:value={valueMultiple}
-			{items}
 			getKey={identity}
-			getValue={identity}
 			getLabel={identity}
+			getValue={identity}
+			{items}
+			bind:value={valueMultiple}
 		/>
 	</div>
 
 	<div>
 		Single Vertical: {valueOneV}
 		<Choice
-			bind:value={valueOneV}
-			{items}
 			getKey={identity}
-			getValue={identity}
 			getLabel={identity}
+			getValue={identity}
+			{items}
 			vertical
+			bind:value={valueOneV}
 		/>
 	</div>
 
 	<div>
 		Multiple Vertical: {valueMultipleV}
 		<ChoiceMulti
-			bind:value={valueMultipleV}
-			{items}
 			getKey={identity}
 			getLabel={identity}
 			getValue={identity}
+			{items}
 			vertical
+			bind:value={valueMultipleV}
 		/>
 	</div>
 </div>

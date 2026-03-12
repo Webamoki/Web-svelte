@@ -1,36 +1,41 @@
+import type { Transport } from '@sveltejs/kit';
+import type { SuperValidated } from 'sveltekit-superforms/client';
+
 import { type } from 'arktype';
+import { parse, stringify } from 'devalue';
 import { toast } from 'svelte-sonner';
 import { createSubscriber } from 'svelte/reactivity';
-import { parse, stringify } from 'devalue';
-import type { SuperValidated } from 'sveltekit-superforms/client';
-import type { Transport } from '@sveltejs/kit';
+
 import { dateTransport } from '../datetime/index.js';
 
 export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
+	get isProcessing(): boolean {
+		this.#subscribe();
+		return this.#isProcessing;
+	}
 	// state storage
 	#isProcessing = false;
-	#url = '';
-	#schema: S;
-	#transport: Transport;
+	#onError?: (message: App.Superforms.Message) => void;
 	#onSuccess?: (
 		form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 	) => void;
-	#onError?: (message: App.Superforms.Message) => void;
-
+	#schema: S;
 	// svelte reactive tracking
 	#subscribe;
-	#update = () => {};
+
+	#transport: Transport;
+	#url = '';
 
 	constructor(
 		schema: S,
 		action: string,
 		options: {
 			actionName?: string;
-			transport?: Transport;
+			onError?: (message: App.Superforms.Message) => void;
 			onSuccess?: (
 				form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
 			) => void;
-			onError?: (message: App.Superforms.Message) => void;
+			transport?: Transport;
 		} = {}
 	) {
 		this.#url = `${action}${options.actionName ? '?/' + options.actionName : ''}`;
@@ -44,58 +49,6 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 		});
 	}
 
-	// Apply transport encoding to data before sending
-	#encodeTransport(data: unknown): unknown {
-		if (!this.#transport || typeof data !== 'object' || data === null) {
-			return data;
-		}
-
-		// Handle arrays
-		if (Array.isArray(data)) {
-			return data.map((item) => this.#encodeTransport(item));
-		}
-
-		// Try each transport encoder
-		for (const [key, encoder] of Object.entries(this.#transport)) {
-			const encoded = encoder.encode(data);
-			if (encoded !== false) {
-				return { __type: key, __value: encoded };
-			}
-		}
-
-		// Recursively encode nested objects
-		const result: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(data)) {
-			result[key] = this.#encodeTransport(value);
-		}
-		return result;
-	}
-
-	// Apply transport decoding to received data
-	#decodeTransport(data: unknown): unknown {
-		if (!this.#transport || typeof data !== 'object' || data === null) {
-			return data;
-		}
-
-		// Handle arrays
-		if (Array.isArray(data)) {
-			return data.map((item) => this.#decodeTransport(item));
-		}
-
-		// Check if this is a transport-encoded value
-		const obj = data as Record<string, unknown>;
-		if (obj.__type && obj.__value && this.#transport[obj.__type as string]) {
-			return this.#transport[obj.__type as string].decode(obj.__value);
-		}
-
-		// Recursively decode nested objects
-		const result: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(obj)) {
-			result[key] = this.#decodeTransport(value);
-		}
-		return result;
-	}
-
 	async submit(data: S['infer']) {
 		this.#isProcessing = true;
 		this.#update();
@@ -104,10 +57,10 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 		if (validated instanceof type.errors) {
 			console.error('Validation failed:', validated.summary);
 			this.#onError?.({
-				text: 'Validation failed',
 				data: validated.summary,
+				showToast: false,
 				success: false,
-				showToast: false
+				text: 'Validation failed'
 			});
 			return;
 		}
@@ -121,8 +74,8 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			formData.append('__superform_json', stringify(encodedData));
 
 			const res = await fetch(this.#url, {
-				method: 'POST',
-				body: formData
+				body: formData,
+				method: 'POST'
 			});
 
 			const result = await res.json();
@@ -154,14 +107,63 @@ export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
 			}
 		} catch (err) {
 			console.error(err);
-			this.#onError?.({ text: 'Network error', data: err, success: false, showToast: false });
+			this.#onError?.({ data: err, showToast: false, success: false, text: 'Network error' });
 		}
 		this.#isProcessing = false;
 		this.#update();
 	}
 
-	get isProcessing(): boolean {
-		this.#subscribe();
-		return this.#isProcessing;
+	// Apply transport decoding to received data
+	#decodeTransport(data: unknown): unknown {
+		if (!this.#transport || typeof data !== 'object' || data === null) {
+			return data;
+		}
+
+		// Handle arrays
+		if (Array.isArray(data)) {
+			return data.map((item) => this.#decodeTransport(item));
+		}
+
+		// Check if this is a transport-encoded value
+		const obj = data as Record<string, unknown>;
+		if (obj.__type && obj.__value && this.#transport[obj.__type as string]) {
+			return this.#transport[obj.__type as string].decode(obj.__value);
+		}
+
+		// Recursively decode nested objects
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(obj)) {
+			result[key] = this.#decodeTransport(value);
+		}
+		return result;
 	}
+
+	// Apply transport encoding to data before sending
+	#encodeTransport(data: unknown): unknown {
+		if (!this.#transport || typeof data !== 'object' || data === null) {
+			return data;
+		}
+
+		// Handle arrays
+		if (Array.isArray(data)) {
+			return data.map((item) => this.#encodeTransport(item));
+		}
+
+		// Try each transport encoder
+		for (const [key, encoder] of Object.entries(this.#transport)) {
+			const encoded = encoder.encode(data);
+			if (encoded !== false) {
+				return { __type: key, __value: encoded };
+			}
+		}
+
+		// Recursively encode nested objects
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(data)) {
+			result[key] = this.#encodeTransport(value);
+		}
+		return result;
+	}
+
+	#update = () => {};
 }

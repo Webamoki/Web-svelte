@@ -1,10 +1,18 @@
 import { createSubscriber } from 'svelte/reactivity';
 
 export class DragManager<T> {
-	#dragData: T | null = null;
+	get dragData(): null | T {
+		this.#subscribe();
+		return this.#dragData;
+	}
+
+	get isDragging(): boolean {
+		this.#subscribe();
+		return this.#dragData !== null;
+	}
+	#dragData: null | T = null;
 
 	#subscribe;
-	#update = () => {};
 
 	constructor() {
 		this.#subscribe = createSubscriber((update) => {
@@ -23,13 +31,5 @@ export class DragManager<T> {
 		this.#update();
 	}
 
-	get isDragging(): boolean {
-		this.#subscribe();
-		return this.#dragData !== null;
-	}
-
-	get dragData(): T | null {
-		this.#subscribe();
-		return this.#dragData;
-	}
+	#update = () => {};
 }

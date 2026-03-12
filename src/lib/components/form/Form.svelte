@@ -1,16 +1,16 @@
-<script lang="ts" generics="T extends Record<string, unknown>, M">
+<script generics="T extends Record<string, unknown>, M" lang="ts">
 	import type { FsSuperForm } from 'formsnap';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		form: FsSuperForm<T, M>;
 		action: string;
 		actionName?: string;
-		class?: string;
 		children?: Snippet;
+		class?: string;
+		form: FsSuperForm<T, M>;
 	}
 
-	let { form, action: _action, actionName, class: className, children }: Props = $props();
+	let { action: _action, actionName, children, class: className, form }: Props = $props();
 	actionName = actionName ? `?/${actionName}` : '';
 </script>
 

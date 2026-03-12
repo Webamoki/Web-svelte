@@ -2,22 +2,24 @@
 	import { identity } from 'ramda';
 
 	export interface WeekdayChoiceMultiProps {
-		value: Day[];
+		class?: string;
+		disabled?: boolean | null;
+		letterLabels?: boolean;
+		longLabels?: boolean;
 		onAdd?: (value: Day) => void;
 		onRemove?: (value: Day) => void;
-		vertical?: boolean;
-		longLabels?: boolean;
-		letterLabels?: boolean;
-		disabled?: boolean | null;
 		readonly?: boolean | null;
-		class?: string;
+		value: Day[];
+		vertical?: boolean;
 	}
 </script>
 
 <script lang="ts">
-	import ChoiceMulti from './ChoiceMulti.svelte';
-	import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
 	import type { Day } from '$lib/utils/types/arktype.js';
+
+	import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
+
+	import ChoiceMulti from './ChoiceMulti.svelte';
 
 	let { value = $bindable([]), ...props }: WeekdayChoiceMultiProps = $props();
 
@@ -28,4 +30,4 @@
 	});
 </script>
 
-<ChoiceMulti items={Days} bind:value {getLabel} getKey={identity} getValue={identity} {...props} />
+<ChoiceMulti getKey={identity} {getLabel} getValue={identity} items={Days} bind:value {...props} />

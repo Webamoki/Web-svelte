@@ -1,22 +1,23 @@
 <script lang="ts" module>
 	export interface WeekdayChoiceProps {
-		value?: Day;
-		onChange?: (value: Day) => void;
-		vertical?: boolean;
-		longLabels?: boolean;
-		letterLabels?: boolean;
-		disabled?: boolean | null;
-		readonly?: boolean | null;
 		class?: string;
+		disabled?: boolean | null;
+		letterLabels?: boolean;
+		longLabels?: boolean;
+		onChange?: (value: Day) => void;
+		readonly?: boolean | null;
+		value?: Day;
+		vertical?: boolean;
 	}
 </script>
 
 <script lang="ts">
+	import type { Day } from '$lib/utils/types/arktype.js';
+
 	import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
 	import { identity } from 'ramda';
 
 	import Choice from './Choice.svelte';
-	import type { Day } from '$lib/utils/types/arktype.js';
 
 	let { value = $bindable(undefined), ...props }: WeekdayChoiceProps = $props();
 
@@ -27,4 +28,4 @@
 	});
 </script>
 
-<Choice items={Days} bind:value {getLabel} getValue={identity} getKey={identity} {...props} />
+<Choice getKey={identity} {getLabel} getValue={identity} items={Days} bind:value {...props} />

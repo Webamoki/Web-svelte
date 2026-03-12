@@ -1,12 +1,13 @@
 <script lang="ts" module>
 	export type ContextMenuState = {
-		position: { x: number; y: number };
 		open: boolean;
+		position: { x: number; y: number };
 	};
 </script>
 
 <script lang="ts">
-	import { setContext, onDestroy, type Snippet } from 'svelte';
+	import { onDestroy, setContext, type Snippet } from 'svelte';
+
 	import { contextMenuState } from './context-menu-state.svelte';
 
 	interface Props {
@@ -19,8 +20,8 @@
 	const menuId = Symbol('context-menu');
 
 	let menuState = $state<ContextMenuState>({
-		position: { x: 0, y: 0 },
-		open: false
+		open: false,
+		position: { x: 0, y: 0 }
 	});
 
 	// Watch for changes to menuState.open and sync with global store

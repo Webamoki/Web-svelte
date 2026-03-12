@@ -1,23 +1,25 @@
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
-	import { Input } from '$lib/shadcn/components/ui/input/index.js';
-	import { cn } from '$lib/shadcn/utils.js';
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
 	import type { Component } from 'svelte';
 	import type { FormPath } from 'sveltekit-superforms';
+
+	import { Input } from '$lib/shadcn/components/ui/input/index.js';
+	import { cn } from '$lib/shadcn/utils.js';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
-		value?: string | null;
-		type?: HTMLInputElement['type'];
 		class?: string;
-		placeholder?: string;
 		icon?: Component;
+		placeholder?: string;
+		type?: HTMLInputElement['type'];
+		value?: null | string;
 	}
 	let {
-		value = $bindable(),
-		type = 'text',
 		class: className,
-		placeholder,
 		icon,
+		placeholder,
+		type = 'text',
+		value = $bindable(),
 		...fieldProps
 	}: Props = $props();
 
@@ -39,15 +41,15 @@
 					<Icon class="size-5" />
 				</div>
 				<Input
-					{type}
-					bind:value={get, set}
 					class={cn('pl-12', className)}
 					{placeholder}
+					{type}
+					bind:value={get, set}
 					{...props}
 				/>
 			</div>
 		{:else}
-			<Input {type} bind:value={get, set} class={className} {placeholder} {...props} />
+			<Input class={className} {placeholder} {type} bind:value={get, set} {...props} />
 		{/if}
 	{/snippet}
 </FieldWrapper>

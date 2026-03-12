@@ -1,7 +1,10 @@
 <script
+	generics="I,V, K extends number | string,T extends Record<string, unknown>, U extends FormPath<T>, M"
 	lang="ts"
-	generics="I,V, K extends string | number,T extends Record<string, unknown>, U extends FormPath<T>, M"
 >
+	import type { Component } from 'svelte';
+	import type { FormPath } from 'sveltekit-superforms';
+
 	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
 	import {
 		Select,
@@ -12,31 +15,30 @@
 		SelectTrigger
 	} from '$lib/shadcn/components/ui/select/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
-	import type { Component } from 'svelte';
-	import type { FormPath } from 'sveltekit-superforms';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
-		value?: V;
-		items: readonly I[];
+		class?: string;
 		getKey: (item: I) => K;
 		getLabel: (item: I) => string;
 		getValue: (item: I) => V;
-		onchange?: (value: V | undefined) => void;
-		class?: string;
-		placeholder: string;
 		icon?: Component;
+		items: readonly I[];
+		onchange?: (value: undefined | V) => void;
+		placeholder: string;
+		value?: V;
 	}
 	let {
-		value = $bindable(undefined),
 		class: className,
 		getKey: _getKey,
 		getLabel,
 		getValue,
+		icon,
+		items,
 		onchange,
 		placeholder,
-		items,
-		icon,
+		value = $bindable(undefined),
 		...fieldProps
 	}: Props = $props();
 	let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
@@ -80,7 +82,7 @@
 				<SelectGroup>
 					<SelectLabel>{fieldProps.label}</SelectLabel>
 					{#each items as item (getKey(item))}
-						<SelectItem class="cursor-pointer" value={getKey(item)} label={getLabel(item)} />
+						<SelectItem class="cursor-pointer" label={getLabel(item)} value={getKey(item)} />
 					{/each}
 				</SelectGroup>
 			</SelectContent>

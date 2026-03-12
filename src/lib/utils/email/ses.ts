@@ -1,19 +1,19 @@
 import { signRequest } from './aws-signer.js';
 
 export interface SendEmailOptions {
-	to: string | string[];
-	cc?: string | string[];
-	bcc?: string | string[];
-	subject: string;
-	text?: string;
-	html?: string;
-	from: string;
-	fromName?: string;
-	replyTo?: string | string[];
+	awsAccessKeyId: string;
 	// AWS credentials (required)
 	awsRegion: string;
-	awsAccessKeyId: string;
 	awsSecretAccessKey: string;
+	bcc?: string | string[];
+	cc?: string | string[];
+	from: string;
+	fromName?: string;
+	html?: string;
+	replyTo?: string | string[];
+	subject: string;
+	text?: string;
+	to: string | string[];
 }
 
 /**
@@ -25,18 +25,18 @@ export interface SendEmailOptions {
 export async function sendEmail(options: SendEmailOptions): Promise<string> {
 	if (!options) throw new Error('sendEmail: options is required');
 	const {
-		to,
-		cc,
+		awsAccessKeyId,
+		awsRegion,
+		awsSecretAccessKey,
 		bcc,
-		subject,
-		text,
-		html,
+		cc,
 		from,
 		fromName,
+		html,
 		replyTo,
-		awsRegion,
-		awsAccessKeyId,
-		awsSecretAccessKey
+		subject,
+		text,
+		to
 	} = options;
 
 	if (!subject) {
@@ -123,19 +123,19 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 		// Sign the request
 		const { headers } = await signRequest('POST', host, path, body, {
 			accessKeyId: awsAccessKeyId,
-			secretAccessKey: awsSecretAccessKey,
-			region: awsRegion
+			region: awsRegion,
+			secretAccessKey: awsSecretAccessKey
 		});
 
 		// Make the request
 		const response = await fetch(`https://${host}${path}`, {
-			method: 'POST',
+			body,
 			headers: {
 				...headers,
-				Host: host,
-				'Content-Length': body.length.toString()
+				'Content-Length': body.length.toString(),
+				Host: host
 			},
-			body
+			method: 'POST'
 		});
 
 		const responseText = await response.text();
@@ -154,7 +154,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 			}
 
 			throw new Error(
-				`sendEmail: failed to send email: ${JSON.stringify({ message: errorMessage, code: errorCode })}`
+				`sendEmail: failed to send email: ${JSON.stringify({ code: errorCode, message: errorMessage })}`
 			);
 		}
 
@@ -187,7 +187,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
 			const e = err as Record<string, unknown>;
 			if (typeof e['name'] === 'string') code = e['name'] as string;
 		}
-		const details = { message, code };
+		const details = { code, message };
 		throw new Error(`sendEmail: failed to send email: ${JSON.stringify(details)}`);
 	}
 }

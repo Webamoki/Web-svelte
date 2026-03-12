@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { cn } from '$lib/shadcn/utils.js';
 	import { getContext, onMount, type Snippet } from 'svelte';
 	import { scale } from 'svelte/transition';
+
 	import type { ContextMenuState } from './ContextMenu.svelte';
-	import { cn } from '$lib/shadcn/utils.js';
 
 	interface Props {
 		children: Snippet<[]>;
@@ -76,8 +77,8 @@
 {#if menuState.open}
 	<div
 		bind:this={menuElement}
-		class={cn('context-menu-content', className)}
 		style="left: {adjustedPosition.x}px; top: {adjustedPosition.y}px;"
+		class={cn('context-menu-content', className)}
 		transition:scale={{ duration: 150, start: 0.95 }}
 	>
 		{@render children()}

@@ -1,4 +1,30 @@
-export function fuzzySearchHighlight(needle: string, haystack: string): string | null {
+export function fuzzySearch(needle: string, haystack: string) {
+	const hlen = haystack.length;
+	const nlen = needle.length;
+
+	if (nlen > hlen) {
+		return false;
+	}
+	if (nlen === hlen) {
+		return needle.toLowerCase() === haystack.toLowerCase();
+	}
+
+	const lowerNeedle = needle.toLowerCase();
+	const lowerHaystack = haystack.toLowerCase();
+
+	outer: for (let i = 0, j = 0; i < nlen; i++) {
+		const nch = lowerNeedle.charCodeAt(i);
+		while (j < hlen) {
+			if (lowerHaystack.charCodeAt(j++) === nch) {
+				continue outer;
+			}
+		}
+		return false;
+	}
+
+	return true;
+}
+export function fuzzySearchHighlight(needle: string, haystack: string): null | string {
 	const hlen = haystack.length;
 	const nlen = needle.length;
 
@@ -42,30 +68,4 @@ export function fuzzySearchHighlight(needle: string, haystack: string): string |
 	if (matchedCount < nlen) return null;
 
 	return `<span>${result}</span>`;
-}
-export function fuzzySearch(needle: string, haystack: string) {
-	const hlen = haystack.length;
-	const nlen = needle.length;
-
-	if (nlen > hlen) {
-		return false;
-	}
-	if (nlen === hlen) {
-		return needle.toLowerCase() === haystack.toLowerCase();
-	}
-
-	const lowerNeedle = needle.toLowerCase();
-	const lowerHaystack = haystack.toLowerCase();
-
-	outer: for (let i = 0, j = 0; i < nlen; i++) {
-		const nch = lowerNeedle.charCodeAt(i);
-		while (j < hlen) {
-			if (lowerHaystack.charCodeAt(j++) === nch) {
-				continue outer;
-			}
-		}
-		return false;
-	}
-
-	return true;
 }

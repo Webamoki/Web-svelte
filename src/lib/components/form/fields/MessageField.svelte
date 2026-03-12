@@ -1,29 +1,31 @@
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
+	import type { Component } from 'svelte';
+	import type { FormPath } from 'sveltekit-superforms';
+
 	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
 	import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
 	import { Lock, LockOpen } from '@lucide/svelte';
-	import type { Component } from 'svelte';
-	import type { FormPath } from 'sveltekit-superforms';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
-		value?: string;
 		class?: string;
-		placeholder?: string;
 		defaultHeight?: number;
-		showLock?: boolean;
 		defaultLocked?: boolean;
 		icon?: Component;
+		placeholder?: string;
+		showLock?: boolean;
+		value?: string;
 	}
 	let {
-		value = $bindable(),
 		class: className,
-		placeholder,
 		defaultHeight = 100,
-		showLock = true,
 		defaultLocked = false,
 		icon,
+		placeholder,
+		showLock = true,
+		value = $bindable(),
 		...fieldProps
 	}: Props = $props();
 
@@ -34,13 +36,13 @@
 	{#snippet formElem(props)}
 		<div class="flex w-full items-start gap-2">
 			<!-- Textarea itself with optional left icon -->
-			<IconInputWrapper {icon} iconPosition="top" flex>
+			<IconInputWrapper flex {icon} iconPosition="top">
 				{#snippet children({ class: iconClass })}
 					<Textarea
-						bind:value
+						style={defaultHeight ? `height: ${defaultHeight}px` : undefined}
 						class={cn(iconClass, className || '', locked ? 'resize-none' : 'resize-y')}
 						{placeholder}
-						style={defaultHeight ? `height: ${defaultHeight}px` : undefined}
+						bind:value
 						{...props}
 					/>
 				{/snippet}
@@ -49,10 +51,10 @@
 			<!-- Lock/unlock button -->
 			{#if showLock}
 				<button
-					type="button"
 					class="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-300 px-4 py-3 text-gray-500 transition-all hover:bg-gray-50 focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none"
-					onclick={() => (locked = !locked)}
 					aria-label={locked ? 'Unlock height' : 'Lock height'}
+					onclick={() => (locked = !locked)}
+					type="button"
 				>
 					{#if locked}
 						<Lock class="size-5" />

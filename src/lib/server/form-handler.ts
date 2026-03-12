@@ -1,4 +1,22 @@
 import { fail, message as superFormMessage, type SuperValidated } from 'sveltekit-superforms';
+export function errorMessage<T extends Record<string, unknown>>(
+	form: SuperValidated<T>,
+	options?: { data?: unknown; showToast?: boolean; text?: string }
+) {
+	const message = {
+		data: options?.data,
+		showToast: options?.showToast ?? false,
+		success: false,
+		text: options?.text
+	} as App.Superforms.Message;
+	return superFormMessage(form, message);
+}
+
+export function failFormValidation<T extends Record<string, unknown>>(form: SuperValidated<T>) {
+	if (form.valid) throw new Error('Invalid form passed');
+	return fail(400, { form });
+}
+
 /**
  * automatically handle database errors from catch.
  * used in form/action handling in page.server.ts
@@ -27,31 +45,13 @@ export function isDuplicateDbError(err: unknown) {
 
 export function successMessage<T extends Record<string, unknown>>(
 	form: SuperValidated<T>,
-	options?: { showToast?: boolean; text?: string; data?: unknown }
+	options?: { data?: unknown; showToast?: boolean; text?: string }
 ) {
 	const message = {
-		success: true,
+		data: options?.data,
 		showToast: options?.showToast ?? true,
-		text: options?.text ?? 'Success',
-		data: options?.data
+		success: true,
+		text: options?.text ?? 'Success'
 	} as App.Superforms.Message;
 	return superFormMessage(form as SuperValidated<T>, message);
-}
-
-export function errorMessage<T extends Record<string, unknown>>(
-	form: SuperValidated<T>,
-	options?: { showToast?: boolean; text?: string; data?: unknown }
-) {
-	const message = {
-		success: false,
-		showToast: options?.showToast ?? false,
-		text: options?.text,
-		data: options?.data
-	} as App.Superforms.Message;
-	return superFormMessage(form, message);
-}
-
-export function failFormValidation<T extends Record<string, unknown>>(form: SuperValidated<T>) {
-	if (form.valid) throw new Error('Invalid form passed');
-	return fail(400, { form });
 }

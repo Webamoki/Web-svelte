@@ -1,38 +1,40 @@
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
 	import type { WeekdayChoiceMultiProps } from '$lib/components/ui/choice/WeekdayChoiceMulti.svelte';
-	import WeekdayChoiceMulti from '$lib/components/ui/choice/WeekdayChoiceMulti.svelte';
 	import type { FormPath } from 'sveltekit-superforms';
+
+	import WeekdayChoiceMulti from '$lib/components/ui/choice/WeekdayChoiceMulti.svelte';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
-	type Props = { class?: string } & FieldWrapperProps<T, U, M> & WeekdayChoiceMultiProps;
+	type Props = FieldWrapperProps<T, U, M> & WeekdayChoiceMultiProps & { class?: string };
 	let {
-		onAdd,
-		onRemove,
-		vertical,
-		value = $bindable([]),
-		letterLabels,
-		longLabels,
-
-		form,
-		name,
-		label,
+		class: className,
 		description,
 		disabled,
+		form,
+		label,
+		letterLabels,
+
+		longLabels,
+		name,
+		onAdd,
+		onRemove,
 		readonly,
-		class: className
+		value = $bindable([]),
+		vertical
 	}: Props = $props();
 </script>
 
-<FieldWrapper {form} {name} {label} {description} class={className}>
+<FieldWrapper {name} class={className} {description} {form} {label}>
 	{#snippet formElem(props)}
 		<WeekdayChoiceMulti
-			{onAdd}
-			{onRemove}
 			{disabled}
-			{readonly}
-			{vertical}
 			{letterLabels}
 			{longLabels}
+			{onAdd}
+			{onRemove}
+			{readonly}
+			{vertical}
 			{...props}
 			bind:value
 		/>

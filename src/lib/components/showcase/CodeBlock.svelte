@@ -42,7 +42,7 @@
 	<div class="border-b border-gray-800 bg-gray-800 px-4 py-2 text-sm font-medium text-gray-200">
 		Code
 	</div>
-	<div bind:this={codeBlock} class="overflow-x-auto text-sm" style="display: none;">
+	<div bind:this={codeBlock} style="display: none;" class="overflow-x-auto text-sm">
 		<slot />
 	</div>
 	<div class="overflow-x-auto text-sm">

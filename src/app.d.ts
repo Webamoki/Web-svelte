@@ -4,10 +4,10 @@ declare global {
 	namespace App {
 		namespace Superforms {
 			type Message = {
-				success: boolean;
-				text?: string;
 				data?: unknown;
 				showToast: boolean;
+				success: boolean;
+				text?: string;
 			};
 		}
 		// interface Error {}

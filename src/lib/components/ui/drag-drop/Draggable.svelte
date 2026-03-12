@@ -1,15 +1,16 @@
-<script lang="ts" generics="T">
+<script generics="T" lang="ts">
 	import { onDestroy, type Snippet } from 'svelte';
+
 	import type { DragManager } from './drag-manager.js';
 
 	interface Props {
-		data: T;
-		manager: DragManager<T>;
 		children: Snippet<[]>;
 		class?: string;
+		data: T;
+		manager: DragManager<T>;
 	}
 
-	let { manager, children, class: className, data }: Props = $props();
+	let { children, class: className, data, manager }: Props = $props();
 
 	let isDragging = $state(false);
 	let mouseX = $state(0);
@@ -61,19 +62,19 @@
 </script>
 
 <div
-	onmousedown={startDrag}
 	class={`relative select-none ${isDragging ? 'opacity-30 grayscale' : 'cursor-grab'} ${className ?? ''}`}
+	aria-label="Draggable item"
+	onmousedown={startDrag}
 	role="button"
 	tabindex="0"
-	aria-label="Draggable item"
 >
 	{@render children()}
 </div>
 
 {#if isDragging}
 	<div
-		class="pointer-events-none fixed z-9999 -translate-x-1/2 -translate-y-1/2 scale-115 transform opacity-95 shadow-xl"
 		style={`top:${mouseY}px; left:${mouseX}px;`}
+		class="pointer-events-none fixed z-9999 -translate-x-1/2 -translate-y-1/2 scale-115 transform opacity-95 shadow-xl"
 	>
 		{@render children()}
 	</div>

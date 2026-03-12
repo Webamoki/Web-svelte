@@ -2,6 +2,11 @@
 	import type { Component, Snippet } from 'svelte';
 
 	interface Props {
+		children: Snippet<[{ class: string }]>;
+		/**
+		 * Whether this wrapper should grow to fill flex container (used in layouts with buttons)
+		 */
+		flex?: boolean;
 		icon?: Component;
 		/**
 		 * Position of the icon vertically.
@@ -9,14 +14,9 @@
 		 * - 'top': Aligns to top with padding (for multi-line inputs like textarea)
 		 */
 		iconPosition?: 'center' | 'top';
-		/**
-		 * Whether this wrapper should grow to fill flex container (used in layouts with buttons)
-		 */
-		flex?: boolean;
-		children: Snippet<[{ class: string }]>;
 	}
 
-	let { icon, iconPosition = 'center', flex = false, children }: Props = $props();
+	let { children, flex = false, icon, iconPosition = 'center' }: Props = $props();
 
 	const iconClass =
 		iconPosition === 'top'

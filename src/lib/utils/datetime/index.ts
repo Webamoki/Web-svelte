@@ -1,5 +1,8 @@
+import type { Transport } from '@sveltejs/kit';
+
 import {
 	CalendarDate,
+	type DateDuration,
 	DateFormatter,
 	fromDate,
 	getDayOfWeek,
@@ -9,11 +12,10 @@ import {
 	toCalendarDate,
 	today,
 	toTime,
-	ZonedDateTime,
-	type DateDuration
+	ZonedDateTime
 } from '@internationalized/date';
-import type { Transport } from '@sveltejs/kit';
 import { map, range } from 'ramda';
+
 import type { Day } from '../types/arktype.js';
 
 const DEFAULT_TIME_ZONE = 'Europe/London';
@@ -34,41 +36,6 @@ export const Days = [
 export const DayIndex: Record<Day, number> = Object.fromEntries(
 	Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
-
-/** Gets the day index of the date */
-export function getDayIndex(date: CalendarDate): number {
-	// Always start 0 on Monday
-	return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
-}
-
-/**
- * Gets the day of the week for a given date.
- * @param date - The date to get the day of the week for.
- * @returns The day of the week
- */
-export function getDayOfDate(date: CalendarDate): Day {
-	return Days[getDayIndex(date)];
-}
-
-/**
- * Checks if a given date is a specific day of the week.
- * @param date - The date to check.
- * @param dayOfWeek - The day of the week to check against.
- * @returns True if the date is the specified day, false otherwise.
- */
-export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
-	const dateDay = getDayOfDate(date);
-	return dateDay === dayOfWeek;
-}
-
-/**
- * Checks if a given date is today.
- * @param date - The date to check.
- * @returns True if the date is today, false otherwise.
- */
-export function isDateToday(date: CalendarDate, timezone: string): boolean {
-	return today(timezone).compare(date) === 0;
-}
 
 /**
  * Calculates the age from a date of birth.
@@ -96,21 +63,48 @@ export function ageFromDob(dob: CalendarDate, timezone: string): number {
 }
 
 /**
- * Gets the date of the next occurrence of a day of the week.
- * @param dayOfWeek - The day of the week to get the next occurrence for.
- * @param startDate - The date to check from. Inclusive.
- * @returns The date of the next occurrence of the specified day.
+ * Checks if two time ranges overlap, boundaries are not considered overlapping.
+ * @param start1 - The start time of the first range.
+ * @param end1 - The end time of the first range.
+ * @param start2 - The start time of the second range.
+ * @param end2 - The end time of the second range.
+ * @returns True if the ranges overlap, false otherwise.
  */
-export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
-	const dayIndex = DayIndex[dayOfWeek];
-	const startIndex = getDayIndex(startDate);
+export function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time): boolean {
+	return start1.compare(end2) < 0 && start2.compare(end1) < 0;
+}
 
-	// Already on the day
-	if (startIndex === dayIndex) return startDate;
+/**
+ * Determines if the given dates are within the given duration of each other.
+ * @param date1 - The first date in order.
+ * @param date2 - The second date in order.
+ * @param duration - The duration to check against. Inclusive of boundaries.
+ * @returns True if the dates are within duration, false otherwise.
+ */
+export function datesWithin(
+	date1: CalendarDate,
+	date2: CalendarDate,
+	duration: DateDuration
+): boolean {
+	// reject invalid order
+	if (date1.compare(date2) > 0) return false;
 
-	// Calculate how many days to add to get to the next occurrence
-	const addition = (dayIndex - startIndex + 7) % 7;
-	return startDate.add({ days: addition });
+	return date1.add(duration).compare(date2) >= 0;
+}
+
+/** Gets the day index of the date */
+export function getDayIndex(date: CalendarDate): number {
+	// Always start 0 on Monday
+	return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
+}
+
+/**
+ * Gets the day of the week for a given date.
+ * @param date - The date to get the day of the week for.
+ * @returns The day of the week
+ */
+export function getDayOfDate(date: CalendarDate): Day {
+	return Days[getDayIndex(date)];
 }
 
 /**
@@ -170,36 +164,44 @@ export function getLastMonths(count: number, startDate: CalendarDate): CalendarD
 	return map((i) => latestDate.subtract({ months: count - 1 - i }), range(0, count));
 }
 
+/**
+ * Gets the date of the next occurrence of a day of the week.
+ * @param dayOfWeek - The day of the week to get the next occurrence for.
+ * @param startDate - The date to check from. Inclusive.
+ * @returns The date of the next occurrence of the specified day.
+ */
+export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
+	const dayIndex = DayIndex[dayOfWeek];
+	const startIndex = getDayIndex(startDate);
+
+	// Already on the day
+	if (startIndex === dayIndex) return startDate;
+
+	// Calculate how many days to add to get to the next occurrence
+	const addition = (dayIndex - startIndex + 7) % 7;
+	return startDate.add({ days: addition });
+}
+
 /* Intervals */
 
 /**
- * Checks if two time ranges overlap, boundaries are not considered overlapping.
- * @param start1 - The start time of the first range.
- * @param end1 - The end time of the first range.
- * @param start2 - The start time of the second range.
- * @param end2 - The end time of the second range.
- * @returns True if the ranges overlap, false otherwise.
+ * Checks if a given date is a specific day of the week.
+ * @param date - The date to check.
+ * @param dayOfWeek - The day of the week to check against.
+ * @returns True if the date is the specified day, false otherwise.
  */
-export function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time): boolean {
-	return start1.compare(end2) < 0 && start2.compare(end1) < 0;
+export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
+	const dateDay = getDayOfDate(date);
+	return dateDay === dayOfWeek;
 }
 
 /**
- * Determines if the given dates are within the given duration of each other.
- * @param date1 - The first date in order.
- * @param date2 - The second date in order.
- * @param duration - The duration to check against. Inclusive of boundaries.
- * @returns True if the dates are within duration, false otherwise.
+ * Checks if a given date is today.
+ * @param date - The date to check.
+ * @returns True if the date is today, false otherwise.
  */
-export function datesWithin(
-	date1: CalendarDate,
-	date2: CalendarDate,
-	duration: DateDuration
-): boolean {
-	// reject invalid order
-	if (date1.compare(date2) > 0) return false;
-
-	return date1.add(duration).compare(date2) >= 0;
+export function isDateToday(date: CalendarDate, timezone: string): boolean {
+	return today(timezone).compare(date) === 0;
 }
 
 const msPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -223,23 +225,23 @@ export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number 
 /**
  * Formats a day of the week.
  * @param day - The day of the week to format.
- * @example "Monday" -> "Mon"
- * @returns Formatted string of the day of the week.
- */
-export function formatDayShort(day: Day): string {
-	// Use the first three letters of the day
-	return day.slice(0, 3);
-}
-
-/**
- * Formats a day of the week.
- * @param day - The day of the week to format.
  * @example "Monday" -> "M"
  * @returns Formatted letter of the day of the week.
  */
 export function formatDayLetter(day: Day): string {
 	// Use the first letters of the day
 	return day.slice(0, 1);
+}
+
+/**
+ * Formats a day of the week.
+ * @param day - The day of the week to format.
+ * @example "Monday" -> "Mon"
+ * @returns Formatted string of the day of the week.
+ */
+export function formatDayShort(day: Day): string {
+	// Use the first three letters of the day
+	return day.slice(0, 3);
 }
 
 /* Calendar Dates */
@@ -251,8 +253,8 @@ const FullDateFormatter = new DateFormatter(DEFAULT_LOCALE, {
 });
 
 const ShortDateFormatter = new DateFormatter(DEFAULT_LOCALE, {
-	month: 'short',
-	day: 'numeric'
+	day: 'numeric',
+	month: 'short'
 });
 
 const MonthFormatter = new DateFormatter(DEFAULT_LOCALE, {
@@ -266,18 +268,16 @@ const NumFormatter = new DateFormatter(DEFAULT_LOCALE, {
 	year: 'numeric'
 });
 
-function formatDate(date: CalendarDate, formatter: DateFormatter): string {
-	const nativeDate = date.toDate(getLocalTimeZone());
-	return formatter.format(nativeDate);
-}
-
 /**
- * @param date The CalendarDate object to format.
- * @returns string of date in shortened format
- * @example "Oct 5"
+ * Formats a full date and time.
+ * @param datetime The ZonedDateTime object to format.
+ * @returns The formatted date and time string.
+ * @example "05/10/2023 14:30:00"
  */
-export function formatDateShort(date: CalendarDate) {
-	return formatDate(date, ShortDateFormatter);
+export function formatAbsolute(datetime: ZonedDateTime): string {
+	const date = toCalendarDate(datetime);
+	const time = toTime(datetime);
+	return `${formatDateNum(date)} ${formatTimeFull(time)}`;
 }
 
 /**
@@ -309,6 +309,15 @@ export function formatDateNum(date: CalendarDate): string {
 }
 
 /**
+ * @param date The CalendarDate object to format.
+ * @returns string of date in shortened format
+ * @example "Oct 5"
+ */
+export function formatDateShort(date: CalendarDate) {
+	return formatDate(date, ShortDateFormatter);
+}
+
+/**
  * Formats the month only.
  * @param date - The date to format.
  * @returns The formatted month string.
@@ -320,24 +329,15 @@ export function formatMonth(date: CalendarDate): string {
 
 /* Times */
 
-// Pad number with zeroes to the left
-function padNum(num: number, len: number): string {
-	if (isNaN(num)) {
-		return '0'.repeat(len);
-	}
-
-	return num.toString().padStart(len, '0');
-}
-
 /**
- * Gives time in HH:MM format
- * @param time
- * @returns string of time in that format
+ * Calculates the end time given a starting time and duration.
+ * @param timeStart starting time
+ * @param durationMinutes duration in minutes
+ * @returns end time in HH:MM format
  */
-export function formatTimeShort(time: Time): string {
-	const hours = padNum(time.hour, 2);
-	const minutes = padNum(time.minute, 2);
-	return `${hours}:${minutes}`;
+export function formatTimeEnd(timeStart: Time, durationMinutes: number): string {
+	const timeEnd = timeStart.add({ minutes: durationMinutes });
+	return formatTimeShort(timeEnd);
 }
 
 /**
@@ -353,29 +353,15 @@ export function formatTimeFull(time: Time): string {
 }
 
 /**
- * Calculates the end time given a starting time and duration.
- * @param timeStart starting time
- * @param durationMinutes duration in minutes
- * @returns end time in HH:MM format
+ * Gives time in HH:MM format
+ * @param time
+ * @returns string of time in that format
  */
-export function formatTimeEnd(timeStart: Time, durationMinutes: number): string {
-	const timeEnd = timeStart.add({ minutes: durationMinutes });
-	return formatTimeShort(timeEnd);
+export function formatTimeShort(time: Time): string {
+	const hours = padNum(time.hour, 2);
+	const minutes = padNum(time.minute, 2);
+	return `${hours}:${minutes}`;
 }
-
-/**
- * Formats a full date and time.
- * @param datetime The ZonedDateTime object to format.
- * @returns The formatted date and time string.
- * @example "05/10/2023 14:30:00"
- */
-export function formatAbsolute(datetime: ZonedDateTime): string {
-	const date = toCalendarDate(datetime);
-	const time = toTime(datetime);
-	return `${formatDateNum(date)} ${formatTimeFull(time)}`;
-}
-
-/* State handling */
 
 /**
  * Unfreezes a CalendarDate object from a snapshot.
@@ -395,23 +381,39 @@ export function unfreezeTime(raw: ReturnType<typeof $state.snapshot<Time>>): Tim
 	return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
 }
 
+/* State handling */
+
+function formatDate(date: CalendarDate, formatter: DateFormatter): string {
+	const nativeDate = date.toDate(getLocalTimeZone());
+	return formatter.format(nativeDate);
+}
+
+// Pad number with zeroes to the left
+function padNum(num: number, len: number): string {
+	if (isNaN(num)) {
+		return '0'.repeat(len);
+	}
+
+	return num.toString().padStart(len, '0');
+}
+
 // SerDe
 
 export const dateTransport: Transport = {
-	Time: {
-		encode: (t) => t instanceof Time && [t.hour, t.minute, t.second, t.millisecond],
-		decode: ([hour, minute, second, millisecond]: [number, number, number, number]) =>
-			new Time(hour, minute, second, millisecond)
-	},
 	CalendarDate: {
-		encode: (d) => d instanceof CalendarDate && [d.year, d.month, d.day],
-		decode: ([year, month, day]: [number, number, number]) => new CalendarDate(year, month, day)
+		decode: ([year, month, day]: [number, number, number]) => new CalendarDate(year, month, day),
+		encode: (d) => d instanceof CalendarDate && [d.year, d.month, d.day]
+	},
+	Time: {
+		decode: ([hour, minute, second, millisecond]: [number, number, number, number]) =>
+			new Time(hour, minute, second, millisecond),
+		encode: (t) => t instanceof Time && [t.hour, t.minute, t.second, t.millisecond]
 	},
 	ZonedDateTime: {
-		encode: (value) => value instanceof ZonedDateTime && [value.toAbsoluteString(), value.timeZone],
 		decode: ([absoluteString, timezone]: [string, string]) => {
 			const nativeDate = new Date(absoluteString);
 			return fromDate(nativeDate, timezone);
-		}
+		},
+		encode: (value) => value instanceof ZonedDateTime && [value.toAbsoluteString(), value.timeZone]
 	}
 };

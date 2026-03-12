@@ -6,7 +6,7 @@
 <nav class="p-2">
 	<p>Links:</p>
 	<ul class="ml-4 list-disc">
-		{#each links as { name, href } (href)}
+		{#each links as { href, name } (href)}
 			<!-- eslint-disable svelte/no-navigation-without-resolve -->
 			<li><a class="text-blue-500 hover:underline" {href}>{name}</a></li>
 			<!-- eslint-disable svelte/no-navigation-without-resolve -->

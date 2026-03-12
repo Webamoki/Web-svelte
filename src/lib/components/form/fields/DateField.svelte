@@ -1,18 +1,20 @@
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>, M">
+<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
+	import type { Component } from 'svelte';
+	import type { FormPath } from 'sveltekit-superforms';
+
 	import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
 	import { Input } from '$lib/shadcn/components/ui/input/index.js';
 	import { cn } from '$lib/shadcn/utils.js';
 	import { CalendarDate } from '@internationalized/date';
-	import type { Component } from 'svelte';
-	import type { FormPath } from 'sveltekit-superforms';
+
 	import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
 	interface Props extends FieldWrapperProps<T, U, M> {
-		value?: CalendarDate;
 		class?: string;
 		icon?: Component;
+		value?: CalendarDate;
 	}
-	let { value = $bindable(), class: className, icon, ...fieldProps }: Props = $props();
+	let { class: className, icon, value = $bindable(), ...fieldProps }: Props = $props();
 
 	// Getter: format CalendarDate → string (YYYY-MM-DD)
 	function get(): string {
@@ -40,7 +42,7 @@
 	{#snippet formElem(props)}
 		<IconInputWrapper {icon}>
 			{#snippet children({ class: iconClass })}
-				<Input type="date" bind:value={get, set} class={cn(iconClass, className)} {...props} />
+				<Input class={cn(iconClass, className)} type="date" bind:value={get, set} {...props} />
 			{/snippet}
 		</IconInputWrapper>
 	{/snippet}

@@ -1,19 +1,20 @@
 <script lang="ts">
 	import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
+
 	import { cn, type WithElementRef } from '$lib/shadcn/utils.js';
 	type InputType = Exclude<HTMLInputTypeAttribute, 'file'>;
 
 	type Props = WithElementRef<
 		Omit<HTMLInputAttributes, 'type'> &
-			({ type: 'file'; files?: FileList } | { type?: InputType; files?: undefined })
+			({ files?: FileList; type: 'file' } | { files?: undefined; type?: InputType })
 	>;
 
 	let {
-		ref = $bindable(null),
-		value = $bindable(),
-		type,
-		files = $bindable(),
 		class: className,
+		files = $bindable(),
+		ref = $bindable(null),
+		type,
+		value = $bindable(),
 		...restProps
 	}: Props = $props();
 
@@ -29,13 +30,13 @@
 {#if type === 'file'}
 	<input
 		bind:this={ref}
-		data-slot="input"
 		class={inputClasses}
+		data-slot="input"
 		type="file"
 		bind:files
 		bind:value
 		{...restProps}
 	/>
 {:else}
-	<input bind:this={ref} data-slot="input" class={inputClasses} {type} bind:value {...restProps} />
+	<input bind:this={ref} class={inputClasses} data-slot="input" {type} bind:value {...restProps} />
 {/if}

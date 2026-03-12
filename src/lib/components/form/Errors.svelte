@@ -10,7 +10,7 @@
 </script>
 
 <FieldErrors>
-	{#snippet children({ errors, errorProps })}
+	{#snippet children({ errorProps, errors })}
 		<div class={cn('space-y-1', className)}>
 			{#each errors as error, i (i)}
 				<span class="text-destructive" {...errorProps}>{error}</span>

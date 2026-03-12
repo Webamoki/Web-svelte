@@ -40,7 +40,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 				}
 			}
 		},
-		resetForm: options?.resetForm === undefined ? true : false,
+		resetForm: options?.resetForm ?? true,
 		transport: dateTransport,
 		validators: arktypeClient(schema)
 	});

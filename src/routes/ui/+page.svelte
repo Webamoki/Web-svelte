@@ -49,7 +49,7 @@
 			</CodeBlock>
 		</Container>
 
-		<div class="mt-8">
+		<div id="choice" class="mt-8">
 			<ChoiceShowcase />
 		</div>
 	</main>

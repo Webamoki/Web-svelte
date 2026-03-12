@@ -114,7 +114,6 @@
 <div class="flex min-h-screen bg-gray-50">
 	<Sidebar>
 		<SidebarLink title="TextField" />
-		<SidebarLink title="TextFieldNullable" />
 		<SidebarLink title="PasswordField" />
 		<SidebarLink title="MessageField" />
 		<SidebarLink title="HexColorField" />

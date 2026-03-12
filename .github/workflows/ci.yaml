@@ -11,7 +11,6 @@ jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
-    if: github.head_ref != 'changeset-release/main' # Skips the entire job for changeset PRs
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -39,7 +38,6 @@ jobs:
   tests:
     name: Run Tests
     runs-on: ubuntu-latest
-    if: github.head_ref != 'changeset-release/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -59,19 +57,3 @@ jobs:
         run: |
           pnpm svelte-kit sync
           pnpm test
-
-  check-changeset:
-    name: Check for Changeset
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup CI Environment
-        uses: ./.github/actions/setup-ci
-
-      - name: Verify Changeset File
-        run: 'pnpm changeset status --since origin/main'

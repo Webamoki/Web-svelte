@@ -1,151 +1,155 @@
 {
-	"name": "@webamoki/web-svelte",
-	"publishConfig": {
-		"access": "public"
-	},
-	"version": "1.0.0",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Webamoki/Web-svelte.git"
-	},
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "pnpm fmt && pnpm lint:es --fix && pnpm lint:svelte && pnpm test",
-		"fmt": "prettier --write --cache --cache-location=.cache/.prettier-cache --cache-strategy metadata --log-level warn .",
-		"lint": "pnpm lint:es && pnpm lint:svelte",
-		"lint:es": "eslint --cache --cache-location .cache/.eslintcache --cache-strategy metadata .",
-		"lint:svelte": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"test:unit": "vitest run",
-		"test": "pnpm test:unit",
-		"watch": "svelte-package --watch"
-	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"sideEffects": [
-		"**/*.css"
-	],
-	"type": "module",
-	"exports": {
-		"./components/form": {
-			"types": "./dist/components/form/index.d.ts",
-			"svelte": "./dist/components/form/index.js"
-		},
-		"./components/ui": {
-			"types": "./dist/components/ui/index.d.ts",
-			"svelte": "./dist/components/ui/index.js"
-		},
-		"./utils/datetime": {
-			"types": "./dist/utils/datetime/index.d.ts",
-			"import": "./dist/utils/datetime/index.js"
-		},
-		"./utils/types/arktype": {
-			"types": "./dist/utils/types/arktype.d.ts",
-			"import": "./dist/utils/types/arktype.js"
-		},
-		"./utils/types/consts": {
-			"types": "./dist/utils/types/consts.d.ts",
-			"import": "./dist/utils/types/consts.js"
-		},
-		"./utils/types/db": {
-			"types": "./dist/utils/types/db.d.ts",
-			"import": "./dist/utils/types/db.js"
-		},
-		"./utils/form": {
-			"types": "./dist/utils/form/index.d.ts",
-			"import": "./dist/utils/form/index.js"
-		},
-		"./utils/email": {
-			"types": "./dist/utils/email/index.d.ts",
-			"import": "./dist/utils/email/index.js"
-		},
-		"./server/form-handler": {
-			"types": "./dist/server/form-handler.d.ts",
-			"import": "./dist/server/form-handler.js"
-		},
-		"./server/form-processor": {
-			"types": "./dist/server/form-processor.d.ts",
-			"import": "./dist/server/form-processor.js"
-		},
-		"./utils/search": {
-			"types": "./dist/utils/search.d.ts",
-			"import": "./dist/utils/search.js"
-		}
-	},
-	"peerDependencies": {
-		"@internationalized/date": "^3.9.0",
-		"@lucide/svelte": "^0.553.0",
-		"arktype": "^2.1.22",
-		"svelte": "^5.43.6",
-		"sveltekit-superforms": "^2.28.1"
-	},
-	"devDependencies": {
-		"@eslint/compat": "^2.0.3",
-		"@eslint/js": "^9.39.4",
-		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.54.0",
-		"@sveltejs/package": "^2.5.7",
-		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"@tailwindcss/forms": "^0.5.11",
-		"@tailwindcss/typography": "^0.5.19",
-		"@tailwindcss/vite": "^4.2.1",
-		"@types/node": "^25.4.0",
-		"@types/ramda": "^0.31.1",
-		"@types/sorted-array-functions": "^1.3.3",
-		"clsx": "^2.1.1",
-		"eslint": "^9.39.4",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-perfectionist": "^5.6.0",
-		"eslint-plugin-svelte": "^3.15.2",
-		"globals": "^17.4.0",
-		"prettier": "^3.8.1",
-		"prettier-plugin-svelte": "^3.5.1",
-		"prettier-plugin-tailwindcss": "^0.7.2",
-		"publint": "^0.3.18",
-		"shiki": "^4.0.2",
-		"svelte": "^5.53.10",
-		"svelte-check": "^4.4.5",
-		"svelte-eslint-parser": "^1.6.0",
-		"tailwind-merge": "^3.5.0",
-		"tailwind-variants": "^3.2.2",
-		"tailwindcss": "^4.2.1",
-		"tw-animate-css": "^1.4.0",
-		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.57.0",
-		"vite": "^7.3.1",
-		"vitest": "^4.0.18"
-	},
-	"keywords": [
-		"svelte"
-	],
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@tailwindcss/oxide",
-			"esbuild",
-			"sharp"
-		],
-		"ignoredBuiltDependencies": [
-			"workerd"
-		]
-	},
-	"dependencies": {
-		"@internationalized/date": "^3.12.0",
-		"@lucide/svelte": "^0.577.0",
-		"arktype": "^2.2.0",
-		"bits-ui": "^2.16.3",
-		"devalue": "^5.6.4",
-		"drizzle-orm": "^0.45.1",
-		"formsnap": "^2.0.1",
-		"ramda": "^0.32.0",
-		"sorted-array-functions": "^1.3.0",
-		"svelte-awesome-color-picker": "^4.1.1",
-		"svelte-sonner": "^1.1.0",
-		"sveltekit-superforms": "^2.30.0"
-	}
+  "name": "@webamoki/web-svelte",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Webamoki/Web-svelte.git"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build:site": "vite build",
+    "build:lib": "pnpm prepack",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "prepack": "svelte-kit sync && svelte-package && publint",
+    "check": "pnpm fmt && pnpm lint:es --fix && pnpm lint:svelte && pnpm test",
+    "fmt": "prettier --write --cache --cache-location=.cache/.prettier-cache --cache-strategy metadata --log-level warn .",
+    "lint": "pnpm lint:es && pnpm lint:svelte",
+    "lint:es": "eslint --cache --cache-location .cache/.eslintcache --cache-strategy metadata .",
+    "lint:svelte": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test:unit": "vitest run",
+    "test": "pnpm test:unit",
+    "watch": "svelte-package --watch"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "type": "module",
+  "exports": {
+    "./components/form": {
+      "types": "./dist/components/form/index.d.ts",
+      "svelte": "./dist/components/form/index.js"
+    },
+    "./components/ui": {
+      "types": "./dist/components/ui/index.d.ts",
+      "svelte": "./dist/components/ui/index.js"
+    },
+    "./utils/datetime": {
+      "types": "./dist/utils/datetime/index.d.ts",
+      "import": "./dist/utils/datetime/index.js"
+    },
+    "./utils/types/arktype": {
+      "types": "./dist/utils/types/arktype.d.ts",
+      "import": "./dist/utils/types/arktype.js"
+    },
+    "./utils/types/consts": {
+      "types": "./dist/utils/types/consts.d.ts",
+      "import": "./dist/utils/types/consts.js"
+    },
+    "./utils/types/db": {
+      "types": "./dist/utils/types/db.d.ts",
+      "import": "./dist/utils/types/db.js"
+    },
+    "./utils/form": {
+      "types": "./dist/utils/form/index.d.ts",
+      "import": "./dist/utils/form/index.js"
+    },
+    "./utils/email": {
+      "types": "./dist/utils/email/index.d.ts",
+      "import": "./dist/utils/email/index.js"
+    },
+    "./server/form-handler": {
+      "types": "./dist/server/form-handler.d.ts",
+      "import": "./dist/server/form-handler.js"
+    },
+    "./server/form-processor": {
+      "types": "./dist/server/form-processor.d.ts",
+      "import": "./dist/server/form-processor.js"
+    },
+    "./utils/search": {
+      "types": "./dist/utils/search.d.ts",
+      "import": "./dist/utils/search.js"
+    }
+  },
+  "peerDependencies": {
+    "@internationalized/date": "^3.9.0",
+    "@lucide/svelte": "^0.553.0",
+    "arktype": "^2.1.22",
+    "svelte": "^5.43.6",
+    "sveltekit-superforms": "^2.28.1"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.0.3",
+    "@eslint/js": "^9.39.4",
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.54.0",
+    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/node": "^25.4.0",
+    "@types/ramda": "^0.31.1",
+    "@types/sorted-array-functions": "^1.3.3",
+    "clsx": "^2.1.1",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-perfectionist": "^5.6.0",
+    "eslint-plugin-svelte": "^3.15.2",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-svelte": "^3.5.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "publint": "^0.3.18",
+    "semantic-release": "^25.0.3",
+    "shiki": "^4.0.2",
+    "svelte": "^5.53.10",
+    "svelte-check": "^4.4.5",
+    "svelte-eslint-parser": "^1.6.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwind-variants": "^3.2.2",
+    "tailwindcss": "^4.2.1",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  },
+  "keywords": [
+    "svelte"
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "workerd"
+    ]
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.0",
+    "@lucide/svelte": "^0.577.0",
+    "arktype": "^2.2.0",
+    "bits-ui": "^2.16.3",
+    "devalue": "^5.6.4",
+    "drizzle-orm": "^0.45.1",
+    "formsnap": "^2.0.1",
+    "ramda": "^0.32.0",
+    "sorted-array-functions": "^1.3.0",
+    "svelte-awesome-color-picker": "^4.1.1",
+    "svelte-sonner": "^1.1.0",
+    "sveltekit-superforms": "^2.30.0"
+  }
 }

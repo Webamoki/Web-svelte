@@ -44,10 +44,10 @@ import { sendEmail } from '@webamoki/web-svelte/utils/email';
 
 // Send a simple text email
 const messageId = await sendEmail({
-	to: 'recipient@example.com',
-	subject: 'Hello from SES',
-	text: 'This is a plain text email.',
-	from: 'sender@example.com'
+  to: 'recipient@example.com',
+  subject: 'Hello from SES',
+  text: 'This is a plain text email.',
+  from: 'sender@example.com'
 });
 
 console.log('Email sent with message ID:', messageId);
@@ -57,12 +57,12 @@ console.log('Email sent with message ID:', messageId);
 
 ```typescript
 await sendEmail({
-	to: 'recipient@example.com',
-	subject: 'Welcome!',
-	html: '<h1>Welcome to our service!</h1><p>Thanks for signing up.</p>',
-	text: 'Welcome to our service! Thanks for signing up.', // Fallback for email clients that don't support HTML
-	from: 'noreply@example.com',
-	fromName: 'My Application'
+  to: 'recipient@example.com',
+  subject: 'Welcome!',
+  html: '<h1>Welcome to our service!</h1><p>Thanks for signing up.</p>',
+  text: 'Welcome to our service! Thanks for signing up.', // Fallback for email clients that don't support HTML
+  from: 'noreply@example.com',
+  fromName: 'My Application'
 });
 ```
 
@@ -70,12 +70,12 @@ await sendEmail({
 
 ```typescript
 await sendEmail({
-	to: ['user1@example.com', 'user2@example.com'],
-	cc: 'manager@example.com',
-	bcc: ['archive@example.com', 'backup@example.com'],
-	subject: 'Team Update',
-	text: 'This is a team-wide announcement.',
-	from: 'team@example.com'
+  to: ['user1@example.com', 'user2@example.com'],
+  cc: 'manager@example.com',
+  bcc: ['archive@example.com', 'backup@example.com'],
+  subject: 'Team Update',
+  text: 'This is a team-wide announcement.',
+  from: 'team@example.com'
 });
 ```
 
@@ -83,12 +83,12 @@ await sendEmail({
 
 ```typescript
 await sendEmail({
-	to: 'customer@example.com',
-	subject: 'Your order confirmation',
-	html: '<p>Your order has been confirmed!</p>',
-	from: 'noreply@example.com',
-	fromName: 'Order System',
-	replyTo: 'support@example.com'
+  to: 'customer@example.com',
+  subject: 'Your order confirmation',
+  html: '<p>Your order has been confirmed!</p>',
+  from: 'noreply@example.com',
+  fromName: 'Order System',
+  replyTo: 'support@example.com'
 });
 ```
 
@@ -110,15 +110,15 @@ Sends an email via AWS SES.
 
 ```typescript
 interface SendEmailOptions {
-	to: string | string[]; // Required: recipient email address(es)
-	cc?: string | string[]; // Optional: CC recipients
-	bcc?: string | string[]; // Optional: BCC recipients
-	subject: string; // Required: email subject
-	text?: string; // Optional: plain text body
-	html?: string; // Optional: HTML body
-	from: string; // Required: sender email
-	fromName?: string; // Optional: sender display name
-	replyTo?: string | string[]; // Optional: reply-to address(es)
+  to: string | string[]; // Required: recipient email address(es)
+  cc?: string | string[]; // Optional: CC recipients
+  bcc?: string | string[]; // Optional: BCC recipients
+  subject: string; // Required: email subject
+  text?: string; // Optional: plain text body
+  html?: string; // Optional: HTML body
+  from: string; // Required: sender email
+  fromName?: string; // Optional: sender display name
+  replyTo?: string | string[]; // Optional: reply-to address(es)
 }
 ```
 
@@ -136,16 +136,16 @@ Always wrap calls in try-catch:
 
 ```typescript
 try {
-	const messageId = await sendEmail({
-		to: 'user@example.com',
-		subject: 'Test',
-		text: 'Hello!',
-		from: 'sender@example.com'
-	});
-	console.log('Success:', messageId);
+  const messageId = await sendEmail({
+    to: 'user@example.com',
+    subject: 'Test',
+    text: 'Hello!',
+    from: 'sender@example.com'
+  });
+  console.log('Success:', messageId);
 } catch (error) {
-	console.error('Failed to send email:', error.message);
-	// Handle error appropriately
+  console.error('Failed to send email:', error.message);
+  // Handle error appropriately
 }
 ```
 
@@ -163,26 +163,26 @@ import { sendEmail } from '@webamoki/web-svelte/utils/email';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const message = formData.get('message') as string;
+  default: async ({ request }) => {
+    const formData = await request.formData();
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
 
-		try {
-			await sendEmail({
-				to: 'admin@example.com',
-				subject: `Contact form submission from ${email}`,
-				text: message,
-				from: 'noreply@example.com',
-				replyTo: email
-			});
+    try {
+      await sendEmail({
+        to: 'admin@example.com',
+        subject: `Contact form submission from ${email}`,
+        text: message,
+        from: 'noreply@example.com',
+        replyTo: email
+      });
 
-			return { success: true };
-		} catch (error) {
-			console.error('Email error:', error);
-			return { success: false, error: 'Failed to send message' };
-		}
-	}
+      return { success: true };
+    } catch (error) {
+      console.error('Email error:', error);
+      return { success: false, error: 'Failed to send message' };
+    }
+  }
 };
 ```
 

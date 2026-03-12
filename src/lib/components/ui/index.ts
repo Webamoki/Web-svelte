@@ -15,20 +15,20 @@ import Dropzone from './drag-drop/Dropzone.svelte';
 import SearchBar from './search/SearchBar.svelte';
 
 export {
-	Choice,
-	ChoiceMulti,
-	// context menu
-	ContextMenu,
-	ContextMenuContent,
-	ContextMenuItem,
-	ContextMenuSeparator,
-	ContextMenuTrigger,
-	Draggable,
+  Choice,
+  ChoiceMulti,
+  // context menu
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+  Draggable,
 
-	// drag drop
-	DragManager,
-	Dropzone,
-	SearchBar,
-	WeekdayChoice,
-	WeekdayChoiceMulti
+  // drag drop
+  DragManager,
+  Dropzone,
+  SearchBar,
+  WeekdayChoice,
+  WeekdayChoiceMulti
 };

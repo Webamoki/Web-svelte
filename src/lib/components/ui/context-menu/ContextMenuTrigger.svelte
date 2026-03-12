@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { getContext, type Snippet } from 'svelte';
+  import { getContext, type Snippet } from 'svelte';
 
-	import type { ContextMenuState } from './ContextMenu.svelte';
+  import type { ContextMenuState } from './ContextMenu.svelte';
 
-	interface Props {
-		children: Snippet<[]>;
-	}
+  interface Props {
+    children: Snippet<[]>;
+  }
 
-	let { children }: Props = $props();
+  let { children }: Props = $props();
 
-	const menuState: ContextMenuState = getContext('context-menu');
+  const menuState: ContextMenuState = getContext('context-menu');
 
-	function handleContextMenu(event: MouseEvent) {
-		event.preventDefault();
-		menuState.position.x = event.clientX;
-		menuState.position.y = event.clientY;
-		menuState.open = true;
-	}
+  function handleContextMenu(event: MouseEvent) {
+    event.preventDefault();
+    menuState.position.x = event.clientX;
+    menuState.position.y = event.clientY;
+    menuState.open = true;
+  }
 </script>
 
 <div oncontextmenu={handleContextMenu} role="button" tabindex="-1">
-	{@render children()}
+  {@render children()}
 </div>

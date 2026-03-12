@@ -3,39 +3,40 @@
 // For a full list of overridable settings, and general information on folder-specific settings,
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
-	"code_actions_on_format": {
-		"source.organizeImports": false // Stop interfering with eslint
-	},
-	"lsp": {
-		"tailwindcss-language-server": {
-			"settings": {
-				"classFunctions": ["cn"]
-			}
-		}
-	},
-	// Enable eslint and fixes
-	"languages": {
-		"Svelte": {
-			"language_servers": ["svelte-language-server", "eslint"],
-			"formatter": "prettier",
-			"code_actions_on_format": {
-				"source.fixAll.eslint": true
-			}
-		},
-		"TypeScript": {
-			"language_servers": ["vtsls", "eslint"],
-			"formatter": "prettier",
-			"code_actions_on_format": {
-				"source.fixAll.eslint": true
-			}
-		},
-		"JavaScript": {
-			"language_servers": ["vtsls", "eslint"],
-			"formatter": "prettier",
-			"code_actions_on_format": {
-				"source.fixAll.eslint": true
-			}
-		}
-	},
-	"tab_size": 2
+  "code_actions_on_format": {
+    "source.organizeImports": false // Stop interfering with eslint
+  },
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classFunctions": ["cn"]
+      }
+    }
+  },
+  // Enable eslint and fixes
+  "languages": {
+    "Svelte": {
+      "language_servers": ["svelte-language-server", "eslint"],
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "TypeScript": {
+      "language_servers": ["vtsls", "eslint"],
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "JavaScript": {
+      "language_servers": ["vtsls", "eslint"],
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    }
+  },
+  "tab_size": 2,
+  "hard_tabs": false
 }

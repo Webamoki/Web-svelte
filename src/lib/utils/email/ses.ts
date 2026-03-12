@@ -1,19 +1,19 @@
 import { signRequest } from './aws-signer.js';
 
 export interface SendEmailOptions {
-	awsAccessKeyId: string;
-	// AWS credentials (required)
-	awsRegion: string;
-	awsSecretAccessKey: string;
-	bcc?: string | string[];
-	cc?: string | string[];
-	from: string;
-	fromName?: string;
-	html?: string;
-	replyTo?: string | string[];
-	subject: string;
-	text?: string;
-	to: string | string[];
+  awsAccessKeyId: string;
+  // AWS credentials (required)
+  awsRegion: string;
+  awsSecretAccessKey: string;
+  bcc?: string | string[];
+  cc?: string | string[];
+  from: string;
+  fromName?: string;
+  html?: string;
+  replyTo?: string | string[];
+  subject: string;
+  text?: string;
+  to: string | string[];
 }
 
 /**
@@ -23,171 +23,171 @@ export interface SendEmailOptions {
  * @returns messageId returned by SES
  */
 export async function sendEmail(options: SendEmailOptions): Promise<string> {
-	if (!options) throw new Error('sendEmail: options is required');
-	const {
-		awsAccessKeyId,
-		awsRegion,
-		awsSecretAccessKey,
-		bcc,
-		cc,
-		from,
-		fromName,
-		html,
-		replyTo,
-		subject,
-		text,
-		to
-	} = options;
+  if (!options) throw new Error('sendEmail: options is required');
+  const {
+    awsAccessKeyId,
+    awsRegion,
+    awsSecretAccessKey,
+    bcc,
+    cc,
+    from,
+    fromName,
+    html,
+    replyTo,
+    subject,
+    text,
+    to
+  } = options;
 
-	if (!subject) {
-		throw new Error('sendEmail: subject is required');
-	}
+  if (!subject) {
+    throw new Error('sendEmail: subject is required');
+  }
 
-	if (!text && !html) {
-		throw new Error('sendEmail: at least one of text or html body must be provided');
-	}
+  if (!text && !html) {
+    throw new Error('sendEmail: at least one of text or html body must be provided');
+  }
 
-	if (!from) {
-		throw new Error('sendEmail: sender `from` is required');
-	}
+  if (!from) {
+    throw new Error('sendEmail: sender `from` is required');
+  }
 
-	// Normalize and validate addresses: convert to array and filter out empty/whitespace strings
-	const normalizeAddresses = (addr?: string | string[]): string[] | undefined => {
-		if (addr === undefined) return undefined;
-		const addresses = Array.isArray(addr) ? addr : [addr];
-		const filtered = addresses.filter((a) => a && a.trim() !== '');
-		return filtered.length > 0 ? filtered : undefined;
-	};
+  // Normalize and validate addresses: convert to array and filter out empty/whitespace strings
+  const normalizeAddresses = (addr?: string | string[]): string[] | undefined => {
+    if (addr === undefined) return undefined;
+    const addresses = Array.isArray(addr) ? addr : [addr];
+    const filtered = addresses.filter((a) => a && a.trim() !== '');
+    return filtered.length > 0 ? filtered : undefined;
+  };
 
-	const toAddresses = normalizeAddresses(to);
-	const ccAddresses = normalizeAddresses(cc);
-	const bccAddresses = normalizeAddresses(bcc);
-	const replyToAddresses = normalizeAddresses(replyTo);
+  const toAddresses = normalizeAddresses(to);
+  const ccAddresses = normalizeAddresses(cc);
+  const bccAddresses = normalizeAddresses(bcc);
+  const replyToAddresses = normalizeAddresses(replyTo);
 
-	if (!toAddresses || toAddresses.length === 0) {
-		throw new Error('sendEmail: at least one valid recipient is required (to)');
-	}
+  if (!toAddresses || toAddresses.length === 0) {
+    throw new Error('sendEmail: at least one valid recipient is required (to)');
+  }
 
-	// Validate AWS credentials
-	if (!awsRegion || !awsAccessKeyId || !awsSecretAccessKey) {
-		throw new Error(
-			'sendEmail: missing required AWS credentials (awsRegion, awsAccessKeyId, awsSecretAccessKey)'
-		);
-	}
+  // Validate AWS credentials
+  if (!awsRegion || !awsAccessKeyId || !awsSecretAccessKey) {
+    throw new Error(
+      'sendEmail: missing required AWS credentials (awsRegion, awsAccessKeyId, awsSecretAccessKey)'
+    );
+  }
 
-	// Format source with optional fromName
-	const source = fromName ? `${fromName} <${from}>` : from;
+  // Format source with optional fromName
+  const source = fromName ? `${fromName} <${from}>` : from;
 
-	// Build form-encoded request body for SES API
-	const params = new URLSearchParams();
-	params.append('Action', 'SendEmail');
-	params.append('Source', source);
+  // Build form-encoded request body for SES API
+  const params = new URLSearchParams();
+  params.append('Action', 'SendEmail');
+  params.append('Source', source);
 
-	// Add destination addresses
-	toAddresses.forEach((addr, i) => params.append(`Destination.ToAddresses.member.${i + 1}`, addr));
-	if (ccAddresses) {
-		ccAddresses.forEach((addr, i) =>
-			params.append(`Destination.CcAddresses.member.${i + 1}`, addr)
-		);
-	}
-	if (bccAddresses) {
-		bccAddresses.forEach((addr, i) =>
-			params.append(`Destination.BccAddresses.member.${i + 1}`, addr)
-		);
-	}
+  // Add destination addresses
+  toAddresses.forEach((addr, i) => params.append(`Destination.ToAddresses.member.${i + 1}`, addr));
+  if (ccAddresses) {
+    ccAddresses.forEach((addr, i) =>
+      params.append(`Destination.CcAddresses.member.${i + 1}`, addr)
+    );
+  }
+  if (bccAddresses) {
+    bccAddresses.forEach((addr, i) =>
+      params.append(`Destination.BccAddresses.member.${i + 1}`, addr)
+    );
+  }
 
-	// Add reply-to addresses
-	if (replyToAddresses) {
-		replyToAddresses.forEach((addr, i) => params.append(`ReplyToAddresses.member.${i + 1}`, addr));
-	}
+  // Add reply-to addresses
+  if (replyToAddresses) {
+    replyToAddresses.forEach((addr, i) => params.append(`ReplyToAddresses.member.${i + 1}`, addr));
+  }
 
-	// Add message subject
-	params.append('Message.Subject.Data', subject);
-	params.append('Message.Subject.Charset', 'UTF-8');
+  // Add message subject
+  params.append('Message.Subject.Data', subject);
+  params.append('Message.Subject.Charset', 'UTF-8');
 
-	// Add message body
-	if (html) {
-		params.append('Message.Body.Html.Data', html);
-		params.append('Message.Body.Html.Charset', 'UTF-8');
-	}
-	if (text) {
-		params.append('Message.Body.Text.Data', text);
-		params.append('Message.Body.Text.Charset', 'UTF-8');
-	}
+  // Add message body
+  if (html) {
+    params.append('Message.Body.Html.Data', html);
+    params.append('Message.Body.Html.Charset', 'UTF-8');
+  }
+  if (text) {
+    params.append('Message.Body.Text.Data', text);
+    params.append('Message.Body.Text.Charset', 'UTF-8');
+  }
 
-	const body = params.toString();
-	const host = `email.${awsRegion}.amazonaws.com`;
-	const path = '/';
+  const body = params.toString();
+  const host = `email.${awsRegion}.amazonaws.com`;
+  const path = '/';
 
-	try {
-		// Sign the request
-		const { headers } = await signRequest('POST', host, path, body, {
-			accessKeyId: awsAccessKeyId,
-			region: awsRegion,
-			secretAccessKey: awsSecretAccessKey
-		});
+  try {
+    // Sign the request
+    const { headers } = await signRequest('POST', host, path, body, {
+      accessKeyId: awsAccessKeyId,
+      region: awsRegion,
+      secretAccessKey: awsSecretAccessKey
+    });
 
-		// Make the request
-		const response = await fetch(`https://${host}${path}`, {
-			body,
-			headers: {
-				...headers,
-				'Content-Length': body.length.toString(),
-				Host: host
-			},
-			method: 'POST'
-		});
+    // Make the request
+    const response = await fetch(`https://${host}${path}`, {
+      body,
+      headers: {
+        ...headers,
+        'Content-Length': body.length.toString(),
+        Host: host
+      },
+      method: 'POST'
+    });
 
-		const responseText = await response.text();
+    const responseText = await response.text();
 
-		if (!response.ok) {
-			// Parse error response using regex (works in Node.js and browsers)
-			let errorMessage = 'Unknown error';
-			let errorCode: string | undefined;
-			try {
-				const codeMatch = responseText.match(/<Code>(.*?)<\/Code>/);
-				const messageMatch = responseText.match(/<Message>(.*?)<\/Message>/);
-				if (codeMatch) errorCode = codeMatch[1];
-				if (messageMatch) errorMessage = messageMatch[1];
-			} catch {
-				errorMessage = responseText || `HTTP ${response.status} ${response.statusText}`;
-			}
+    if (!response.ok) {
+      // Parse error response using regex (works in Node.js and browsers)
+      let errorMessage = 'Unknown error';
+      let errorCode: string | undefined;
+      try {
+        const codeMatch = responseText.match(/<Code>(.*?)<\/Code>/);
+        const messageMatch = responseText.match(/<Message>(.*?)<\/Message>/);
+        if (codeMatch) errorCode = codeMatch[1];
+        if (messageMatch) errorMessage = messageMatch[1];
+      } catch {
+        errorMessage = responseText || `HTTP ${response.status} ${response.statusText}`;
+      }
 
-			throw new Error(
-				`sendEmail: failed to send email: ${JSON.stringify({ code: errorCode, message: errorMessage })}`
-			);
-		}
+      throw new Error(
+        `sendEmail: failed to send email: ${JSON.stringify({ code: errorCode, message: errorMessage })}`
+      );
+    }
 
-		// Parse success response for MessageId using regex (works in Node.js and browsers)
-		try {
-			const messageIdMatch = responseText.match(/<MessageId>(.*?)<\/MessageId>/);
+    // Parse success response for MessageId using regex (works in Node.js and browsers)
+    try {
+      const messageIdMatch = responseText.match(/<MessageId>(.*?)<\/MessageId>/);
 
-			if (!messageIdMatch || !messageIdMatch[1]) {
-				throw new Error('sendEmail: SES response did not contain a MessageId');
-			}
+      if (!messageIdMatch || !messageIdMatch[1]) {
+        throw new Error('sendEmail: SES response did not contain a MessageId');
+      }
 
-			return messageIdMatch[1];
-		} catch (err) {
-			if (err instanceof Error && err.message.includes('MessageId')) {
-				throw err;
-			}
-			throw new Error(
-				`sendEmail: failed to parse SES response: ${err instanceof Error ? err.message : String(err)}`
-			);
-		}
-	} catch (err: unknown) {
-		// Re-throw if already formatted
-		if (err instanceof Error && err.message.startsWith('sendEmail:')) {
-			throw err;
-		}
-		// Normalize other errors
-		const message = err instanceof Error ? err.message : String(err);
-		let code: string | undefined;
-		if (err && typeof err === 'object') {
-			const e = err as Record<string, unknown>;
-			if (typeof e['name'] === 'string') code = e['name'] as string;
-		}
-		const details = { code, message };
-		throw new Error(`sendEmail: failed to send email: ${JSON.stringify(details)}`);
-	}
+      return messageIdMatch[1];
+    } catch (err) {
+      if (err instanceof Error && err.message.includes('MessageId')) {
+        throw err;
+      }
+      throw new Error(
+        `sendEmail: failed to parse SES response: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  } catch (err: unknown) {
+    // Re-throw if already formatted
+    if (err instanceof Error && err.message.startsWith('sendEmail:')) {
+      throw err;
+    }
+    // Normalize other errors
+    const message = err instanceof Error ? err.message : String(err);
+    let code: string | undefined;
+    if (err && typeof err === 'object') {
+      const e = err as Record<string, unknown>;
+      if (typeof e['name'] === 'string') code = e['name'] as string;
+    }
+    const details = { code, message };
+    throw new Error(`sendEmail: failed to send email: ${JSON.stringify(details)}`);
+  }
 }

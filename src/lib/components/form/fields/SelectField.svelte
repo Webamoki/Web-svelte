@@ -41,7 +41,10 @@
 		value = $bindable(undefined),
 		...fieldProps
 	}: Props = $props();
+	// Items property shouldn't be updated, ignore warning
+	// svelte-ignore state_referenced_locally
 	let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
+	// svelte-ignore state_referenced_locally
 	let keyToItem: Map<string, I> = new Map(items.map((item) => [getKey(item), item] as const));
 
 	// Enforce string key function

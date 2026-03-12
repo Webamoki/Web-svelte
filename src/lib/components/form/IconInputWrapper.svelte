@@ -18,12 +18,13 @@
 
 	let { children, flex = false, icon, iconPosition = 'center' }: Props = $props();
 
-	const iconClass =
+	let iconClass = $derived(
 		iconPosition === 'top'
 			? 'pointer-events-none absolute top-4 left-4 text-gray-500'
-			: 'pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-500';
+			: 'pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-500'
+	);
 
-	const wrapperClass = flex ? 'relative flex-1' : 'relative';
+	let wrapperClass = $derived(flex ? 'relative flex-1' : 'relative');
 </script>
 
 {#if icon}

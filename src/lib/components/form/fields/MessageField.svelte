@@ -12,8 +12,8 @@
 	interface Props extends FieldWrapperProps<T, U, M> {
 		class?: string;
 		defaultHeight?: number;
-		defaultLocked?: boolean;
 		icon?: Component;
+		locked?: boolean;
 		placeholder?: string;
 		showLock?: boolean;
 		value?: string;
@@ -21,15 +21,13 @@
 	let {
 		class: className,
 		defaultHeight = 100,
-		defaultLocked = false,
 		icon,
+		locked = $bindable(false),
 		placeholder,
 		showLock = true,
 		value = $bindable(),
 		...fieldProps
 	}: Props = $props();
-
-	let locked = $state(defaultLocked);
 </script>
 
 <FieldWrapper {...fieldProps}>

@@ -67,7 +67,7 @@
 				</p>
 			</div>
 
-			<Form action={resolve('/form')} actionName="normal" form={testForm}>
+			<Form actionName="normal" actionPath={resolve('/form')} form={testForm}>
 				<div class="space-y-4">
 					<TextField name="email" form={testForm} label="Email" bind:value={$testData.email} />
 					<MessageField

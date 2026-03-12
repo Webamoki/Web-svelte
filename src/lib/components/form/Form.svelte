@@ -3,17 +3,21 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		action: string;
 		actionName?: string;
+		actionPath: string;
 		children?: Snippet;
 		class?: string;
 		form: FsSuperForm<T, M>;
 	}
 
-	let { action: _action, actionName, children, class: className, form }: Props = $props();
-	actionName = actionName ? `?/${actionName}` : '';
+	let { actionName, actionPath, children, class: className, form }: Props = $props();
 </script>
 
-<form class={className} action="{_action}{actionName}" method="POST" use:form.enhance>
+<form
+	class={className}
+	action="{actionPath ?? ''}{actionName ? `?/${actionName}` : ''}"
+	method="POST"
+	use:form.enhance
+>
 	{@render children?.()}
 </form>

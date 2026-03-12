@@ -18,12 +18,14 @@
 		...restProps
 	}: Props = $props();
 
-	const inputClasses = cn(
-		'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none',
-		'focus:border-transparent focus:ring-2 focus:ring-primary',
-		'disabled:cursor-not-allowed disabled:opacity-50',
-		'aria-invalid:border-red-500 aria-invalid:focus:ring-red-300',
-		className
+	let inputClasses = $derived(
+		cn(
+			'w-full rounded-lg border border-gray-300 px-4 py-3 transition-all outline-none',
+			'focus:border-transparent focus:ring-2 focus:ring-primary',
+			'disabled:cursor-not-allowed disabled:opacity-50',
+			'aria-invalid:border-red-500 aria-invalid:focus:ring-red-300',
+			className
+		)
 	);
 </script>
 

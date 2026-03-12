@@ -24,6 +24,8 @@
 		...props
 	}: ChoiceMultiProps<V, I, K> = $props();
 
+	// Items property shouldn't be updated, ignore warning
+	// svelte-ignore state_referenced_locally
 	const valueIndex = new Map<V, number>(
 		items.map((item, index) => [getValue(item), index] as const)
 	);

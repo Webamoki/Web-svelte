@@ -1,4 +1,5 @@
-import { type } from 'arktype';
+import type { type } from 'arktype';
+
 import { toast } from 'svelte-sonner';
 import { defaults, superForm, type SuperValidated } from 'sveltekit-superforms';
 import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';

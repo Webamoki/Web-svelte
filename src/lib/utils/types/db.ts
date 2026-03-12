@@ -1,4 +1,6 @@
-import { CalendarDate, parseDate, parseTime, type Time } from '@internationalized/date';
+import type { CalendarDate } from '@internationalized/date';
+
+import { parseDate, parseTime, type Time } from '@internationalized/date';
 import { customType, varchar } from 'drizzle-orm/pg-core';
 
 import { HEX_COLOR_MAX, NAME_MAX } from './consts.js';

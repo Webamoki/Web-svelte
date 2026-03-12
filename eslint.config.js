@@ -46,5 +46,11 @@ export default ts.config(
 		rules: {
 			'svelte/sort-attributes': 'error'
 		}
+	},
+	{
+		rules: {
+			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/no-import-type-side-effects': 'error'
+		}
 	}
 );

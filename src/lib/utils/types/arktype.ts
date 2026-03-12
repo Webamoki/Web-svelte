@@ -1,5 +1,7 @@
+import type { Type } from 'arktype';
+
 import { CalendarDate as calendarImport, Time as timeImport } from '@internationalized/date';
-import { Type, type } from 'arktype';
+import { type } from 'arktype';
 
 import { Days } from '../datetime/index.js';
 import { toTitleCase } from '../string.js';

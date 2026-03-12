@@ -21,7 +21,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 ) {
 	const form = superForm(defaults(arktype(schema)), {
 		dataType: 'json',
-		invalidateAll: options?.invalidateAll === undefined ? false : true,
+		invalidateAll: options?.invalidateAll ?? false,
 		onError({ result }) {
 			const message = result.error.message ?? 'There was an error submitting the form';
 			const status = result.status ?? 500;

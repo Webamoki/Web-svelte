@@ -23,59 +23,55 @@
     "test": "pnpm test:unit",
     "watch": "svelte-package --watch"
   },
-  "files": [
-    "dist",
-    "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
-  ],
-  "sideEffects": [
-    "**/*.css"
-  ],
   "type": "module",
   "exports": {
     "./components/form": {
-      "types": "./src/lib/components/form/index.d.ts",
-      "svelte": "./src/lib/components/form/index.js"
+      "types": "./src/lib/components/form/index.ts",
+      "svelte": "./src/lib/components/form/index.ts"
     },
     "./components/ui": {
-      "types": "./src/lib/components/ui/index.d.ts",
-      "svelte": "./src/lib/components/ui/index.js"
+      "types": "./src/lib/components/ui/index.ts",
+      "svelte": "./src/lib/components/ui/index.ts"
     },
     "./utils/datetime": {
-      "types": "./src/lib/utils/datetime/index.d.ts",
-      "import": "./src/lib/utils/datetime/index.js"
+      "types": "./src/lib/utils/datetime/index.ts",
+      "import": "./src/lib/utils/datetime/index.ts"
     },
     "./utils/types/arktype": {
-      "types": "./src/lib/utils/types/arktype.d.ts",
-      "import": "./src/lib/utils/types/arktype.js"
+      "types": "./src/lib/utils/types/arktype.ts",
+      "import": "./src/lib/utils/types/arktype.ts"
     },
     "./utils/types/consts": {
-      "types": "./src/lib/utils/types/consts.d.ts",
-      "import": "./src/lib/utils/types/consts.js"
+      "types": "./src/lib/utils/types/consts.ts",
+      "import": "./src/lib/utils/types/consts.ts"
     },
     "./utils/types/db": {
-      "types": "./src/lib/utils/types/db.d.ts",
-      "import": "./src/lib/utils/types/db.js"
+      "types": "./src/lib/utils/types/db.ts",
+      "import": "./src/lib/utils/types/db.ts"
     },
     "./utils/form": {
-      "types": "./src/lib/utils/form/index.d.ts",
-      "import": "./src/lib/utils/form/index.js"
+      "types": "./src/lib/utils/form/index.ts",
+      "import": "./src/lib/utils/form/index.ts"
     },
     "./utils/email": {
-      "types": "./src/lib/utils/email/index.d.ts",
-      "import": "./src/lib/utils/email/index.js"
+      "types": "./src/lib/utils/email/index.ts",
+      "import": "./src/lib/utils/email/index.ts"
     },
     "./server/form-handler": {
-      "types": "./src/lib/server/form-handler.d.ts",
-      "import": "./src/lib/server/form-handler.js"
+      "types": "./src/lib/server/form-handler.ts",
+      "import": "./src/lib/server/form-handler.ts"
     },
     "./server/form-processor": {
-      "types": "./src/lib/server/form-processor.d.ts",
-      "import": "./src/lib/server/form-processor.js"
+      "types": "./src/lib/server/form-processor.ts",
+      "import": "./src/lib/server/form-processor.ts"
     },
     "./utils/search": {
-      "types": "./src/lib/utils/search.d.ts",
-      "import": "./src/lib/utils/search.js"
+      "types": "./src/lib/utils/search.ts",
+      "import": "./src/lib/utils/search.ts"
+    },
+    "./utils/string": {
+      "types": "./src/lib/utils/string.ts",
+      "import": "./src/lib/utils/string.ts"
     }
   },
   "peerDependencies": {

@@ -14,7 +14,6 @@
 		"build": "vite build && pnpm prepack",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "pnpm fmt && pnpm lint:es --fix && pnpm lint:svelte && pnpm test",
 		"fmt": "prettier --write --cache --cache-location=.cache/.prettier-cache --cache-strategy metadata --log-level warn .",
 		"lint": "pnpm lint:es && pnpm lint:svelte",

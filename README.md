@@ -1,119 +1,87 @@
 # Web-Svelte
 
 A shared Svelte UI components and utilities library.
-Managed via Git Submodules and PNPM Workspaces.
 
 ## 🚀 Setup
 
-### 1. Add as Git Submodule
+### 1. Install Dependency
 
-If you are adding this library to a new project for the first time, run the
-following command from your project root:
-
-```bash
-git submodule add git@github.com:Webamoki/Web-svelte.git modules/web-svelte
-```
-
-> [!NOTE]
-> If you want, you can change the `modules/web-svelte` path, don't forget to change
-> this in the rest of the setup.
-
-> [!IMPORTANT]
-> **If you have just cloned a project that already contains this submodule**, the
-> folder will be empty by default. Run this to fetch the code:
->
-> ```bash
-> git submodule update --init --recursive
-> ```
-
-### 2. Configure PNPM Workspace
-
-Your project must be configured as a workspace so PNPM can link the submodule.
-Add (or update) the workspace file in your project root:
-
-`pnpm-workspace.yaml`
-
-```yaml
-packages:
-  - '.'
-  - 'modules/*'
-```
-
-### 3. Install Dependency
-
-Link the library to your main app as a pnpm package.
-Run the following command in your project root:
+Install the library in your project via your preferred package manager:
 
 ```bash
-pnpm add @webamoki/web-svelte@workspace:*
-```
-
-Install any dependencies required by the library.
-
-```bash
-pnpm install
-```
-
-### 4. Vite Config
-
-Add the following to your Vite config to use the library as source code.
-
-```ts
-export default defineConfig({
-  // ... other configs
-  ssr: {
-    noExternal: ['@webamoki/web-svelte']
-  }
-});
+pnpm add @webamoki/web-svelte
 ```
 
 ---
 
-## 🎨 Styling
+### 🎨 Styling
 
 This library is built with Tailwind CSS. To ensure styles are applied correctly in your host project, follow these steps:
 
 ### Theme Configuration
 
-Create a `theme.css` file in your project (or update your existing one) to match the variable structure found in `modules/web-svelte/src/theme.css`.
+Create a `theme.css` file in your project (or update your existing one) to match the CSS variables required by the library's theme.
 
 ### Main CSS Setup
 
-In your project's main CSS entry point (e.g., `src/app.css`), include the following:
+In your project's main CSS entry point (e.g., `src/app.css`), include the following. Crucially, you must add the `@source` directive so Tailwind v4 scans the installed library's components for utility classes.
 
 ```css
 @import 'tailwindcss';
 @import './theme.css';
 
+/* Tell Tailwind to scan the library for classes */
+@source '../node_modules/@webamoki/web-svelte';
+
 /* Required for the library's dark mode components */
 @custom-variant dark (&:is(.dark *));
 ```
+
+> [!NOTE]
+> Adjust the relative path in `@source` if your `app.css` is deeply nested, e.g., `../../node_modules/...`.
 
 ---
 
 ## 🛠 Development Workflow
 
-### Updating the Library
+### Local Development
 
-To pull the latest changes from the remote repository into your local submodule:
+If you want to make changes to `@webamoki/web-svelte` and test them in a host application simultaneously without publishing:
+
+1. Clone this repository:
+   ```bash
+   git clone git@github.com:Webamoki/Web-svelte.git
+   cd Web-svelte
+   pnpm install
+   ```
+2. Link the package globally:
+   ```bash
+   pnpm link --global
+   ```
+3. In your host application, link the local package:
+   ```bash
+   pnpm link --global @webamoki/web-svelte
+   ```
+4. Run the package watcher in the library directory to automatically rebuild on changes:
+   ```bash
+   pnpm watch
+   ```
+
+Alternatively, to develop and test components in isolation, you can use the built-in SvelteKit app:
 
 ```bash
-git submodule update --remote --merge
+pnpm dev
 ```
-
-You will notice a git diff in your main project showing the submodule pointer
-(commit hash) has changed.
-Commit and push these changes to update the submodule pointer in your main project.
-
-### Making Changes
-
-Since this is a workspace, you can edit code inside `modules/web-svelte` directly
-and have hot-reloading.
 
 ### Versioning & Releases
 
-We use **GitHub Run Numbers** for versioning. Every merge to `main`
-automatically generates a new Release tag (e.g., `v1`, `v2`).
+We use **Semantic Versioning** managed automatically by `semantic-release`.
 
-Check the [Releases](https://github.com/Webamoki/Web-svelte/releases) tab for
-auto-generated changelogs based on Pull Request titles.
+Every merge to `main` is automatically analyzed based on the
+**[Angular commit message format](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md)**
+to determine the correct version bump, generate a changelog, create a GitHub Release,
+and publish the package to npm with OIDC provenance.
+
+- **Patch Release (`v1.0.x`)**: `fix:`, `perf:`, etc. (Bug fixes, minor tweaks)
+- **Minor Release (`v1.x.0`)**: `feat:` (New features added in a backwards-compatible manner)
+- **Major Release (`vX.0.0`)**: Any commit that includes `BREAKING CHANGE:` in its footer.

@@ -11,9 +11,10 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && pnpm prepack",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
+    "prepack": "svelte-kit sync && svelte-package && publint",
     "check": "pnpm fmt && pnpm lint:es --fix && pnpm lint:svelte && pnpm test",
     "fmt": "prettier --write --cache --cache-location=.cache/.prettier-cache --cache-strategy metadata --log-level warn .",
     "lint": "pnpm lint:es && pnpm lint:svelte",
@@ -34,48 +35,48 @@
   "type": "module",
   "exports": {
     "./components/form": {
-      "types": "./src/lib/components/form/index.d.ts",
-      "svelte": "./src/lib/components/form/index.js"
+      "types": "./dist/components/form/index.d.ts",
+      "svelte": "./dist/components/form/index.js"
     },
     "./components/ui": {
-      "types": "./src/lib/components/ui/index.d.ts",
-      "svelte": "./src/lib/components/ui/index.js"
+      "types": "./dist/components/ui/index.d.ts",
+      "svelte": "./dist/components/ui/index.js"
     },
     "./utils/datetime": {
-      "types": "./src/lib/utils/datetime/index.d.ts",
-      "import": "./src/lib/utils/datetime/index.js"
+      "types": "./dist/utils/datetime/index.d.ts",
+      "import": "./dist/utils/datetime/index.js"
     },
     "./utils/types/arktype": {
-      "types": "./src/lib/utils/types/arktype.d.ts",
-      "import": "./src/lib/utils/types/arktype.js"
+      "types": "./dist/utils/types/arktype.d.ts",
+      "import": "./dist/utils/types/arktype.js"
     },
     "./utils/types/consts": {
-      "types": "./src/lib/utils/types/consts.d.ts",
-      "import": "./src/lib/utils/types/consts.js"
+      "types": "./dist/utils/types/consts.d.ts",
+      "import": "./dist/utils/types/consts.js"
     },
     "./utils/types/db": {
-      "types": "./src/lib/utils/types/db.d.ts",
-      "import": "./src/lib/utils/types/db.js"
+      "types": "./dist/utils/types/db.d.ts",
+      "import": "./dist/utils/types/db.js"
     },
     "./utils/form": {
-      "types": "./src/lib/utils/form/index.d.ts",
-      "import": "./src/lib/utils/form/index.js"
+      "types": "./dist/utils/form/index.d.ts",
+      "import": "./dist/utils/form/index.js"
     },
     "./utils/email": {
-      "types": "./src/lib/utils/email/index.d.ts",
-      "import": "./src/lib/utils/email/index.js"
+      "types": "./dist/utils/email/index.d.ts",
+      "import": "./dist/utils/email/index.js"
     },
     "./server/form-handler": {
-      "types": "./src/lib/server/form-handler.d.ts",
-      "import": "./src/lib/server/form-handler.js"
+      "types": "./dist/server/form-handler.d.ts",
+      "import": "./dist/server/form-handler.js"
     },
     "./server/form-processor": {
-      "types": "./src/lib/server/form-processor.d.ts",
-      "import": "./src/lib/server/form-processor.js"
+      "types": "./dist/server/form-processor.d.ts",
+      "import": "./dist/server/form-processor.js"
     },
     "./utils/search": {
-      "types": "./src/lib/utils/search.d.ts",
-      "import": "./src/lib/utils/search.js"
+      "types": "./dist/utils/search.d.ts",
+      "import": "./dist/utils/search.js"
     }
   },
   "peerDependencies": {

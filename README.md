@@ -1,5 +1,7 @@
 # Web-Svelte
 
+[![npm version](https://img.shields.io/npm/v/@webamoki/web-svelte.svg)](https://www.npmjs.com/package/@webamoki/web-svelte)
+
 A shared Svelte UI components and utilities library.
 
 ## 🚀 Setup

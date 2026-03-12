@@ -12,9 +12,7 @@ Install the library in your project via your preferred package manager:
 pnpm add @webamoki/web-svelte
 ```
 
----
-
-### 🎨 Styling
+### 2. 🎨 Styling
 
 This library is built with Tailwind CSS. To ensure styles are applied correctly in your host project, follow these steps:
 

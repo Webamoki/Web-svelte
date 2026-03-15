@@ -16,6 +16,9 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
     onSuccess: (
       form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
     ) => void;
+    onUpdated: (
+      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+    ) => void;
     resetForm: boolean;
   }>
 ) {
@@ -28,6 +31,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
       toast.error(`${status} - ${message}`);
     },
     onUpdated({ form }) {
+      options?.onUpdated?.(form);
       if (form.valid && form.message!.success) {
         options?.onSuccess?.(form);
         if (form.message?.text && form.message?.showToast) {
@@ -60,6 +64,9 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
     onSuccess: (
       form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
     ) => void;
+    onUpdated: (
+      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+    ) => void;
     resetForm: boolean;
   }>
 ) {
@@ -72,6 +79,7 @@ export function prepareForm<S extends type.Any<Record<string, unknown>>>(
       toast.error(`${status} - ${message}`);
     },
     onUpdated({ form }) {
+      options?.onUpdated?.(form);
       if (form.valid && form.message!.success) {
         options?.onSuccess?.(form);
         if (form.message?.text && form.message?.showToast) {

@@ -46,7 +46,12 @@
         }
       }
     ],
-    "@anolilab/semantic-release-pnpm",
+    [
+      "@anolilab/semantic-release-pnpm",
+      {
+        "tarballDir": "dist"
+      }
+    ],
     [
       "@semantic-release/github",
       {

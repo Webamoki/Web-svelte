@@ -42,9 +42,7 @@ In your project's main CSS entry point (e.g., `src/app.css`), include the follow
 
 ---
 
-## 🛠 Development Workflow
-
-### Local Development
+## 🛠 Local Development
 
 If you want to make changes to `@webamoki/web-svelte` and test them in a host application simultaneously without publishing:
 
@@ -73,15 +71,76 @@ Alternatively, to develop and test components in isolation, you can use the buil
 pnpm dev
 ```
 
-### Versioning & Releases
+---
+
+## Versioning & Releases
 
 We use **Semantic Versioning** managed automatically by `semantic-release`.
 
-Every merge to `main` is automatically analyzed based on the
-**[Angular commit message format](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md)**
-to determine the correct version bump, generate a changelog, create a GitHub Release,
-and publish the package to npm with OIDC provenance.
+Every merge to `main` is automatically analysed based on each commit message to determine the correct version bump, generate a GitHub Release and publish the package to npm.
 
-- **Patch Release (`v1.0.x`)**: `fix:`, `perf:`, etc. (Bug fixes, minor tweaks)
-- **Minor Release (`v1.x.0`)**: `feat:` (New features added in a backwards-compatible manner)
-- **Major Release (`vX.0.0`)**: Any commit that includes `BREAKING CHANGE:` in its footer.
+- **Patch Release (`v0.0.X`)**: Minor tweaks that should not affect API
+- **Minor Release (`v0.X.0`)**: New features added in a backwards-compatible manner
+- **Major Release (`vX.0.0`)**: Any commit that makes breaking API changes
+
+If there are multiple version bumps triggered, only the highest one will take effect (major > minor > patch).
+
+Any commit causing a version bump will be displayed in the final release notes.
+
+### Commit Signature
+
+```
+type(scope): subject
+
+footer
+```
+
+### Standard Types
+
+If a commit has any of these types, they cause a version bump:
+
+- **Patch**: `fix|refactor|perf|build`
+- **Minor**: `feat`
+
+Other types not mentioned above will not trigger a version bump.
+
+### Scope
+
+If the commit has any of `major|minor|patch` in its scope, then it triggers a version bump regardless of its type.
+
+### Versioning Examples:
+
+```
+refactor(ui): a function   // patch - standard type
+fix: a bug                 // patch - standard type
+fix(minor): a bug          // minor - scope overrides type
+chore: comment typo        // No versioning - not a standard type
+chore(major): something    // major - scope overrides type
+ci: blah                   // No versioning - not standard
+```
+
+### Breaking Changes
+
+For breaking changes, you must append `!` before the colon in the commit header as such:
+
+```
+refactor!: change api
+fix(ui)!: change button api
+```
+
+Breaking changes will be displayed separately in the release notes.
+If you want to give more detail for a breaking commit, add messages in the footer following these templates:
+
+```
+refactor!: change api
+
+BREAKING CHANGE: Remove endpoint for auth
+```
+
+```
+fix(ui)!: change button api
+
+BREAKING CHANGES: button api
+- Remove content prop
+- Add colour prop
+```

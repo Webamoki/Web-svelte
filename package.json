@@ -93,6 +93,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "@anolilab/semantic-release-pnpm": "^5.0.0",
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.39.4",
     "@internationalized/date": "catalog:",

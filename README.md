@@ -128,6 +128,8 @@ refactor!: change api
 fix(ui)!: change button api
 ```
 
+Commits with breaking changes cause `major` version bumps. 
+
 Breaking changes will be displayed separately in the release notes.
 If you want to give more detail for a breaking commit, add messages in the footer following these templates:
 

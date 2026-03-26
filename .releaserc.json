@@ -49,19 +49,13 @@
     [
       "@anolilab/semantic-release-pnpm",
       {
-        "tarballDir": "dist"
+        "tarballDir": "pack"
       }
     ],
     [
       "@semantic-release/github",
       {
-        "assets": [
-          {
-            "path": "dist/*.tgz",
-            "name": "web-svelte-${nextRelease.version}.tgz",
-            "label": "NPM Tarball (${nextRelease.version})"
-          }
-        ]
+        "assets": "pack/*.tgz"
       }
     ]
   ]

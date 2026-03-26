@@ -32,9 +32,6 @@ jobs:
       - name: Setup CI Environment
         uses: ./.github/actions/setup-ci
 
-      - name: Build
-        run: pnpm build:lib
-
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -73,7 +73,7 @@ pnpm dev
 
 ---
 
-## Versioning & Releases
+## 🔖 Versioning & Releases
 
 We use **Semantic Versioning** managed automatically by `semantic-release`.
 
@@ -120,6 +120,8 @@ ci: blah                   // No versioning - not standard
 ```
 
 ### Breaking Changes
+
+Commits with a breaking change automatically trigger a `major` version bump.
 
 For breaking changes, you must append `!` before the colon in the commit header as such:
 

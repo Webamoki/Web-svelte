@@ -10,7 +10,7 @@ import {
   startOfMonth,
   Time,
   toCalendarDate,
-  today,
+  today as todayFn,
   toTime,
   ZonedDateTime
 } from '@internationalized/date';
@@ -18,7 +18,6 @@ import { map, range } from 'ramda';
 
 import type { Day } from '../types/arktype.js';
 
-const DEFAULT_TIME_ZONE = 'Europe/London';
 const DEFAULT_LOCALE = 'en-GB';
 
 // Day of the week
@@ -37,29 +36,50 @@ export const DayIndex: Record<Day, number> = Object.fromEntries(
   Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
 
-/**
- * Calculates the age from a date of birth.
- * @param dob - The date of birth.
- * @returns The age in years.
- * @throws Error if the date of birth is in the future.
- */
-export function ageFromDob(dob: CalendarDate, timezone: string): number {
-  const todayDate = today(timezone);
+// Date functions local to a timezone
+export class LocalDateF {
+  constructor(private readonly timezone: string) {}
 
-  if (todayDate.compare(dob) < 0) {
-    throw new Error('Date of birth is in the future');
+  /**
+   * Calculates the age from a date of birth.
+   * @param dob - The date of birth.
+   * @returns The age in years.
+   * @throws Error if the date of birth is in the future.
+   */
+  ageFromDob(dob: CalendarDate): number {
+    const todayDate = this.today();
+
+    if (todayDate.compare(dob) < 0) {
+      throw new Error('Date of birth is in the future');
+    }
+
+    let years = todayDate.year - dob.year;
+    const monthDiff = todayDate.month - dob.month;
+    const dayDiff = todayDate.day - dob.day;
+
+    // Adjust years down if birthday hasn't occurred this year
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      years--;
+    }
+
+    return years;
   }
 
-  let years = todayDate.year - dob.year;
-  const monthDiff = todayDate.month - dob.month;
-  const dayDiff = todayDate.day - dob.day;
-
-  // Adjust years down if birthday hasn't occurred this year
-  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-    years--;
+  /**
+   * Checks if a given date is today.
+   * @param date - The date to check.
+   * @returns True if the date is today, false otherwise.
+   */
+  isDateToday(date: CalendarDate): boolean {
+    return this.today().compare(date) === 0;
   }
 
-  return years;
+  /**
+   * @returns The current date.
+   */
+  today(): CalendarDate {
+    return todayFn(this.timezone);
+  }
 }
 
 /**
@@ -195,15 +215,6 @@ export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
   return dateDay === dayOfWeek;
 }
 
-/**
- * Checks if a given date is today.
- * @param date - The date to check.
- * @returns True if the date is today, false otherwise.
- */
-export function isDateToday(date: CalendarDate, timezone: string): boolean {
-  return today(timezone).compare(date) === 0;
-}
-
 const msPerWeek = 7 * 24 * 60 * 60 * 1000;
 
 /**
@@ -212,8 +223,8 @@ const msPerWeek = 7 * 24 * 60 * 60 * 1000;
  * @param date2 - The second date in order.
  */
 export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number {
-  const date1Abs = date1.toDate(DEFAULT_TIME_ZONE).getTime();
-  const date2Abs = date2.toDate(DEFAULT_TIME_ZONE).getTime();
+  const date1Abs = date1.toDate('UTC').getTime();
+  const date2Abs = date2.toDate('UTC').getTime();
 
   return Math.floor((date2Abs - date1Abs) / msPerWeek);
 }
@@ -390,9 +401,7 @@ function formatDate(date: CalendarDate, formatter: DateFormatter): string {
 
 // Pad number with zeroes to the left
 function padNum(num: number, len: number): string {
-  if (isNaN(num)) {
-    return '0'.repeat(len);
-  }
+  if (isNaN(num)) return '0'.repeat(len);
 
   return num.toString().padStart(len, '0');
 }

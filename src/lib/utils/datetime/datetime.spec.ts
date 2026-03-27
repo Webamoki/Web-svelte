@@ -2,7 +2,6 @@ import { CalendarDate, CalendarDateTime, Time, ZonedDateTime } from '@internatio
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  ageFromDob,
   checkOverlap,
   dateDiffWeeks,
   datesWithin,
@@ -17,16 +16,30 @@ import {
   formatTimeEnd,
   formatTimeFull,
   formatTimeShort,
+  getDayIndex,
   getDayOfDate,
   getLastDateOfDay,
   getLastDatesOfDay,
   getLastMonths,
   getNextDateOfDay,
   isDateDay,
-  isDateToday
+  LocalDateF
 } from './index.js';
 
 const SERVER_TIME_ZONE = 'Europe/London';
+
+describe('getDayIndex', () => {
+  it('returns the correct day index (0 = Monday)', () => {
+    // Test specific dates with known day indices
+    expect(getDayIndex(new CalendarDate(2023, 5, 1))).toBe(0); // May 1, 2023 was a Monday
+    expect(getDayIndex(new CalendarDate(2023, 5, 2))).toBe(1); // May 2, 2023 was a Tuesday
+    expect(getDayIndex(new CalendarDate(2023, 5, 3))).toBe(2); // May 3, 2023 was a Wednesday
+    expect(getDayIndex(new CalendarDate(2023, 5, 4))).toBe(3); // May 4, 2023 was a Thursday
+    expect(getDayIndex(new CalendarDate(2023, 5, 5))).toBe(4); // May 5, 2023 was a Friday
+    expect(getDayIndex(new CalendarDate(2023, 5, 6))).toBe(5); // May 6, 2023 was a Saturday
+    expect(getDayIndex(new CalendarDate(2023, 5, 7))).toBe(6); // May 7, 2023 was a Sunday
+  });
+});
 
 describe('getDayOfDate', () => {
   it('returns the correct day of the week (0 = Monday)', () => {
@@ -85,6 +98,8 @@ describe('isDateDay', () => {
 });
 
 describe('isDateToday', () => {
+  const dt = new LocalDateF(SERVER_TIME_ZONE);
+
   beforeEach(() => {
     // Mock current date to 2024-05-15
     const currentDate = new CalendarDate(2024, 5, 15);
@@ -98,42 +113,44 @@ describe('isDateToday', () => {
 
   it('returns true when date is today', () => {
     const today = new CalendarDate(2024, 5, 15);
-    expect(isDateToday(today, SERVER_TIME_ZONE)).toBe(true);
+    expect(dt.isDateToday(today)).toBe(true);
   });
 
   it('returns false when date is in the past', () => {
     const yesterday = new CalendarDate(2024, 5, 14);
-    expect(isDateToday(yesterday, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(yesterday)).toBe(false);
 
     const lastMonth = new CalendarDate(2024, 4, 15);
-    expect(isDateToday(lastMonth, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(lastMonth)).toBe(false);
 
     const lastYear = new CalendarDate(2023, 5, 15);
-    expect(isDateToday(lastYear, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(lastYear)).toBe(false);
   });
 
   it('returns false when date is in the future', () => {
     const tomorrow = new CalendarDate(2024, 5, 16);
-    expect(isDateToday(tomorrow, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(tomorrow)).toBe(false);
 
     const nextMonth = new CalendarDate(2024, 6, 15);
-    expect(isDateToday(nextMonth, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(nextMonth)).toBe(false);
 
     const nextYear = new CalendarDate(2025, 5, 15);
-    expect(isDateToday(nextYear, SERVER_TIME_ZONE)).toBe(false);
+    expect(dt.isDateToday(nextYear)).toBe(false);
   });
 
   it('handles date comparison at day boundaries', () => {
     // Still the same day regardless of time of day
     vi.setSystemTime(new CalendarDateTime(2024, 5, 15, 0, 0, 1).toDate(SERVER_TIME_ZONE));
-    expect(isDateToday(new CalendarDate(2024, 5, 15), SERVER_TIME_ZONE)).toBe(true);
+    expect(dt.isDateToday(new CalendarDate(2024, 5, 15))).toBe(true);
 
     vi.setSystemTime(new CalendarDateTime(2024, 5, 15, 23, 59, 59).toDate(SERVER_TIME_ZONE));
-    expect(isDateToday(new CalendarDate(2024, 5, 15), SERVER_TIME_ZONE)).toBe(true);
+    expect(dt.isDateToday(new CalendarDate(2024, 5, 15))).toBe(true);
   });
 });
 
 describe('ageFromDob', () => {
+  const dt = new LocalDateF(SERVER_TIME_ZONE);
+
   beforeEach(() => {
     // Mock current date to 2025-03-30
     const mockDate = new CalendarDate(2025, 3, 30);
@@ -147,42 +164,42 @@ describe('ageFromDob', () => {
 
   it('should calculate age correctly for a normal case', () => {
     const dob = new CalendarDate(2000, 3, 30);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(25);
+    expect(dt.ageFromDob(dob)).toBe(25);
   });
 
   it('should calculate age correctly when birthday is today', () => {
     const dob = new CalendarDate(2000, 3, 30);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(25);
+    expect(dt.ageFromDob(dob)).toBe(25);
   });
 
   it('should calculate age correctly for someone born yesterday', () => {
     const dob = new CalendarDate(2000, 3, 29);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(25);
+    expect(dt.ageFromDob(dob)).toBe(25);
   });
 
   it('should calculate age correctly for someone born tomorrow', () => {
     const dob = new CalendarDate(2000, 3, 31);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(24);
+    expect(dt.ageFromDob(dob)).toBe(24);
   });
 
   it('should handle leap year birthdays', () => {
     const dob = new CalendarDate(2000, 2, 29);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(25);
+    expect(dt.ageFromDob(dob)).toBe(25);
   });
 
   it('should return undefined for future dates', () => {
     const futureDob = new CalendarDate(2026, 1, 1);
-    expect(() => ageFromDob(futureDob, SERVER_TIME_ZONE)).toThrow();
+    expect(() => dt.ageFromDob(futureDob)).toThrow();
   });
 
   it('should handle month boundary cases', () => {
     const dob = new CalendarDate(2000, 2, 28);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(25);
+    expect(dt.ageFromDob(dob)).toBe(25);
   });
 
   it('should handle year boundary cases', () => {
     const dob = new CalendarDate(2000, 12, 31);
-    expect(ageFromDob(dob, SERVER_TIME_ZONE)).toBe(24);
+    expect(dt.ageFromDob(dob)).toBe(24);
   });
 });
 

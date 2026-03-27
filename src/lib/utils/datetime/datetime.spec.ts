@@ -27,6 +27,7 @@ import {
 } from './index.js';
 
 const SERVER_TIME_ZONE = 'Europe/London';
+const dt = new LocalDateF(SERVER_TIME_ZONE);
 
 describe('getDayIndex', () => {
   it('returns the correct day index (0 = Monday)', () => {
@@ -98,8 +99,6 @@ describe('isDateDay', () => {
 });
 
 describe('isDateToday', () => {
-  const dt = new LocalDateF(SERVER_TIME_ZONE);
-
   beforeEach(() => {
     // Mock current date to 2024-05-15
     const currentDate = new CalendarDate(2024, 5, 15);
@@ -149,8 +148,6 @@ describe('isDateToday', () => {
 });
 
 describe('ageFromDob', () => {
-  const dt = new LocalDateF(SERVER_TIME_ZONE);
-
   beforeEach(() => {
     // Mock current date to 2025-03-30
     const mockDate = new CalendarDate(2025, 3, 30);

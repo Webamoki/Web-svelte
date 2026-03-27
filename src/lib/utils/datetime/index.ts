@@ -18,8 +18,6 @@ import { map, range } from 'ramda';
 
 import type { Day } from '../types/arktype.js';
 
-// Localisation defaults
-const DEFAULT_TIME_ZONE = 'Europe/London';
 const DEFAULT_LOCALE = 'en-GB';
 
 // Day of the week
@@ -40,7 +38,7 @@ export const DayIndex: Record<Day, number> = Object.fromEntries(
 
 // Date functions local to a timezone
 export class LocalDateF {
-  constructor(private readonly timezone: string = DEFAULT_TIME_ZONE) {}
+  constructor(private readonly timezone: string) {}
 
   /**
    * Calculates the age from a date of birth.
@@ -225,10 +223,8 @@ const msPerWeek = 7 * 24 * 60 * 60 * 1000;
  * @param date2 - The second date in order.
  */
 export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number {
-  // Use the default time zone for comparison
-  // Diff makes it independent of time zone anyway
-  const date1Abs = date1.toDate(DEFAULT_TIME_ZONE).getTime();
-  const date2Abs = date2.toDate(DEFAULT_TIME_ZONE).getTime();
+  const date1Abs = date1.toDate('UTC').getTime();
+  const date2Abs = date2.toDate('UTC').getTime();
 
   return Math.floor((date2Abs - date1Abs) / msPerWeek);
 }

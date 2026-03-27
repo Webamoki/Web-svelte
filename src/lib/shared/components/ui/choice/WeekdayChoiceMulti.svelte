@@ -15,9 +15,12 @@
 </script>
 
 <script lang="ts">
-  import type { Day } from '$lib/utils/types/arktype.js';
-
-  import { Days, formatDayLetter, formatDayShort } from '$lib/utils/datetime/index.js';
+  import {
+    type Day,
+    Days,
+    formatDayLetter,
+    formatDayShort
+  } from '$lib/shared/utils/datetime/index.js';
 
   import ChoiceMulti from './ChoiceMulti.svelte';
 

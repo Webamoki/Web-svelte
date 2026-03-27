@@ -4,7 +4,7 @@
   import Preview from '$lib/components/showcase/Preview.svelte';
   import Sidebar from '$lib/components/showcase/Sidebar.svelte';
   import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
-  import SearchBar from '$lib/components/ui/search/SearchBar.svelte';
+  import SearchBar from '$lib/shared/components/ui/search/SearchBar.svelte';
 
   import ChoiceShowcase from './helpers/ChoiceShowcase.svelte';
 

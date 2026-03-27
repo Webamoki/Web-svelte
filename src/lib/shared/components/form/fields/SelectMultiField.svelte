@@ -5,7 +5,6 @@
   import type { Component } from 'svelte';
   import type { FormPath } from 'sveltekit-superforms';
 
-  import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
   import {
     Select,
     SelectContent,
@@ -15,6 +14,7 @@
     SelectTrigger
   } from '$lib/shadcn/components/ui/select/index.js';
   import { cn } from '$lib/shadcn/utils.js';
+  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
@@ -25,9 +25,9 @@
     getValue: (item: I) => V;
     icon?: Component;
     items: readonly I[];
-    onchange?: (value: undefined | V) => void;
+    onchange?: (value: V[]) => void;
     placeholder: string;
-    value?: V;
+    values?: V[];
   }
   let {
     class: className,
@@ -38,7 +38,7 @@
     items,
     onchange,
     placeholder,
-    value = $bindable(undefined),
+    values = $bindable([]),
     ...fieldProps
   }: Props = $props();
   // Items property shouldn't be updated, ignore warning
@@ -53,30 +53,37 @@
     return key.toString();
   }
 
-  function getKeyFromValue(): string {
-    if (value === undefined) return '';
-    const item = valueToItem.get(value);
-    if (item === undefined) return '';
-    return getKey(item);
+  function getKeyFromValue(): string[] {
+    return values.map((value) => {
+      const item = valueToItem.get(value)!;
+      return getKey(item)!;
+    });
   }
 
-  function setValueFromKey(key: string) {
-    const item = keyToItem.get(key);
-    if (item === undefined) return;
-    const newValue = getValue(item);
-    value = newValue;
-    onchange?.(newValue);
+  function setValueFromKey(keys: string[]) {
+    const newValues: V[] = keys
+      .map((key) => keyToItem.get(key))
+      .filter((item): item is I => item !== undefined) // filter out missing keys
+      .map((item) => getValue(item));
+    values = newValues;
+    onchange?.(newValues);
+  }
+
+  function getPreview() {
+    return values.length
+      ? values.map((value) => getLabel(valueToItem.get(value)!)).join(', ')
+      : placeholder;
   }
 </script>
 
 <FieldWrapper {...fieldProps}>
   {#snippet formElem(props)}
-    <Select type="single" {...props} bind:value={getKeyFromValue, setValueFromKey}>
+    <Select type="multiple" {...props} bind:value={getKeyFromValue, setValueFromKey}>
       <IconInputWrapper {icon}>
         {#snippet children({ class: iconClass })}
           <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)}>
             <span class="block truncate">
-              {value ? getLabel(valueToItem.get(value)!) : placeholder}
+              {getPreview()}
             </span>
           </SelectTrigger>
         {/snippet}

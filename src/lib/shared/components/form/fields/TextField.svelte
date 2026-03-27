@@ -2,26 +2,24 @@
   import type { Component } from 'svelte';
   import type { FormPath } from 'sveltekit-superforms';
 
-  import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
-  import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
+  import { Input } from '$lib/shadcn/components/ui/input/index.js';
   import { cn } from '$lib/shadcn/utils.js';
+  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
   interface Props extends FieldWrapperProps<T, U, M> {
     class?: string;
-    defaultHeight?: number;
     icon?: Component;
     placeholder?: string;
-    resize?: boolean;
+    type?: HTMLInputElement['type'];
     value?: string;
   }
   let {
     class: className,
-    defaultHeight = 100,
     icon,
     placeholder,
-    resize = false,
+    type = 'text',
     value = $bindable(),
     ...fieldProps
   }: Props = $props();
@@ -29,16 +27,9 @@
 
 <FieldWrapper {...fieldProps}>
   {#snippet formElem(props)}
-    <!-- Textarea itself with optional left icon -->
-    <IconInputWrapper flex {icon} iconPosition="top">
+    <IconInputWrapper {icon}>
       {#snippet children({ class: iconClass })}
-        <Textarea
-          style="height: {defaultHeight}px; min-height: {defaultHeight}px;"
-          class={cn(resize ? 'resize-y' : 'resize-none', iconClass, className)}
-          {placeholder}
-          bind:value
-          {...props}
-        />
+        <Input class={cn(iconClass, className)} {placeholder} {type} bind:value {...props} />
       {/snippet}
     </IconInputWrapper>
   {/snippet}

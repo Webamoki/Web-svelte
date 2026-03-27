@@ -1,23 +1,30 @@
-<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
+<script
+  generics="V,I, K extends number | string | symbol,T extends Record<string, unknown>, U extends FormPath<T>, M"
+  lang="ts"
+>
   import type { FormPath } from 'sveltekit-superforms';
 
-  import WeekdayChoice, {
-    type WeekdayChoiceProps
-  } from '$lib/components/ui/choice/WeekdayChoice.svelte';
+  import Choice, { type ChoiceProps } from '$lib/shared/components/ui/choice/Choice.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
-  type Props = FieldWrapperProps<T, U, M> & WeekdayChoiceProps & { class?: string };
+  type Props = ChoiceProps<V, I, K> &
+    FieldWrapperProps<T, U, M> & {
+      class?: string;
+    };
 
   let {
+    buttonContent,
     class: className,
     description,
     disabled,
     form,
-    label,
+    getKey,
+    getLabel,
 
-    letterLabels,
-    longLabels,
+    getValue,
+    items,
+    label,
     name,
     onChange,
     readonly,
@@ -28,10 +35,13 @@
 
 <FieldWrapper {name} class={className} {description} {form} {label}>
   {#snippet formElem(props)}
-    <WeekdayChoice
+    <Choice
+      {buttonContent}
       {disabled}
-      {letterLabels}
-      {longLabels}
+      {getKey}
+      {getLabel}
+      {getValue}
+      {items}
       {onChange}
       {readonly}
       {vertical}

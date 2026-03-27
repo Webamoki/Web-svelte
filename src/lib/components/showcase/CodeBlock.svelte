@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { highlight } from '$lib/highlight.js';
+  import { highlight } from '$lib/utils/highlight.js';
   import { onMount } from 'svelte';
 
   export let language: string = 'svelte';

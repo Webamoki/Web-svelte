@@ -1,6 +1,6 @@
 import type { type } from 'arktype';
 
-import { dateTransport } from '$lib/utils/datetime/index.js';
+import { dateTransport } from '$lib/shared/utils/datetime/index.js';
 import { superValidate } from 'sveltekit-superforms';
 import { arktype } from 'sveltekit-superforms/adapters';
 

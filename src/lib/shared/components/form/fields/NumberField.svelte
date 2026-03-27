@@ -2,9 +2,9 @@
   import type { Component } from 'svelte';
   import type { FormPath } from 'sveltekit-superforms';
 
-  import IconInputWrapper from '$lib/components/form/IconInputWrapper.svelte';
   import { Input } from '$lib/shadcn/components/ui/input/index.js';
   import { cn } from '$lib/shadcn/utils.js';
+  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 

@@ -16,7 +16,7 @@ import {
 } from '@internationalized/date';
 import { map, range } from 'ramda';
 
-import type { Day } from '../types/arktype.js';
+import type { Day } from '../arktype.js';
 
 const DEFAULT_LOCALE = 'en-GB';
 
@@ -31,6 +31,7 @@ export const Days = [
   'Saturday',
   'Sunday'
 ] as const;
+export type Day = (typeof Days)[number];
 
 export const DayIndex: Record<Day, number> = Object.fromEntries(
   Days.map((day, index) => [day, index])

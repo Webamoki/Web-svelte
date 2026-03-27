@@ -47,12 +47,8 @@
       "import": "./dist/utils/datetime/index.js"
     },
     "./utils/types/arktype": {
-      "types": "./dist/utils/types/arktype.d.ts",
-      "import": "./dist/utils/types/arktype.js"
-    },
-    "./utils/types/consts": {
-      "types": "./dist/utils/types/consts.d.ts",
-      "import": "./dist/utils/types/consts.js"
+      "types": "./dist/utils/arktype.d.ts",
+      "import": "./dist/utils/arktype.js"
     },
     "./utils/form": {
       "types": "./dist/utils/form/index.d.ts",

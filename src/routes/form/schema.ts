@@ -1,4 +1,4 @@
-import { CalendarDate, Day, Time } from '$lib/utils/types/arktype.js';
+import { CalendarDate, Day, Time } from '$lib/utils/arktype.js';
 import { type } from 'arktype';
 
 import { PasswordType } from './types/password.js';

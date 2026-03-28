@@ -4,17 +4,17 @@ This package provides utilities for sending emails using AWS Simple Email Servic
 
 ## Key Features
 
-- **Cloudflare Workers Compatible**: Uses direct AWS SES API calls with fetch instead of AWS SDK
-- **AWS Signature V4**: Implements proper AWS authentication for secure API requests
+- **Cloudflare Workers Compatible**: Uses `aws4fetch` for direct AWS SES API calls
+- **AWS Signature V4**: Handled by `aws4fetch` for secure API requests
 - **Zero Heavy Dependencies**: No AWS SDK required, works in any JavaScript runtime with fetch support
 
 ## Installation
 
-No additional dependencies required beyond the standard JavaScript runtime. The implementation uses:
+The implementation uses:
 
+- `aws4fetch` for AWS Signature V4 signing and requests
 - Native `fetch` API for HTTP requests
-- Web Crypto API for AWS Signature V4 signing
-- Native `DOMParser` for XML response parsing
+- Native `DOMParser` for XML response parsing (optional, used for error/response parsing)
 
 ## Configuration
 

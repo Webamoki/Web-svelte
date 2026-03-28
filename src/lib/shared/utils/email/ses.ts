@@ -1,4 +1,4 @@
-import { signRequest } from './aws-signer.js';
+import { AwsClient } from 'aws4fetch';
 
 export interface SendEmailOptions {
   awsAccessKeyId: string;
@@ -120,22 +120,32 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
   const path = '/';
 
   try {
-    // Sign the request
-    const { headers } = await signRequest('POST', host, path, body, {
+    const aws = new AwsClient({
       accessKeyId: awsAccessKeyId,
       region: awsRegion,
-      secretAccessKey: awsSecretAccessKey
+      secretAccessKey: awsSecretAccessKey,
+      service: 'ses'
     });
 
-    // Make the request
-    const response = await fetch(`https://${host}${path}`, {
+    const url = `https://${host}${path}`;
+    const init = {
       body,
       headers: {
-        ...headers,
-        'Content-Length': body.length.toString(),
-        Host: host
+        'Content-Type': 'application/x-form-urlencoded'
       },
       method: 'POST'
+    };
+
+    // Sign the request and then use the global fetch.
+    // We avoid using aws.fetch() directly as it can cause issues in some test environments
+    // or when fetch is mocked/replaced after AwsClient instantiation.
+    const signedRequest = await aws.sign(url, init);
+
+    // Use two-argument fetch to satisfy tests that expect the second argument to be an options object
+    const response = await fetch(signedRequest.url, {
+      body: init.body,
+      headers: signedRequest.headers,
+      method: signedRequest.method
     });
 
     const responseText = await response.text();

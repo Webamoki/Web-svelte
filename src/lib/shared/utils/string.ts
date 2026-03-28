@@ -29,7 +29,15 @@ export function fuzzySearchHighlight(needle: string, haystack: string): null | s
   const hlen = haystack.length;
   const nlen = needle.length;
 
-  if (nlen === 0) return `<span>${haystack}</span>`;
+  const escape = (text: string) =>
+    text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  if (nlen === 0) return `<span>${escape(haystack)}</span>`;
   if (nlen > hlen) return null;
 
   let result = '';
@@ -44,14 +52,14 @@ export function fuzzySearchHighlight(needle: string, haystack: string): null | s
       const hch = haystack[j];
       if (hch.toLowerCase() === nch) {
         // match found → wrap in <b>
-        result += `<b>${hch}</b>`;
+        result += `<b>${escape(hch)}</b>`;
         j++;
         found = true;
         matchedCount++;
         break;
       } else {
         // non-match → normal text
-        result += hch;
+        result += escape(hch);
         j++;
       }
     }
@@ -63,7 +71,7 @@ export function fuzzySearchHighlight(needle: string, haystack: string): null | s
   }
 
   // add remaining unmatched characters
-  result += haystack.slice(j);
+  result += escape(haystack.slice(j));
 
   // sanity check — must have matched all needle chars
   if (matchedCount < nlen) return null;

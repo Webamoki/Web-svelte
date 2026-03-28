@@ -10,7 +10,7 @@ export const PasswordType = type('string')
   .narrow((data, ctx) => {
     if (!allowedChars.test(data)) {
       return ctx.reject({
-        problem: 'must contains invalid characters. Only A–Z, a–z, 0–9, !@$#() are allowed.'
+        problem: 'must only contain A–Z, a–z, 0–9, !@$#().'
       });
     }
     if (!/[A-Z]/.test(data)) {

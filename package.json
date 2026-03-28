@@ -58,6 +58,10 @@
       "types": "./dist/shared/utils/email/index.d.ts",
       "import": "./dist/shared/utils/email/index.js"
     },
+    "./utils/functional": {
+      "types": "./dist/shared/utils/functional.d.ts",
+      "import": "./dist/shared/utils/functional.js"
+    },
     "./server/form-handler": {
       "types": "./dist/shared/server/form-handler.d.ts",
       "import": "./dist/shared/server/form-handler.js"

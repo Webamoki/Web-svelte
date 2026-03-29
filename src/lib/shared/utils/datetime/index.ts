@@ -222,10 +222,11 @@ const msPerWeek = 7 * 24 * 60 * 60 * 1000;
  * @param date2 - The second date in order.
  */
 export function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number {
-  const date1Abs = date1.toDate('UTC').getTime();
-  const date2Abs = date2.toDate('UTC').getTime();
+  const date1Ms = date1.toDate('UTC').getTime();
+  const date2Ms = date2.toDate('UTC').getTime();
+  const absDiff = Math.abs(date2Ms - date1Ms);
 
-  return Math.floor((date2Abs - date1Abs) / msPerWeek);
+  return Math.floor(absDiff / msPerWeek);
 }
 
 /* Formatting */

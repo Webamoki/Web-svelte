@@ -12,7 +12,7 @@ import {
 
 import { err, ok, type Result } from './functional.js';
 
-export type CheckFunction = () => CheckResult;
+export type CheckFunction = () => Promise<CheckResult>;
 export type CheckResult = Result<void, ResponseError>;
 export type ResponseError = {
   code: number;
@@ -32,7 +32,7 @@ export function guardedCommand<Schema extends StandardSchemaV1, Output>(
   fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<ResponseResult<Output>>
 ): RemoteCommand<StandardSchemaV1.InferInput<Schema>, Promise<ResponseResult<Output>>> {
   return command(schema, async (output) => {
-    const outcome = check();
+    const outcome = await check();
     // Command remote functions cannot redirect for error,
     //   so return result object.
     if (!outcome.ok) return err(outcome.error);
@@ -46,7 +46,7 @@ export function guardedCommandVoid<Output>(
   fn: () => Promise<ResponseResult<Output>>
 ): RemoteCommand<void, Promise<ResponseResult<Output>>> {
   return command(async () => {
-    const outcome = check();
+    const outcome = await check();
     if (!outcome.ok) return err(outcome.error);
     return await fn();
   });
@@ -65,7 +65,7 @@ export function guardedForm<
   ) => Promise<Output>
 ): RemoteForm<StandardSchemaV1.InferInput<Schema>, Output> {
   return form(schema, async (output, issue) => {
-    const outcome = check();
+    const outcome = await check();
     // Use sveltekit error to play nicer form errors
     if (!outcome.ok) error(outcome.error.code, outcome.error.message);
     return await fn(output, issue);
@@ -78,7 +78,7 @@ export function guardedFormVoid<Output>(
   fn: () => Promise<Output>
 ): RemoteForm<void, Output> {
   return form(async () => {
-    const outcome = check();
+    const outcome = await check();
     if (!outcome.ok) error(outcome.error.code, outcome.error.message);
     return await fn();
   });
@@ -91,7 +91,7 @@ export function guardedQuery<Schema extends StandardSchemaV1, Output>(
   fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<ResponseResult<Output>>
 ): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, ResponseResult<Output>> {
   return query(schema, async (output) => {
-    const outcome = check();
+    const outcome = await check();
     if (!outcome.ok) return err(outcome.error);
     return await fn(output);
   });
@@ -103,7 +103,7 @@ export function guardedQueryVoid<Output>(
   fn: () => Promise<ResponseResult<Output>>
 ): RemoteQueryFunction<void, ResponseResult<Output>> {
   return query(async () => {
-    const outcome = check();
+    const outcome = await check();
     if (!outcome.ok) return err(outcome.error);
     return await fn();
   });

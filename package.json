@@ -69,6 +69,10 @@
     "./server/form-processor": {
       "types": "./dist/shared/server/form-processor.d.ts",
       "import": "./dist/shared/server/form-processor.js"
+    },
+    "./utils/remote": {
+      "types": "./dist/shared/utils/remote.d.ts",
+      "import": "./dist/shared/utils/remote.js"
     }
   },
   "peerDependencies": {
@@ -86,6 +90,7 @@
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.39.4",
     "@internationalized/date": "catalog:",
+    "@standard-schema/spec": "^1.1.0",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "catalog:",
     "@sveltejs/package": "^2.5.7",

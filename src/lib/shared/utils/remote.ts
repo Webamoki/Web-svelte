@@ -26,6 +26,14 @@ export type ResponseError = {
   message: string;
 };
 export type ResponseResult<T> = Result<T, ResponseError>;
+export const ResponseResult = {
+  /**
+   * Unwraps a ResponseResult, throwing a sveltekit error if it is an error result.
+   */
+  unwrap<T>(result: ResponseResult<T>): T {
+    return Result.unwrapOrElse(result, (err) => error(err.code, err.message));
+  }
+};
 
 /* Guards command remote function with a check function. */
 export function guardedCommand<Schema extends StandardSchemaV1, Output>(

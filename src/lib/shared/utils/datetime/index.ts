@@ -16,8 +16,6 @@ import {
 } from '@internationalized/date';
 import { map, range } from 'ramda';
 
-import type { Day } from '../arktype.js';
-
 const DEFAULT_LOCALE = 'en-GB';
 
 // Day of the week

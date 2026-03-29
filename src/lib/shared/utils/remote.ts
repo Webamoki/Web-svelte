@@ -10,20 +10,22 @@ import {
   type RemoteQueryFunction
 } from '@sveltejs/kit';
 
-import { err, ok, type Result } from './functional.js';
+import { Result } from './functional/index.js';
 
 export type CheckFunction = () => Promise<CheckResult>;
 export type CheckResult = Result<void, ResponseError>;
+export const CheckResult = {
+  /* Helper function for ok check result. */
+  ok(): { ok: true; value: void } {
+    return Result.ok(undefined) satisfies CheckResult;
+  }
+};
+
 export type ResponseError = {
   code: number;
   message: string;
 };
 export type ResponseResult<T> = Result<T, ResponseError>;
-
-/* Helper function for ok check result. */
-export function checkOk() {
-  return ok(undefined) satisfies CheckResult;
-}
 
 /* Guards command remote function with a check function. */
 export function guardedCommand<Schema extends StandardSchemaV1, Output>(
@@ -35,7 +37,7 @@ export function guardedCommand<Schema extends StandardSchemaV1, Output>(
     const outcome = await check();
     // Command remote functions cannot redirect for error,
     //   so return result object.
-    if (!outcome.ok) return err(outcome.error);
+    if (!outcome.ok) return Result.err(outcome.error);
     return await fn(output);
   });
 }
@@ -47,7 +49,7 @@ export function guardedCommandVoid<Output>(
 ): RemoteCommand<void, Promise<ResponseResult<Output>>> {
   return command(async () => {
     const outcome = await check();
-    if (!outcome.ok) return err(outcome.error);
+    if (!outcome.ok) return Result.err(outcome.error);
     return await fn();
   });
 }
@@ -92,7 +94,7 @@ export function guardedQuery<Schema extends StandardSchemaV1, Output>(
 ): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, ResponseResult<Output>> {
   return query(schema, async (output) => {
     const outcome = await check();
-    if (!outcome.ok) return err(outcome.error);
+    if (!outcome.ok) return Result.err(outcome.error);
     return await fn(output);
   });
 }
@@ -104,7 +106,7 @@ export function guardedQueryVoid<Output>(
 ): RemoteQueryFunction<void, ResponseResult<Output>> {
   return query(async () => {
     const outcome = await check();
-    if (!outcome.ok) return err(outcome.error);
+    if (!outcome.ok) return Result.err(outcome.error);
     return await fn();
   });
 }

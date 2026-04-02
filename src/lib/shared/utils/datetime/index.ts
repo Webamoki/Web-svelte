@@ -89,6 +89,34 @@ export class LocalDateF {
   }
 }
 
+/** Gets the day index of the date */
+export function getDayIndexOfDate(date: CalendarDate): number {
+  // Always start 0 on Monday
+  return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
+}
+
+/**
+ * Gets the day of the week for a given date.
+ * @param date - The date to get the day of the week for.
+ * @returns The day of the week
+ */
+export function getDayOfDate(date: CalendarDate): Day {
+  return Days[getDayIndexOfDate(date)];
+}
+
+/**
+ * Checks if a given date is a specific day of the week.
+ * @param date - The date to check.
+ * @param dayOfWeek - The day of the week to check against.
+ * @returns True if the date is the specified day, false otherwise.
+ */
+export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
+  const dateDay = getDayOfDate(date);
+  return dateDay === dayOfWeek;
+}
+
+/* Intervals */
+
 /**
  * Checks if two time ranges overlap, boundaries are not considered overlapping.
  * @param start1 - The start time of the first range.
@@ -118,22 +146,6 @@ export function datesWithin(
 
   return date1.add(duration).compare(date2) >= 0;
 }
-
-/** Gets the day index of the date */
-export function getDayIndexOfDate(date: CalendarDate): number {
-  // Always start 0 on Monday
-  return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
-}
-
-/**
- * Gets the day of the week for a given date.
- * @param date - The date to get the day of the week for.
- * @returns The day of the week
- */
-export function getDayOfDate(date: CalendarDate): Day {
-  return Days[getDayIndexOfDate(date)];
-}
-
 /**
  * Gets the most recent occurrence of a day of the week.
  * @param dayOfWeek - The day of the week
@@ -207,19 +219,6 @@ export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): Calen
   // Calculate how many days to add to get to the next occurrence
   const addition = (dayIndex - startIndex + 7) % 7;
   return startDate.add({ days: addition });
-}
-
-/* Intervals */
-
-/**
- * Checks if a given date is a specific day of the week.
- * @param date - The date to check.
- * @param dayOfWeek - The day of the week to check against.
- * @returns True if the date is the specified day, false otherwise.
- */
-export function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean {
-  const dateDay = getDayOfDate(date);
-  return dateDay === dayOfWeek;
 }
 
 const msPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -342,11 +341,22 @@ export function formatDateShort(date: CalendarDate) {
  * @returns The formatted month string.
  * @example "Oct"
  */
-export function formatMonth(date: CalendarDate): string {
+export function formatMonthShort(date: CalendarDate): string {
   return formatDate(date, MonthFormatter);
 }
 
 /* Times */
+
+/**
+ * Gives time in HH:MM format
+ * @param time
+ * @returns string of time in that format
+ */
+export function formatTime(time: Time): string {
+  const hours = padNum(time.hour, 2);
+  const minutes = padNum(time.minute, 2);
+  return `${hours}:${minutes}`;
+}
 
 /**
  * Calculates the end time given a starting time and duration.
@@ -356,7 +366,7 @@ export function formatMonth(date: CalendarDate): string {
  */
 export function formatTimeEnd(timeStart: Time, durationMinutes: number): string {
   const timeEnd = timeStart.add({ minutes: durationMinutes });
-  return formatTimeShort(timeEnd);
+  return formatTime(timeEnd);
 }
 
 /**
@@ -371,16 +381,21 @@ export function formatTimeFull(time: Time): string {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-/**
- * Gives time in HH:MM format
- * @param time
- * @returns string of time in that format
- */
-export function formatTimeShort(time: Time): string {
-  const hours = padNum(time.hour, 2);
-  const minutes = padNum(time.minute, 2);
-  return `${hours}:${minutes}`;
+/* Helpers */
+
+function formatDate(date: CalendarDate, formatter: DateFormatter): string {
+  const nativeDate = date.toDate(getLocalTimeZone());
+  return formatter.format(nativeDate);
 }
+
+// Pad number with zeroes to the left
+function padNum(num: number, len: number): string {
+  if (isNaN(num)) return '0'.repeat(len);
+
+  return num.toString().padStart(len, '0');
+}
+
+/* State handling */
 
 /**
  * Unfreezes a CalendarDate object from a snapshot.
@@ -419,20 +434,6 @@ export function unfreezeAbsoluteDate(
     date.second,
     date.millisecond
   );
-}
-
-/* State handling */
-
-function formatDate(date: CalendarDate, formatter: DateFormatter): string {
-  const nativeDate = date.toDate(getLocalTimeZone());
-  return formatter.format(nativeDate);
-}
-
-// Pad number with zeroes to the left
-function padNum(num: number, len: number): string {
-  if (isNaN(num)) return '0'.repeat(len);
-
-  return num.toString().padStart(len, '0');
 }
 
 // SerDe

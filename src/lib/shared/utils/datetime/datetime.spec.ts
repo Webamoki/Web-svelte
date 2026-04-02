@@ -12,10 +12,10 @@ import {
   formatDateShort,
   formatDayLetter,
   formatDayShort,
-  formatMonth,
+  formatMonthShort,
+  formatTime,
   formatTimeEnd,
   formatTimeFull,
-  formatTimeShort,
   getDayIndexOfDate,
   getDayOfDate,
   getLastDateOfDay,
@@ -727,57 +727,57 @@ describe('formatDateNum', () => {
   });
 });
 
-describe('formatMonth', () => {
+describe('formatMonthShort', () => {
   it('should format month correctly for all months', () => {
-    expect(formatMonth(new CalendarDate(2023, 1, 1))).toBe('Jan 23');
-    expect(formatMonth(new CalendarDate(2023, 2, 1))).toBe('Feb 23');
-    expect(formatMonth(new CalendarDate(2023, 3, 1))).toBe('Mar 23');
-    expect(formatMonth(new CalendarDate(2023, 4, 1))).toBe('Apr 23');
-    expect(formatMonth(new CalendarDate(2023, 5, 1))).toBe('May 23');
-    expect(formatMonth(new CalendarDate(2023, 6, 1))).toBe('Jun 23');
-    expect(formatMonth(new CalendarDate(2023, 7, 1))).toBe('Jul 23');
-    expect(formatMonth(new CalendarDate(2023, 8, 1))).toBe('Aug 23');
-    expect(formatMonth(new CalendarDate(2023, 9, 1))).toBe('Sept 23');
-    expect(formatMonth(new CalendarDate(2023, 10, 1))).toBe('Oct 23');
-    expect(formatMonth(new CalendarDate(2023, 11, 1))).toBe('Nov 23');
-    expect(formatMonth(new CalendarDate(2023, 12, 1))).toBe('Dec 23');
+    expect(formatMonthShort(new CalendarDate(2023, 1, 1))).toBe('Jan 23');
+    expect(formatMonthShort(new CalendarDate(2023, 2, 1))).toBe('Feb 23');
+    expect(formatMonthShort(new CalendarDate(2023, 3, 1))).toBe('Mar 23');
+    expect(formatMonthShort(new CalendarDate(2023, 4, 1))).toBe('Apr 23');
+    expect(formatMonthShort(new CalendarDate(2023, 5, 1))).toBe('May 23');
+    expect(formatMonthShort(new CalendarDate(2023, 6, 1))).toBe('Jun 23');
+    expect(formatMonthShort(new CalendarDate(2023, 7, 1))).toBe('Jul 23');
+    expect(formatMonthShort(new CalendarDate(2023, 8, 1))).toBe('Aug 23');
+    expect(formatMonthShort(new CalendarDate(2023, 9, 1))).toBe('Sept 23');
+    expect(formatMonthShort(new CalendarDate(2023, 10, 1))).toBe('Oct 23');
+    expect(formatMonthShort(new CalendarDate(2023, 11, 1))).toBe('Nov 23');
+    expect(formatMonthShort(new CalendarDate(2023, 12, 1))).toBe('Dec 23');
   });
 
   it('should return the same month regardless of the day or year', () => {
-    expect(formatMonth(new CalendarDate(2023, 1, 31))).toBe('Jan 23');
-    expect(formatMonth(new CalendarDate(2024, 1, 1))).toBe('Jan 24');
+    expect(formatMonthShort(new CalendarDate(2023, 1, 31))).toBe('Jan 23');
+    expect(formatMonthShort(new CalendarDate(2024, 1, 1))).toBe('Jan 24');
   });
 });
 
-describe('formatTimeShort', () => {
+describe('formatTime', () => {
   it('should format time correctly with 2-digit hours and 2-digit minutes', () => {
     const time = new Time(14, 30);
-    expect(formatTimeShort(time)).toBe('14:30');
+    expect(formatTime(time)).toBe('14:30');
   });
 
   it('should pad single digit hours with leading zero', () => {
     const time = new Time(9, 45);
-    expect(formatTimeShort(time)).toBe('09:45');
+    expect(formatTime(time)).toBe('09:45');
   });
 
   it('should pad single digit minutes with leading zero', () => {
     const time = new Time(12, 5);
-    expect(formatTimeShort(time)).toBe('12:05');
+    expect(formatTime(time)).toBe('12:05');
   });
 
   it('should pad both single digit hours and minutes with leading zeros', () => {
     const time = new Time(1, 7);
-    expect(formatTimeShort(time)).toBe('01:07');
+    expect(formatTime(time)).toBe('01:07');
   });
 
   it('should format midnight correctly', () => {
     const time = new Time(0, 0);
-    expect(formatTimeShort(time)).toBe('00:00');
+    expect(formatTime(time)).toBe('00:00');
   });
 
   it('should format end of day correctly', () => {
     const time = new Time(23, 59);
-    expect(formatTimeShort(time)).toBe('23:59');
+    expect(formatTime(time)).toBe('23:59');
   });
 });
 

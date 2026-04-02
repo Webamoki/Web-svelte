@@ -1,0 +1,24 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yaml
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup CI Environment
+        uses: ./.github/actions/setup-ci
+
+      - name: Build Check
+        run: pnpm build:lib

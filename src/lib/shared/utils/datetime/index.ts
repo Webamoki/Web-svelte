@@ -400,6 +400,27 @@ export function unfreezeTime(raw: ReturnType<typeof $state.snapshot<Time>>): Tim
   return new Time(raw.hour, raw.minute, raw.second, raw.millisecond);
 }
 
+/**
+ * Unfreezes a ZonedDateTime object from a snapshot.
+ * @param date - The snapshot of the ZonedDateTime object.
+ * @returns The unfrozen ZonedDateTime object.
+ */
+export function unfreezeAbsoluteDate(
+  date: ReturnType<typeof $state.snapshot<ZonedDateTime>>
+): ZonedDateTime {
+  return new ZonedDateTime(
+    date.year,
+    date.month,
+    date.day,
+    date.timeZone,
+    date.offset,
+    date.hour,
+    date.minute,
+    date.second,
+    date.millisecond
+  );
+}
+
 /* State handling */
 
 function formatDate(date: CalendarDate, formatter: DateFormatter): string {

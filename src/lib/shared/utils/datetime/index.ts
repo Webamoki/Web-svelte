@@ -32,7 +32,7 @@ export const Days = [
 ] as const;
 export type Day = (typeof Days)[number];
 
-const DayIndex: Record<Day, number> = Object.fromEntries(
+export const DayIndex: Record<Day, number> = Object.fromEntries(
   Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
 

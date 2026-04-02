@@ -13,10 +13,10 @@ import {
   formatDayLetter,
   formatDayShort,
   formatMonth,
+  formatTime,
   formatTimeEnd,
   formatTimeFull,
-  formatTimeShort,
-  getDayIndex,
+  getDayIndexOfDate,
   getDayOfDate,
   getLastDateOfDay,
   getLastDatesOfDay,
@@ -32,13 +32,13 @@ const dt = new LocalDateF(SERVER_TIME_ZONE);
 describe('getDayIndex', () => {
   it('returns the correct day index (0 = Monday)', () => {
     // Test specific dates with known day indices
-    expect(getDayIndex(new CalendarDate(2023, 5, 1))).toBe(0); // May 1, 2023 was a Monday
-    expect(getDayIndex(new CalendarDate(2023, 5, 2))).toBe(1); // May 2, 2023 was a Tuesday
-    expect(getDayIndex(new CalendarDate(2023, 5, 3))).toBe(2); // May 3, 2023 was a Wednesday
-    expect(getDayIndex(new CalendarDate(2023, 5, 4))).toBe(3); // May 4, 2023 was a Thursday
-    expect(getDayIndex(new CalendarDate(2023, 5, 5))).toBe(4); // May 5, 2023 was a Friday
-    expect(getDayIndex(new CalendarDate(2023, 5, 6))).toBe(5); // May 6, 2023 was a Saturday
-    expect(getDayIndex(new CalendarDate(2023, 5, 7))).toBe(6); // May 7, 2023 was a Sunday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 1))).toBe(0); // May 1, 2023 was a Monday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 2))).toBe(1); // May 2, 2023 was a Tuesday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 3))).toBe(2); // May 3, 2023 was a Wednesday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 4))).toBe(3); // May 4, 2023 was a Thursday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 5))).toBe(4); // May 5, 2023 was a Friday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 6))).toBe(5); // May 6, 2023 was a Saturday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 7))).toBe(6); // May 7, 2023 was a Sunday
   });
 });
 
@@ -727,7 +727,7 @@ describe('formatDateNum', () => {
   });
 });
 
-describe('formatMonth', () => {
+describe('formatMonthShort', () => {
   it('should format month correctly for all months', () => {
     expect(formatMonth(new CalendarDate(2023, 1, 1))).toBe('Jan 23');
     expect(formatMonth(new CalendarDate(2023, 2, 1))).toBe('Feb 23');
@@ -749,35 +749,35 @@ describe('formatMonth', () => {
   });
 });
 
-describe('formatTimeShort', () => {
+describe('formatTime', () => {
   it('should format time correctly with 2-digit hours and 2-digit minutes', () => {
     const time = new Time(14, 30);
-    expect(formatTimeShort(time)).toBe('14:30');
+    expect(formatTime(time)).toBe('14:30');
   });
 
   it('should pad single digit hours with leading zero', () => {
     const time = new Time(9, 45);
-    expect(formatTimeShort(time)).toBe('09:45');
+    expect(formatTime(time)).toBe('09:45');
   });
 
   it('should pad single digit minutes with leading zero', () => {
     const time = new Time(12, 5);
-    expect(formatTimeShort(time)).toBe('12:05');
+    expect(formatTime(time)).toBe('12:05');
   });
 
   it('should pad both single digit hours and minutes with leading zeros', () => {
     const time = new Time(1, 7);
-    expect(formatTimeShort(time)).toBe('01:07');
+    expect(formatTime(time)).toBe('01:07');
   });
 
   it('should format midnight correctly', () => {
     const time = new Time(0, 0);
-    expect(formatTimeShort(time)).toBe('00:00');
+    expect(formatTime(time)).toBe('00:00');
   });
 
   it('should format end of day correctly', () => {
     const time = new Time(23, 59);
-    expect(formatTimeShort(time)).toBe('23:59');
+    expect(formatTime(time)).toBe('23:59');
   });
 });
 

@@ -1,0 +1,22 @@
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "npm"
+decision = "deny"
+priority = 999
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "git"
+decision = "ask_user"
+priority = 999
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = ["pnpm test", "pnpm lint", "pnpm fmt", "pnpm check"]
+decision = "allow"
+priority = 500
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "ask_user"
+priority = 1

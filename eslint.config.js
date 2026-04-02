@@ -33,6 +33,20 @@ export default ts.config(
         },
         tsconfigRootDir: import.meta.dirname
       }
+    },
+    rules: {
+      'perfectionist/sort-modules': [
+        'error',
+        {
+          partitionByNewLine: true
+        }
+      ],
+      'perfectionist/sort-objects': [
+        'error',
+        {
+          partitionByNewLine: true
+        }
+      ]
     }
   },
   {

@@ -35,48 +35,44 @@
   "type": "module",
   "exports": {
     "./components/form": {
-      "types": "./dist/components/form/index.d.ts",
-      "svelte": "./dist/components/form/index.js"
+      "types": "./dist/shared/components/form/index.d.ts",
+      "svelte": "./dist/shared/components/form/index.js"
     },
     "./components/ui": {
-      "types": "./dist/components/ui/index.d.ts",
-      "svelte": "./dist/components/ui/index.js"
+      "types": "./dist/shared/components/ui/index.d.ts",
+      "svelte": "./dist/shared/components/ui/index.js"
     },
     "./utils/datetime": {
-      "types": "./dist/utils/datetime/index.d.ts",
-      "import": "./dist/utils/datetime/index.js"
+      "types": "./dist/shared/utils/datetime/index.d.ts",
+      "import": "./dist/shared/utils/datetime/index.js"
     },
     "./utils/types/arktype": {
-      "types": "./dist/utils/types/arktype.d.ts",
-      "import": "./dist/utils/types/arktype.js"
-    },
-    "./utils/types/consts": {
-      "types": "./dist/utils/types/consts.d.ts",
-      "import": "./dist/utils/types/consts.js"
-    },
-    "./utils/types/db": {
-      "types": "./dist/utils/types/db.d.ts",
-      "import": "./dist/utils/types/db.js"
+      "types": "./dist/shared/utils/types/arktype.d.ts",
+      "import": "./dist/shared/utils/types/arktype.js"
     },
     "./utils/form": {
-      "types": "./dist/utils/form/index.d.ts",
-      "import": "./dist/utils/form/index.js"
+      "types": "./dist/shared/utils/form/index.d.ts",
+      "import": "./dist/shared/utils/form/index.js"
     },
     "./utils/email": {
-      "types": "./dist/utils/email/index.d.ts",
-      "import": "./dist/utils/email/index.js"
+      "types": "./dist/shared/utils/email/index.d.ts",
+      "import": "./dist/shared/utils/email/index.js"
+    },
+    "./utils/functional": {
+      "types": "./dist/shared/utils/functional/index.d.ts",
+      "import": "./dist/shared/utils/functional/index.js"
     },
     "./server/form-handler": {
-      "types": "./dist/server/form-handler.d.ts",
-      "import": "./dist/server/form-handler.js"
+      "types": "./dist/shared/server/form-handler.d.ts",
+      "import": "./dist/shared/server/form-handler.js"
     },
     "./server/form-processor": {
-      "types": "./dist/server/form-processor.d.ts",
-      "import": "./dist/server/form-processor.js"
+      "types": "./dist/shared/server/form-processor.d.ts",
+      "import": "./dist/shared/server/form-processor.js"
     },
-    "./utils/search": {
-      "types": "./dist/utils/search.d.ts",
-      "import": "./dist/utils/search.js"
+    "./utils/remote": {
+      "types": "./dist/shared/utils/remote.d.ts",
+      "import": "./dist/shared/utils/remote.js"
     }
   },
   "peerDependencies": {
@@ -94,6 +90,7 @@
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.39.4",
     "@internationalized/date": "catalog:",
+    "@standard-schema/spec": "^1.1.0",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "catalog:",
     "@sveltejs/package": "^2.5.7",
@@ -146,9 +143,9 @@
   },
   "dependencies": {
     "@lucide/svelte": "^1.6.0",
+    "aws4fetch": "^1.0.20",
     "bits-ui": "^2.16.3",
     "devalue": "^5.6.4",
-    "drizzle-orm": "^0.45.1",
     "formsnap": "^2.0.1",
     "ramda": "^0.32.0",
     "sorted-array-functions": "^1.3.0",

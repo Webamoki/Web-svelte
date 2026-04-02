@@ -46,7 +46,7 @@
       "types": "./dist/shared/utils/datetime/index.d.ts",
       "import": "./dist/shared/utils/datetime/index.js"
     },
-    "./utils/types/arktype": {
+    "./utils/arktype": {
       "types": "./dist/shared/utils/arktype.d.ts",
       "import": "./dist/shared/utils/arktype.js"
     },

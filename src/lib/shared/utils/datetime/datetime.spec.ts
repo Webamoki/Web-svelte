@@ -16,7 +16,7 @@ import {
   formatTimeEnd,
   formatTimeFull,
   formatTimeShort,
-  getDayIndex,
+  getDayIndexOfDate,
   getDayOfDate,
   getLastDateOfDay,
   getLastDatesOfDay,
@@ -32,13 +32,13 @@ const dt = new LocalDateF(SERVER_TIME_ZONE);
 describe('getDayIndex', () => {
   it('returns the correct day index (0 = Monday)', () => {
     // Test specific dates with known day indices
-    expect(getDayIndex(new CalendarDate(2023, 5, 1))).toBe(0); // May 1, 2023 was a Monday
-    expect(getDayIndex(new CalendarDate(2023, 5, 2))).toBe(1); // May 2, 2023 was a Tuesday
-    expect(getDayIndex(new CalendarDate(2023, 5, 3))).toBe(2); // May 3, 2023 was a Wednesday
-    expect(getDayIndex(new CalendarDate(2023, 5, 4))).toBe(3); // May 4, 2023 was a Thursday
-    expect(getDayIndex(new CalendarDate(2023, 5, 5))).toBe(4); // May 5, 2023 was a Friday
-    expect(getDayIndex(new CalendarDate(2023, 5, 6))).toBe(5); // May 6, 2023 was a Saturday
-    expect(getDayIndex(new CalendarDate(2023, 5, 7))).toBe(6); // May 7, 2023 was a Sunday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 1))).toBe(0); // May 1, 2023 was a Monday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 2))).toBe(1); // May 2, 2023 was a Tuesday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 3))).toBe(2); // May 3, 2023 was a Wednesday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 4))).toBe(3); // May 4, 2023 was a Thursday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 5))).toBe(4); // May 5, 2023 was a Friday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 6))).toBe(5); // May 6, 2023 was a Saturday
+    expect(getDayIndexOfDate(new CalendarDate(2023, 5, 7))).toBe(6); // May 7, 2023 was a Sunday
   });
 });
 

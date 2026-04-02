@@ -32,7 +32,7 @@ export const Days = [
 ] as const;
 export type Day = (typeof Days)[number];
 
-export const DayIndex: Record<Day, number> = Object.fromEntries(
+const DayIndex: Record<Day, number> = Object.fromEntries(
   Days.map((day, index) => [day, index])
 ) as Record<Day, number>;
 
@@ -120,7 +120,7 @@ export function datesWithin(
 }
 
 /** Gets the day index of the date */
-export function getDayIndex(date: CalendarDate): number {
+export function getDayIndexOfDate(date: CalendarDate): number {
   // Always start 0 on Monday
   return getDayOfWeek(date, DEFAULT_LOCALE, 'mon');
 }
@@ -131,7 +131,7 @@ export function getDayIndex(date: CalendarDate): number {
  * @returns The day of the week
  */
 export function getDayOfDate(date: CalendarDate): Day {
-  return Days[getDayIndex(date)];
+  return Days[getDayIndexOfDate(date)];
 }
 
 /**
@@ -143,7 +143,7 @@ export function getDayOfDate(date: CalendarDate): Day {
  */
 export function getLastDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
   const dayIndex = DayIndex[dayOfWeek];
-  const startIndex = getDayIndex(startDate);
+  const startIndex = getDayIndexOfDate(startDate);
 
   // Already on the day
   if (startIndex === dayIndex) return startDate;
@@ -199,7 +199,7 @@ export function getLastMonths(count: number, startDate: CalendarDate): CalendarD
  */
 export function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate {
   const dayIndex = DayIndex[dayOfWeek];
-  const startIndex = getDayIndex(startDate);
+  const startIndex = getDayIndexOfDate(startDate);
 
   // Already on the day
   if (startIndex === dayIndex) return startDate;

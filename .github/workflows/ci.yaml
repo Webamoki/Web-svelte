@@ -34,6 +34,7 @@ jobs:
           pnpm prettier --check --cache --cache-location=.cache/.prettier-cache --cache-strategy content .
           pnpm eslint --cache --cache-location=.cache/.eslintcache --cache-strategy content .
           pnpm svelte-check --tsconfig ./tsconfig.json
+          pnpm publint
 
   tests:
     name: Run Tests

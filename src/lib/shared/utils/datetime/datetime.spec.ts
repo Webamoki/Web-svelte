@@ -12,7 +12,7 @@ import {
   formatDateShort,
   formatDayLetter,
   formatDayShort,
-  formatMonthShort,
+  formatMonth,
   formatTime,
   formatTimeEnd,
   formatTimeFull,
@@ -729,23 +729,23 @@ describe('formatDateNum', () => {
 
 describe('formatMonthShort', () => {
   it('should format month correctly for all months', () => {
-    expect(formatMonthShort(new CalendarDate(2023, 1, 1))).toBe('Jan 23');
-    expect(formatMonthShort(new CalendarDate(2023, 2, 1))).toBe('Feb 23');
-    expect(formatMonthShort(new CalendarDate(2023, 3, 1))).toBe('Mar 23');
-    expect(formatMonthShort(new CalendarDate(2023, 4, 1))).toBe('Apr 23');
-    expect(formatMonthShort(new CalendarDate(2023, 5, 1))).toBe('May 23');
-    expect(formatMonthShort(new CalendarDate(2023, 6, 1))).toBe('Jun 23');
-    expect(formatMonthShort(new CalendarDate(2023, 7, 1))).toBe('Jul 23');
-    expect(formatMonthShort(new CalendarDate(2023, 8, 1))).toBe('Aug 23');
-    expect(formatMonthShort(new CalendarDate(2023, 9, 1))).toBe('Sept 23');
-    expect(formatMonthShort(new CalendarDate(2023, 10, 1))).toBe('Oct 23');
-    expect(formatMonthShort(new CalendarDate(2023, 11, 1))).toBe('Nov 23');
-    expect(formatMonthShort(new CalendarDate(2023, 12, 1))).toBe('Dec 23');
+    expect(formatMonth(new CalendarDate(2023, 1, 1))).toBe('Jan 23');
+    expect(formatMonth(new CalendarDate(2023, 2, 1))).toBe('Feb 23');
+    expect(formatMonth(new CalendarDate(2023, 3, 1))).toBe('Mar 23');
+    expect(formatMonth(new CalendarDate(2023, 4, 1))).toBe('Apr 23');
+    expect(formatMonth(new CalendarDate(2023, 5, 1))).toBe('May 23');
+    expect(formatMonth(new CalendarDate(2023, 6, 1))).toBe('Jun 23');
+    expect(formatMonth(new CalendarDate(2023, 7, 1))).toBe('Jul 23');
+    expect(formatMonth(new CalendarDate(2023, 8, 1))).toBe('Aug 23');
+    expect(formatMonth(new CalendarDate(2023, 9, 1))).toBe('Sept 23');
+    expect(formatMonth(new CalendarDate(2023, 10, 1))).toBe('Oct 23');
+    expect(formatMonth(new CalendarDate(2023, 11, 1))).toBe('Nov 23');
+    expect(formatMonth(new CalendarDate(2023, 12, 1))).toBe('Dec 23');
   });
 
   it('should return the same month regardless of the day or year', () => {
-    expect(formatMonthShort(new CalendarDate(2023, 1, 31))).toBe('Jan 23');
-    expect(formatMonthShort(new CalendarDate(2024, 1, 1))).toBe('Jan 24');
+    expect(formatMonth(new CalendarDate(2023, 1, 31))).toBe('Jan 23');
+    expect(formatMonth(new CalendarDate(2024, 1, 1))).toBe('Jan 24');
   });
 });
 

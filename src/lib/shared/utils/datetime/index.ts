@@ -339,9 +339,9 @@ export function formatDateShort(date: CalendarDate) {
  * Formats the month only.
  * @param date - The date to format.
  * @returns The formatted month string.
- * @example "Oct"
+ * @example "Oct 23"
  */
-export function formatMonthShort(date: CalendarDate): string {
+export function formatMonth(date: CalendarDate): string {
   return formatDate(date, MonthFormatter);
 }
 

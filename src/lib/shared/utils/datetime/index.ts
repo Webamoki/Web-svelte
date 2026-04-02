@@ -7,6 +7,7 @@ import {
   fromDate,
   getDayOfWeek,
   getLocalTimeZone,
+  now as nowFn,
   startOfMonth,
   Time,
   toCalendarDate,
@@ -71,6 +72,13 @@ export class LocalDateF {
    */
   isDateToday(date: CalendarDate): boolean {
     return this.today().compare(date) === 0;
+  }
+
+  /**
+   * @returns The current date and time.
+   */
+  now(): ZonedDateTime {
+    return nowFn(this.timezone);
   }
 
   /**

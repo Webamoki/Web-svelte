@@ -941,3 +941,65 @@ describe('formatAbsolute', () => {
     expect(formatAbsolute(datetime)).toBe('15/05/2024 14:30:45');
   });
 });
+
+describe('dateWithin', () => {
+  beforeEach(() => {
+    // Mock current date to 2024-05-15
+    const mockDate = new CalendarDate(2024, 5, 15);
+    vi.useFakeTimers();
+    vi.setSystemTime(mockDate.toDate(SERVER_TIME_ZONE));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns true when date is today with zero duration', () => {
+    const today = new CalendarDate(2024, 5, 15);
+    expect(dt.dateWithin(today, { days: 0 })).toBe(true);
+  });
+
+  it('returns true when date is within the duration (days)', () => {
+    const twoDaysAgo = new CalendarDate(2024, 5, 13);
+    expect(dt.dateWithin(twoDaysAgo, { days: 2 })).toBe(true);
+    expect(dt.dateWithin(twoDaysAgo, { days: 3 })).toBe(true);
+  });
+
+  it('returns false when date is outside the duration (days)', () => {
+    const threeDaysAgo = new CalendarDate(2024, 5, 12);
+    expect(dt.dateWithin(threeDaysAgo, { days: 2 })).toBe(false);
+  });
+
+  it('returns false when date is in the future', () => {
+    const tomorrow = new CalendarDate(2024, 5, 16);
+    expect(dt.dateWithin(tomorrow, { days: 5 })).toBe(false);
+  });
+
+  it('returns true at the exact boundary', () => {
+    const exactBoundary = new CalendarDate(2024, 5, 8);
+    expect(dt.dateWithin(exactBoundary, { weeks: 1 })).toBe(true);
+  });
+
+  it('returns false just past the boundary', () => {
+    const pastBoundary = new CalendarDate(2024, 5, 7);
+    expect(dt.dateWithin(pastBoundary, { weeks: 1 })).toBe(false);
+  });
+
+  it('works with week durations', () => {
+    const twoWeeksAgo = new CalendarDate(2024, 5, 1);
+    expect(dt.dateWithin(twoWeeksAgo, { weeks: 2 })).toBe(true);
+    expect(dt.dateWithin(twoWeeksAgo, { weeks: 1 })).toBe(false);
+  });
+
+  it('works with month durations', () => {
+    const lastMonth = new CalendarDate(2024, 4, 15);
+    expect(dt.dateWithin(lastMonth, { months: 1 })).toBe(true);
+    expect(dt.dateWithin(lastMonth, { months: 0 })).toBe(false);
+  });
+
+  it('works with year durations', () => {
+    const lastYear = new CalendarDate(2023, 5, 15);
+    expect(dt.dateWithin(lastYear, { years: 1 })).toBe(true);
+    expect(dt.dateWithin(lastYear, { months: 11 })).toBe(false);
+  });
+});

@@ -66,6 +66,16 @@ export class LocalDateF {
   }
 
   /**
+   * Checks if a given date is within a specified duration from today.
+   * @param date - The date to check.
+   * @param duration - The duration to check against.
+   * @returns True if the date is within the duration, false otherwise.
+   */
+  dateWithin(date: CalendarDate, duration: DateDuration): boolean {
+    return datesWithin(date, this.today(), duration);
+  }
+
+  /**
    * Checks if a given date is today.
    * @param date - The date to check.
    * @returns True if the date is today, false otherwise.

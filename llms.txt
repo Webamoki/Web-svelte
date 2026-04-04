@@ -730,7 +730,7 @@ const ResponseResult = {
 
 Wrap SvelteKit `command`, `query`, and `form` remote functions with authorization checks.
 
-Note that the functions bodies for `command` remote functions cannot throw sveltekit errors or redirect. `query` and `form` remote functions can.
+Note that the function bodies for `command` remote functions cannot throw SvelteKit errors or redirect. `query` and `form` remote functions can.
 
 All guarded functions run the `CheckFunction` before the handler. On check failure, `guardedCommand` and `guardedCommandVoid` return a `Result.err`; all others throw a SvelteKit error via `ResponseResult.unwrap`.
 

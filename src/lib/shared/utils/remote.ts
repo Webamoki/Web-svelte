@@ -117,3 +117,28 @@ export function guardedQueryVoid<Output>(
     return await fn();
   });
 }
+
+// Client side handling
+
+export class CommandAction<S, O> {
+  get submitting() {
+    return this.#submitting;
+  }
+
+  #remote: RemoteCommand<S, Promise<ResponseResult<O>>>;
+  #submitting = $state(false);
+
+  constructor(remote: RemoteCommand<S, Promise<ResponseResult<O>>>) {
+    this.#remote = remote;
+  }
+
+  async execute(input: Parameters<RemoteCommand<S, Promise<ResponseResult<O>>>>[0]): Promise<O> {
+    this.#submitting = true;
+    try {
+      const result = await this.#remote(input);
+      return ResponseResult.unwrap(result);
+    } finally {
+      this.#submitting = false;
+    }
+  }
+}

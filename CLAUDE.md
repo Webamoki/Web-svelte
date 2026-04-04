@@ -1,4 +1,4 @@
-# AGENTS.md
+# CLAUDE.md
 
 ## Project Overview
 
@@ -18,33 +18,11 @@ Use `pnpm`, never use `npm`.
 - `pnpm lint:svelte` to run svelte check
 - `pnpm check` to run fmt, lint and test. Checks altogether.
 
-## Agent Guidelines & Tools
+## Guidelines
 
-1. **Svelte MCP:** Use for Svelte 5 logic, SvelteKit routing, and standard component patterns.
+1. **Type Safety:** Always use **ArkType** for runtime validation and type definitions.
 2. **UI Components:** Use **shadcn**, **bits-ui**, and **Tailwind CSS v4** to build/extend UI components. Shadcn components are in `src/lib/shadcn/components/ui`.
-3. **Context7:** Use to fetch documentation for specific libraries:
-   - `/arktype/arktype` for schema validation.
-   - `/huntabyte/bits-ui` for UI primitives.
-   - Find other libraries if local knowledge is limited.
-4. **Type Safety:** Always use **ArkType** for runtime validation and type definitions.
-5. **Consistency:** Follow existing patterns in `src/lib/shared/components/form` for new fields.
-
-## Available Svelte MCP Tools:
-
-### 1. list-sections
-
-Use this FIRST to discover all available documentation sections. Returns a structured list with titles, use_cases, and paths.
-When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start of the chat to find relevant sections.
-
-### 2. get-documentation
-
-Retrieves full documentation content for specific sections. Accepts single or multiple sections.
-After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
-
-### 3. svelte-autofixer
-
-Analyzes Svelte code and returns issues and suggestions.
-You MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling it until no issues or suggestions are returned.
+3. **Consistency:** Follow existing patterns in `src/lib/shared/components/form` for new fields.
 
 ## Core Features
 
@@ -68,9 +46,29 @@ Higher-level UI components:
 ### 3. Utilities (`src/lib/shared/utils`)
 
 - `datetime`: `@internationalized/date` integration.
-- `form`: `prepareForm`, `VirtualForm`.
+- `form`: `prepareForm`.
 - `email`: AWS SES via Web Crypto API.
 - `search`: Fuzzy search and highlighting.
+
+### Svelte MCP
+
+Use these tools to maintain strictly correct Svelte 5 code:
+
+1. **`list-sections`** — Call FIRST for any Svelte/SvelteKit query to map relevant documentation sections.
+2. **`get-documentation`** — Fetch the content for the identified sections before writing code.
+3. **`svelte-autofixer`** — **MANDATORY.** Run this on all Svelte code blocks before presenting them. Repeat until 0 issues remain.
+
+### Context7 MCP
+
+Use Context7 for documentation grounding on the core stack. When looking up docs, use these library IDs:
+
+- `/sveltejs/svelte` (Svelte 5 / Runes)
+- `/sveltejs/kit`
+- `/tailwindlabs/tailwindcss`
+- `/huntabyte/bits-ui`
+- `/huntabyte/shadcn-svelte`
+- `/arktypeio/arktype`
+- `/microsoft/typescript`
 
 ## Common Workflows
 

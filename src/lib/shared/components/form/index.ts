@@ -7,6 +7,7 @@ import HexColorField from './fields/HexColorField.svelte';
 import MessageField from './fields/MessageField.svelte';
 import NumberField from './fields/NumberField.svelte';
 import PasswordField from './fields/PasswordField.svelte';
+import PinField from './fields/PinField.svelte';
 import SelectField from './fields/SelectField.svelte';
 import SelectMultiField from './fields/SelectMultiField.svelte';
 import TextField from './fields/TextField.svelte';
@@ -29,6 +30,7 @@ export {
   MessageField,
   NumberField,
   PasswordField,
+  PinField,
   SelectField,
   SelectMultiField,
   TextField,

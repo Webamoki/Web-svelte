@@ -12,6 +12,7 @@
   import HexColorField from '$lib/shared/components/form/fields/HexColorField.svelte';
   import MessageField from '$lib/shared/components/form/fields/MessageField.svelte';
   import PasswordField from '$lib/shared/components/form/fields/PasswordField.svelte';
+  import PinField from '$lib/shared/components/form/fields/PinField.svelte';
   import SelectField from '$lib/shared/components/form/fields/SelectField.svelte';
   import SelectMultiField from '$lib/shared/components/form/fields/SelectMultiField.svelte';
   import TextField from '$lib/shared/components/form/fields/TextField.svelte';
@@ -117,6 +118,7 @@
     <SidebarLink title="CheckboxField" />
     <SidebarLink title="TextField" />
     <SidebarLink title="PasswordField" />
+    <SidebarLink title="PinField" />
     <SidebarLink title="MessageField" />
     <SidebarLink title="HexColorField" />
     <SidebarLink title="SelectField" />
@@ -245,6 +247,33 @@
       </CodeBlock>
     </Container>
 
+    <Container description="A 6-digit PIN input for 2FA verification" title="PinField">
+      <Preview slot="preview">
+        <form class="space-y-5" method="POST" use:enhance>
+          <PinField name="pin" {form} label="Verification Code" bind:value={$formData.pin} />
+          <PinField
+            name="pin"
+            description="Enter the 6-digit code sent to your device"
+            {form}
+            label="With Description"
+            bind:value={$formData.pin}
+          />
+          <PinField name="pin" disabled {form} label="Disabled" bind:value={$formData.pin} />
+        </form>
+      </Preview>
+      <CodeBlock slot="code">
+        {`
+				<PinField
+					{form}
+					label="Verification Code"
+					name="pin"
+					description="Enter the 6-digit code sent to your device"
+					disabled?
+					bind:value={$formData.pin}
+				/>
+			`}
+      </CodeBlock>
+    </Container>
     <Container description="A textarea field with height lock feature" title="MessageField">
       <Preview slot="preview">
         <form class="space-y-5" method="POST" use:enhance>

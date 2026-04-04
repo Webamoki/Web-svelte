@@ -131,7 +131,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<string> {
     const init = {
       body,
       headers: {
-        'Content-Type': 'application/x-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       method: 'POST'
     };

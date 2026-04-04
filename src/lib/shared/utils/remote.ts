@@ -75,9 +75,8 @@ export function guardedForm<
   ) => Promise<Output>
 ): RemoteForm<StandardSchemaV1.InferInput<Schema>, Output> {
   return form(schema, async (output, issue) => {
-    const outcome = await check();
-    // Use sveltekit error to play nicer form errors
-    if (!outcome.ok) error(outcome.error.code, outcome.error.message);
+    // Enforce auth check or throw sveltekit error
+    ResponseResult.unwrap(await check());
     return await fn(output, issue);
   });
 }
@@ -88,8 +87,8 @@ export function guardedFormVoid<Output>(
   fn: () => Promise<Output>
 ): RemoteForm<void, Output> {
   return form(async () => {
-    const outcome = await check();
-    if (!outcome.ok) error(outcome.error.code, outcome.error.message);
+    // Enforce auth check or throw sveltekit error
+    ResponseResult.unwrap(await check());
     return await fn();
   });
 }
@@ -98,11 +97,11 @@ export function guardedFormVoid<Output>(
 export function guardedQuery<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<ResponseResult<Output>>
-): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, ResponseResult<Output>> {
+  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<Output>
+): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, Output> {
   return query(schema, async (output) => {
-    const outcome = await check();
-    if (!outcome.ok) return Result.err(outcome.error);
+    // Enforce auth check or throw sveltekit error
+    ResponseResult.unwrap(await check());
     return await fn(output);
   });
 }
@@ -110,11 +109,11 @@ export function guardedQuery<Schema extends StandardSchemaV1, Output>(
 /* Guards input-less query remote function with a check function. */
 export function guardedQueryVoid<Output>(
   check: CheckFunction,
-  fn: () => Promise<ResponseResult<Output>>
-): RemoteQueryFunction<void, ResponseResult<Output>> {
+  fn: () => Promise<Output>
+): RemoteQueryFunction<void, Output> {
   return query(async () => {
-    const outcome = await check();
-    if (!outcome.ok) return Result.err(outcome.error);
+    // Enforce auth check or throw sveltekit error
+    ResponseResult.unwrap(await check());
     return await fn();
   });
 }

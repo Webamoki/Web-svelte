@@ -730,6 +730,10 @@ const ResponseResult = {
 
 Wrap SvelteKit `command`, `query`, and `form` remote functions with authorization checks.
 
+Note that the function bodies for `command` remote functions cannot throw SvelteKit errors or redirect. `query` and `form` remote functions can.
+
+All guarded functions run the `CheckFunction` before the handler. On check failure, `guardedCommand` and `guardedCommandVoid` return a `Result.err`; all others throw a SvelteKit error via `ResponseResult.unwrap`.
+
 ```ts
 function guardedCommand<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
@@ -756,13 +760,13 @@ function guardedFormVoid<Output>(
 function guardedQuery<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<ResponseResult<Output>>
-): RemoteQueryFunction<InferInput<Schema>, ResponseResult<Output>>;
+  fn: (output: InferOutput<Schema>) => Promise<Output>
+): RemoteQueryFunction<InferInput<Schema>, Output>;
 
 function guardedQueryVoid<Output>(
   check: CheckFunction,
-  fn: () => Promise<ResponseResult<Output>>
-): RemoteQueryFunction<void, ResponseResult<Output>>;
+  fn: () => Promise<Output>
+): RemoteQueryFunction<void, Output>;
 ```
 
 ---

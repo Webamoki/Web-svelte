@@ -11,6 +11,7 @@ export const MasterSchema = type({
   emailNull: type('string.email').or(type.null).default(null),
   message: 'string',
   password: PasswordType,
+  pin: type('string').exactlyLength(6),
   select: 'number',
   selects: type('number').array(),
   tag: 'string',

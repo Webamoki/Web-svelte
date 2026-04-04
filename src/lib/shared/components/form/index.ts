@@ -1,4 +1,5 @@
 import Button from './Button.svelte';
+import CheckboxField from './fields/CheckboxField.svelte';
 import ChoiceField from './fields/ChoiceField.svelte';
 import ChoiceMultiField from './fields/ChoiceMultiField.svelte';
 import DateField from './fields/DateField.svelte';
@@ -18,6 +19,7 @@ import IconInputWrapper from './IconInputWrapper.svelte';
 
 export {
   Button,
+  CheckboxField,
   ChoiceField,
   ChoiceMultiField,
   DateField,

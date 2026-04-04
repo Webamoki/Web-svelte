@@ -5,6 +5,7 @@
   import Sidebar from '$lib/components/showcase/Sidebar.svelte';
   import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
   import Button from '$lib/shared/components/form/Button.svelte';
+  import CheckboxField from '$lib/shared/components/form/fields/CheckboxField.svelte';
   import ChoiceField from '$lib/shared/components/form/fields/ChoiceField.svelte';
   import ChoiceMultiField from '$lib/shared/components/form/fields/ChoiceMultiField.svelte';
   import DateField from '$lib/shared/components/form/fields/DateField.svelte';
@@ -113,6 +114,7 @@
 
 <div class="flex min-h-screen bg-gray-50">
   <Sidebar>
+    <SidebarLink title="CheckboxField" />
     <SidebarLink title="TextField" />
     <SidebarLink title="PasswordField" />
     <SidebarLink title="MessageField" />
@@ -129,6 +131,44 @@
   <!-- Main content -->
   <main class="flex-1 p-8">
     <h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>
+    <Container description="A checkbox field for boolean values" title="CheckboxField">
+      <Preview slot="preview">
+        <form class="space-y-5" method="POST" use:enhance>
+          <CheckboxField
+            name="agreed"
+            {form}
+            label="I agree to the terms"
+            bind:checked={$formData.agreed}
+          />
+          <CheckboxField
+            name="agreed"
+            description="You must accept to continue"
+            {form}
+            label="With Description"
+            bind:checked={$formData.agreed}
+          />
+          <CheckboxField
+            name="agreed"
+            disabled
+            {form}
+            label="Disabled"
+            bind:checked={$formData.agreed}
+          />
+        </form>
+      </Preview>
+      <CodeBlock slot="code">
+        {`
+				<CheckboxField
+					{form}
+					label="I agree to the terms"
+					name="agreed"
+					description="You must accept to continue"
+					disabled?
+					bind:checked={$formData.agreed}
+				/>
+			`}
+      </CodeBlock>
+    </Container>
     <Container description="A basic input field with validation support" title="TextField">
       <Preview slot="preview">
         <form class="space-y-5" method="POST" use:enhance>

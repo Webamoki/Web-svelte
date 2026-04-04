@@ -4,6 +4,7 @@ import { type } from 'arktype';
 import { PasswordType } from './types/password.js';
 
 export const MasterSchema = type({
+  agreed: 'boolean',
   calendarDate: CalendarDate,
   color: type('string').atLeastLength(4).atMostLength(7),
   email: 'string.email',

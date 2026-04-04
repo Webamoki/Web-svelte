@@ -1,0 +1,792 @@
+# @webamoki/web-svelte
+
+> A Svelte 5 component library for SvelteKit providing type-safe forms, UI components, and utilities.
+
+- **Framework:** Svelte 5 (Runes) & SvelteKit
+- **Styling:** Tailwind CSS v4
+- **Validation:** ArkType
+- **Forms:** sveltekit-superforms
+
+---
+
+## Installation
+
+```bash
+pnpm add @webamoki/web-svelte
+```
+
+Peer dependencies: `svelte`, `@sveltejs/kit`, `arktype`, `sveltekit-superforms`, `tailwindcss`, `@tailwindcss/forms`, `@tailwindcss/typography`, `@internationalized/date`
+
+---
+
+## Exports
+
+### `@webamoki/web-svelte/components/form`
+
+Type-safe form components built on sveltekit-superforms and ArkType.
+
+All field components extend `FieldWrapperProps`:
+
+```ts
+interface FieldWrapperProps<T extends Record<string, unknown>, U extends FormPath<T>, M> {
+  class?: string;
+  description?: string;
+  form: FsSuperForm<T, M>;
+  label?: string;
+  name: U;
+}
+```
+
+#### `Form`
+
+Main form wrapper with server action handling.
+
+```svelte
+<Form actionName?: string actionPath: string class?: string form: FsSuperForm<T, M>>
+  {children}
+</Form>
+```
+
+#### `Button`
+
+Submit button with loading state.
+
+```svelte
+<Button class?: string disabled?: boolean loading?: boolean loadingMessage?: string>
+  {children}
+</Button>
+```
+
+`loadingMessage` defaults to `"Please wait"`.
+
+#### `TextField`
+
+Text input field with optional icon.
+
+```svelte
+<TextField
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  placeholder?: string
+  type?: HTMLInputElement['type']
+  bind:value?: string
+/>
+```
+
+#### `TextFieldNullable`
+
+Text input that supports `null` values.
+
+```svelte
+<TextFieldNullable
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  placeholder?: string
+  type?: HTMLInputElement['type']
+  bind:value?: string | null
+/>
+```
+
+#### `PasswordField`
+
+Password input with show/hide toggle.
+
+```svelte
+<PasswordField
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  bind:value?: string
+/>
+```
+
+#### `NumberField`
+
+Number input with optional step precision.
+
+```svelte
+<NumberField
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  placeholder?: string
+  step?: HTMLInputElement['step']
+  bind:value?: number
+/>
+```
+
+#### `DateField`
+
+Date input bound to `CalendarDate` from `@internationalized/date`.
+
+```svelte
+<DateField
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  bind:value?: CalendarDate
+/>
+```
+
+#### `TimeField`
+
+Time input bound to `Time` from `@internationalized/date`.
+
+```svelte
+<TimeField
+  {...fieldWrapperProps}
+  class?: string
+  icon?: Component
+  placeholder?: string
+  step?: HTMLInputElement['step']
+  bind:value?: Time
+/>
+```
+
+#### `SelectField`
+
+Single-select dropdown.
+
+```svelte
+<SelectField
+  {...fieldWrapperProps}
+  class?: string
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  icon?: Component
+  items: readonly I[]
+  onchange?: (value: V | undefined) => void
+  placeholder: string
+  bind:value?: V
+/>
+```
+
+#### `SelectMultiField`
+
+Multi-select dropdown.
+
+```svelte
+<SelectMultiField
+  {...fieldWrapperProps}
+  class?: string
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  icon?: Component
+  items: readonly I[]
+  onchange?: (value: V[]) => void
+  placeholder: string
+  bind:values?: V[]
+/>
+```
+
+#### `ChoiceField`
+
+Single-choice toggle buttons.
+
+```svelte
+<ChoiceField
+  {...fieldWrapperProps}
+  buttonContent?: Snippet
+  disabled?: boolean
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  items: readonly I[]
+  onChange?: (value: V) => void
+  readonly?: boolean
+  bind:value?: V
+  vertical?: boolean
+/>
+```
+
+#### `ChoiceMultiField`
+
+Multi-choice toggle buttons.
+
+```svelte
+<ChoiceMultiField
+  {...fieldWrapperProps}
+  buttonContent?: Snippet
+  disabled?: boolean
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  items: readonly I[]
+  onAdd?: (value: V) => void
+  onRemove?: (value: V) => void
+  readonly?: boolean
+  bind:value?: V[]
+  vertical?: boolean
+/>
+```
+
+#### `MessageField`
+
+Textarea for longer text input.
+
+```svelte
+<MessageField
+  {...fieldWrapperProps}
+  class?: string
+  defaultHeight?: number
+  icon?: Component
+  placeholder?: string
+  resize?: boolean
+  bind:value?: string
+/>
+```
+
+`defaultHeight` defaults to `100`. `resize` defaults to `false`.
+
+#### `HexColorField`
+
+Hex color picker field.
+
+```svelte
+<HexColorField
+  {...fieldWrapperProps}
+  bind:value?: string
+/>
+```
+
+#### `WeekdayChoiceField`
+
+Single weekday selector.
+
+```svelte
+<WeekdayChoiceField
+  {...fieldWrapperProps}
+  disabled?: boolean
+  letterLabels?: boolean
+  longLabels?: boolean
+  onChange?: (value: Day) => void
+  readonly?: boolean
+  bind:value?: Day
+  vertical?: boolean
+/>
+```
+
+#### `WeekdayChoiceMultiField`
+
+Multi-weekday selector.
+
+```svelte
+<WeekdayChoiceMultiField
+  {...fieldWrapperProps}
+  disabled?: boolean
+  letterLabels?: boolean
+  longLabels?: boolean
+  onAdd?: (value: Day) => void
+  onRemove?: (value: Day) => void
+  readonly?: boolean
+  bind:value?: Day[]
+  vertical?: boolean
+/>
+```
+
+#### `IconInputWrapper`
+
+Wrapper that adds an icon to input fields.
+
+```svelte
+<IconInputWrapper icon?: Component iconPosition?: 'center' | 'top' flex?: boolean>
+  {#snippet children(attrs: { class: string })}
+    <input class={attrs.class} />
+  {/snippet}
+</IconInputWrapper>
+```
+
+---
+
+### `@webamoki/web-svelte/components/ui`
+
+Higher-level UI components.
+
+#### `Choice`
+
+Standalone single-choice selector.
+
+```svelte
+<Choice
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  items: readonly I[]
+  buttonContent?: Snippet
+  disabled?: boolean
+  readonly?: boolean
+  vertical?: boolean
+  onChange?: (value: V) => void
+  bind:value?: V
+/>
+```
+
+#### `ChoiceMulti`
+
+Standalone multi-choice selector.
+
+```svelte
+<ChoiceMulti
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  items: readonly I[]
+  buttonContent?: Snippet
+  disabled?: boolean
+  readonly?: boolean
+  vertical?: boolean
+  onAdd?: (value: V) => void
+  onRemove?: (value: V) => void
+  bind:value?: V[]
+/>
+```
+
+#### `WeekdayChoice`
+
+Single weekday selector with configurable labels.
+
+```svelte
+<WeekdayChoice
+  class?: string
+  disabled?: boolean
+  letterLabels?: boolean
+  longLabels?: boolean
+  readonly?: boolean
+  vertical?: boolean
+  onChange?: (value: Day) => void
+  bind:value?: Day
+/>
+```
+
+#### `WeekdayChoiceMulti`
+
+Multi-weekday selector with configurable labels.
+
+```svelte
+<WeekdayChoiceMulti
+  class?: string
+  disabled?: boolean
+  letterLabels?: boolean
+  longLabels?: boolean
+  readonly?: boolean
+  vertical?: boolean
+  onAdd?: (value: Day) => void
+  onRemove?: (value: Day) => void
+  bind:value: Day[]
+/>
+```
+
+#### `ContextMenu`
+
+Right-click context menu.
+
+```svelte
+<ContextMenu onOpenChange?: (open: boolean) => void>
+  <ContextMenuTrigger>
+    {children}
+  </ContextMenuTrigger>
+  <ContextMenuContent class?: string>
+    <ContextMenuItem onclick?: (e: MouseEvent) => void disabled?: boolean variant?: 'default' | 'destructive'>
+      {children}
+    </ContextMenuItem>
+    <ContextMenuSeparator />
+  </ContextMenuContent>
+</ContextMenu>
+```
+
+#### `DragManager`
+
+State manager for drag-and-drop operations.
+
+```ts
+class DragManager<T> {
+  get isDragging(): boolean;
+  get dragData(): T | undefined;
+  drag(data: T): void;
+  stop(): void;
+}
+```
+
+#### `Draggable`
+
+Makes content draggable.
+
+```svelte
+<Draggable class?: string data: T manager: DragManager<T>>
+  {children}
+</Draggable>
+```
+
+#### `Dropzone`
+
+Drop target that validates and accepts dragged items.
+
+```svelte
+<Dropzone
+  class?: string
+  isDroppable: (data: T) => boolean
+  manager: DragManager<T>
+  onDrop: (data: T) => void
+>
+  {children}
+</Dropzone>
+```
+
+#### `SearchBar`
+
+Search input with icon and debounced change callback.
+
+```svelte
+<SearchBar
+  class?: string
+  defaultValue?: string
+  onChange: (value: string) => void
+  placeholder?: string
+/>
+```
+
+---
+
+### `@webamoki/web-svelte/utils/datetime`
+
+Date/time utilities built on `@internationalized/date`.
+
+#### Types
+
+```ts
+const Days: readonly ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+type Day = (typeof Days)[number];
+const DayIndex: Record<Day, number>;
+```
+
+#### `LocalDateF`
+
+Timezone-aware date functions.
+
+```ts
+class LocalDateF {
+  constructor(timezone: string);
+  today(): CalendarDate;
+  now(): ZonedDateTime;
+  isDateToday(date: CalendarDate): boolean;
+  ageFromDob(dob: CalendarDate): number;
+  dateWithin(date: CalendarDate, duration: DateDuration): boolean;
+}
+```
+
+#### Date Functions
+
+```ts
+function getDayIndexOfDate(date: CalendarDate): number;
+function getDayOfDate(date: CalendarDate): Day;
+function isDateDay(date: CalendarDate, dayOfWeek: Day): boolean;
+function checkOverlap(start1: Time, end1: Time, start2: Time, end2: Time): boolean;
+function datesWithin(date1: CalendarDate, date2: CalendarDate, duration: DateDuration): boolean;
+function getLastDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate;
+function getLastDatesOfDay(dayOfWeek: Day, count: number, startDate: CalendarDate): CalendarDate[];
+function getLastMonths(count: number, startDate: CalendarDate): CalendarDate[];
+function getNextDateOfDay(dayOfWeek: Day, startDate: CalendarDate): CalendarDate;
+function dateDiffWeeks(date1: CalendarDate, date2: CalendarDate): number;
+```
+
+#### Formatting
+
+```ts
+function formatDayLetter(day: Day): string;        // "Monday" -> "M"
+function formatDayShort(day: Day): string;          // "Monday" -> "Mon"
+function formatDateFull(date: CalendarDate): string; // "5 Oct 2023"
+function formatDateISO(date: CalendarDate): string;  // "2023-10-05"
+function formatDateNum(date: CalendarDate): string;  // "05/10/2023"
+function formatDateShort(date: CalendarDate): string; // "Oct 5"
+function formatMonth(date: CalendarDate): string;    // "Oct 23"
+function formatAbsolute(datetime: ZonedDateTime): string; // "05/10/2023 14:30:00"
+function formatTime(time: Time): string;             // "14:30"
+function formatTimeEnd(timeStart: Time, durationMinutes: number): string;
+function formatTimeFull(time: Time): string;         // "14:30:00"
+```
+
+#### State Handling
+
+```ts
+function unfreezeDate(raw: ReturnType<typeof $state.snapshot<CalendarDate>>): CalendarDate;
+function unfreezeTime(raw: ReturnType<typeof $state.snapshot<Time>>): Time;
+function unfreezeAbsoluteDate(raw: ReturnType<typeof $state.snapshot<ZonedDateTime>>): ZonedDateTime;
+```
+
+#### Transport
+
+```ts
+const dateTransport: Transport;
+```
+
+SvelteKit `Transport` for `CalendarDate`, `Time`, and `ZonedDateTime` serialization/deserialization.
+
+---
+
+### `@webamoki/web-svelte/utils/arktype`
+
+Common ArkType validators.
+
+```ts
+const IntegerId: Type<number>;   // number.integer >= 0
+const Phone: Type<string>;       // allows "+", digits, and spaces
+const HexColor: Type<string>;    // 3 or 6 hex digit color (without #)
+const Day: Type<Day>;            // enum of weekday names
+const Time: Type<Time>;          // instanceof @internationalized/date Time
+const CalendarDate: Type<CalendarDate>; // instanceof @internationalized/date CalendarDate
+
+function trimTo(typeTo: Type<string>): Type<string>;
+```
+
+`trimTo` creates a type that trims whitespace before applying the inner validation.
+
+---
+
+### `@webamoki/web-svelte/utils/form`
+
+Form initialization utilities for sveltekit-superforms.
+
+#### `prepareForm`
+
+Initializes a superform with an ArkType schema and pre-validated data.
+
+```ts
+function prepareForm<S extends type.Any<Record<string, unknown>>>(
+  schema: S,
+  validated: S['infer'] | SuperValidated<S['infer']>,
+  options?: {
+    invalidateAll?: boolean;
+    onError?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onUpdated?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    resetForm?: boolean;
+  }
+): { data: Writable<S['infer']>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+```
+
+#### `prepareEmptyForm`
+
+Initializes a superform with defaults (no initial data needed).
+
+```ts
+function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
+  schema: S,
+  options?: {
+    invalidateAll?: boolean;
+    onError?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onUpdated?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    resetForm?: boolean;
+  }
+): { data: Writable<S['infer']>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+```
+
+#### `VirtualForm`
+
+Client-side form submission without a `<form>` element. Useful for programmatic submissions.
+
+```ts
+class VirtualForm<S extends type.Any<Record<string, unknown>>> {
+  constructor(
+    schema: S,
+    action: string,
+    options?: {
+      actionName?: string;
+      onError?: (message: App.Superforms.Message) => void;
+      onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+      transport?: Transport;
+    }
+  );
+  get isProcessing(): boolean;
+  submit(data: S['infer']): Promise<void>;
+}
+```
+
+---
+
+### `@webamoki/web-svelte/utils/email`
+
+AWS SES email sending via Web Crypto API (Cloudflare Workers compatible).
+
+```ts
+interface SendEmailOptions {
+  awsAccessKeyId: string;
+  awsRegion: string;
+  awsSecretAccessKey: string;
+  from: string;
+  fromName?: string;
+  to: string | string[];
+  cc?: string | string[];
+  bcc?: string | string[];
+  replyTo?: string | string[];
+  subject: string;
+  text?: string;
+  html?: string;
+}
+
+function sendEmail(options: SendEmailOptions): Promise<string>;
+```
+
+Returns the SES `MessageId` on success.
+
+---
+
+### `@webamoki/web-svelte/utils/functional`
+
+Functional programming utilities.
+
+#### `Result`
+
+A discriminated union type for error handling without exceptions.
+
+```ts
+type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+const Result = {
+  ok<T>(value: T): { ok: true; value: T };
+  err<E>(error: E): { ok: false; error: E };
+  isOk<T, E>(result: Result<T, E>): result is { ok: true; value: T };
+  isErr<T, E>(result: Result<T, E>): result is { ok: false; error: E };
+  unwrapOr<T, E>(result: Result<T, E>, defaultValue: T): T;
+  unwrapOrElse<T, E>(result: Result<T, E>, op: (error: E) => T): T;
+  map<T, U, E>(result: Result<T, E>, fn: (val: T) => U): Result<U, E>;
+  mapErr<T, E, F>(result: Result<T, E>, fn: (err: E) => F): Result<T, F>;
+  andThen<T, U, E>(result: Result<T, E>, op: (val: T) => Result<U, E>): Result<U, E>;
+  orElse<T, E, F>(result: Result<T, E>, op: (err: E) => Result<T, F>): Result<T, F>;
+  match<T, E, R>(result: Result<T, E>, arms: { ok: (val: T) => R; err: (err: E) => R }): R;
+};
+```
+
+---
+
+### `@webamoki/web-svelte/server/form-handler`
+
+Server-side form handling helpers for `+page.server.ts` actions.
+
+```ts
+function errorMessage<T extends Record<string, unknown>>(
+  form: SuperValidated<T>,
+  options?: { data?: unknown; showToast?: boolean; text?: string }
+): ActionResult;
+
+function successMessage<T extends Record<string, unknown>>(
+  form: SuperValidated<T>,
+  options?: { data?: unknown; showToast?: boolean; text?: string }
+): ActionResult;
+
+function failFormValidation<T extends Record<string, unknown>>(
+  form: SuperValidated<T>
+): ActionFailure<{ form: SuperValidated<T> }>;
+
+function handleDbErrorForm<T extends Record<string, unknown>>(
+  form: SuperValidated<T>,
+  message: string,
+  err: unknown
+): ActionFailure<{ form: SuperValidated<T> }>;
+
+function isDuplicateDbError(err: unknown): boolean;
+```
+
+---
+
+### `@webamoki/web-svelte/server/form-processor`
+
+Server-side form validation.
+
+```ts
+function processForm<S extends type.Any<Record<string, unknown>>>(
+  request: Request,
+  schema: S
+): Promise<SuperValidated<S['infer']>>;
+```
+
+---
+
+### `@webamoki/web-svelte/utils/remote`
+
+SvelteKit remote function helpers with guard patterns.
+
+#### Types
+
+```ts
+type ResponseError = { code: number; message: string };
+type ResponseResult<T> = Result<T, ResponseError>;
+type CheckFunction = () => Promise<Result<void, ResponseError>>;
+
+const CheckResult = {
+  ok(): { ok: true; value: void };
+};
+
+const ResponseResult = {
+  unwrap<T>(result: ResponseResult<T>): T; // throws SvelteKit error on failure
+};
+```
+
+#### Guarded Remote Functions
+
+Wrap SvelteKit `command`, `query`, and `form` remote functions with authorization checks.
+
+```ts
+function guardedCommand<Schema extends StandardSchemaV1, Output>(
+  check: CheckFunction,
+  schema: Schema,
+  fn: (output: InferOutput<Schema>) => Promise<ResponseResult<Output>>
+): RemoteCommand<InferInput<Schema>, Promise<ResponseResult<Output>>>;
+
+function guardedCommandVoid<Output>(
+  check: CheckFunction,
+  fn: () => Promise<ResponseResult<Output>>
+): RemoteCommand<void, Promise<ResponseResult<Output>>>;
+
+function guardedForm<Schema extends StandardSchemaV1, Output>(
+  schema: Schema,
+  check: CheckFunction,
+  fn: (output: InferOutput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
+): RemoteForm<InferInput<Schema>, Output>;
+
+function guardedFormVoid<Output>(
+  check: CheckFunction,
+  fn: () => Promise<Output>
+): RemoteForm<void, Output>;
+
+function guardedQuery<Schema extends StandardSchemaV1, Output>(
+  check: CheckFunction,
+  schema: Schema,
+  fn: (output: InferOutput<Schema>) => Promise<ResponseResult<Output>>
+): RemoteQueryFunction<InferInput<Schema>, ResponseResult<Output>>;
+
+function guardedQueryVoid<Output>(
+  check: CheckFunction,
+  fn: () => Promise<ResponseResult<Output>>
+): RemoteQueryFunction<void, ResponseResult<Output>>;
+```
+
+---
+
+## Usage Example
+
+```svelte
+<script lang="ts">
+  import { Form, Button, TextField, NumberField } from '@webamoki/web-svelte/components/form';
+  import { prepareForm } from '@webamoki/web-svelte/utils/form';
+  import { type } from 'arktype';
+
+  const Schema = type({
+    name: 'string >= 1',
+    age: 'number.integer >= 0'
+  });
+
+  let { data } = $props();
+  const { form, data: formData, isProcessing } = prepareForm(Schema, data.form);
+</script>
+
+<Form {form} actionPath="/api/submit">
+  <TextField {form} name="name" label="Name" placeholder="Enter name" />
+  <NumberField {form} name="age" label="Age" placeholder="Enter age" />
+  <Button loading={$isProcessing}>Submit</Button>
+</Form>
+```

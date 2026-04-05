@@ -801,18 +801,22 @@ function guardedQueryVoid<Output>(
 
 Client-side handler for command remote functions. Manages submission state, toast notifications, and callbacks.
 
+#### `CommandAction`
+
+Client handler for command remote functions that take schema-validated input.
+
 ```ts
-class CommandAction<S, O extends CommandSuccess> {
-  input: S; // reactive ($state), set before calling execute()
+class CommandAction<Schema extends StandardSchemaV1, O extends CommandSuccess> {
+  input: InferOutput<Schema>; // reactive ($state), set before calling execute()
 
   get submitting(): boolean; // reactive, true while a request is in-flight
 
   constructor(
-    remote: RemoteCommand<S, Promise<CommandResult<O>>>,
-    defaultInput: S,
+    remote: RemoteCommand<InferInput<Schema>, Promise<CommandResult<O>>>,
+    defaultInput: InferOutput<Schema>,
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (state: { input: S; result: O }) => void;
+      onSuccess?: (state: { input: InferOutput<Schema>; result: O }) => void;
       toastError?: boolean;   // default: true
       toastSuccess?: boolean; // default: true
     }
@@ -822,7 +826,29 @@ class CommandAction<S, O extends CommandSuccess> {
 }
 ```
 
-`execute()` calls the remote command with the current `input`. Network errors are caught and converted to `Result.err({ code: 500, message: 'Internal Server Error' })`. On success it toasts `result.message` and calls `onSuccess` with `{ input, result }`. On error it toasts the error and calls `onError`.
+#### `CommandActionVoid`
+
+Client handler for input-less command remote functions.
+
+```ts
+class CommandActionVoid<O extends CommandSuccess> {
+  get submitting(): boolean; // reactive, true while a request is in-flight
+
+  constructor(
+    remote: RemoteCommand<void, Promise<CommandResult<O>>>,
+    config?: {
+      onError?: (error: ResponseError) => void;
+      onSuccess?: (result: O) => void;
+      toastError?: boolean;   // default: true
+      toastSuccess?: boolean; // default: true
+    }
+  );
+
+  execute(): Promise<void>;
+}
+```
+
+Both classes catch network errors as `Result.err({ code: 500, message: 'Internal Server Error' })`. On success they toast `result.message` and call `onSuccess`. On error they toast the error and call `onError`.
 
 ---
 

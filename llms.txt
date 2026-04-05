@@ -737,21 +737,20 @@ function processForm<S extends type.Any<Record<string, unknown>>>(
 
 ### `@webamoki/web-svelte/utils/remote`
 
-SvelteKit remote function helpers with guard patterns.
+Server-side SvelteKit remote function helpers with guard patterns.
 
 #### Types
 
 ```ts
 type ResponseError = { code: number; message: string };
-type ResponseResult<T> = Result<T, ResponseError>;
-type CheckFunction = () => Promise<Result<void, ResponseError>>;
+type CheckFunction = () => Promise<CheckResult>;
+type CheckResult = Result<void, ResponseError>;
+type CommandSuccess = { message: string };
+type CommandResult<T extends CommandSuccess> = Result<T, ResponseError>;
 
 const CheckResult = {
   ok(): { ok: true; value: void };
-};
-
-const ResponseResult = {
-  unwrap<T>(result: ResponseResult<T>): T; // throws SvelteKit error on failure
+  enforceOk(r: CheckResult): void; // throws SvelteKit error if result is Err
 };
 ```
 
@@ -759,21 +758,19 @@ const ResponseResult = {
 
 Wrap SvelteKit `command`, `query`, and `form` remote functions with authorization checks.
 
-Note that the function bodies for `command` remote functions cannot throw SvelteKit errors or redirect. `query` and `form` remote functions can.
-
-All guarded functions run the `CheckFunction` before the handler. On check failure, `guardedCommand` and `guardedCommandVoid` return a `Result.err`; all others throw a SvelteKit error via `ResponseResult.unwrap`.
+All guarded functions run the `CheckFunction` before the handler. On check failure, `guardedCommand` and `guardedCommandVoid` return a `Result.err` (commands cannot throw SvelteKit errors); all others throw via `CheckResult.enforceOk`.
 
 ```ts
-function guardedCommand<Schema extends StandardSchemaV1, Output>(
+function guardedCommand<Schema extends StandardSchemaV1, Output extends CommandSuccess>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<ResponseResult<Output>>
-): RemoteCommand<InferInput<Schema>, Promise<ResponseResult<Output>>>;
+  fn: (output: InferOutput<Schema>) => Promise<CommandResult<Output>>
+): RemoteCommand<InferInput<Schema>, Promise<CommandResult<Output>>>;
 
-function guardedCommandVoid<Output>(
+function guardedCommandVoid<Output extends CommandSuccess>(
   check: CheckFunction,
-  fn: () => Promise<ResponseResult<Output>>
-): RemoteCommand<void, Promise<ResponseResult<Output>>>;
+  fn: () => Promise<CommandResult<Output>>
+): RemoteCommand<void, Promise<CommandResult<Output>>>;
 
 function guardedForm<Schema extends StandardSchemaV1, Output>(
   schema: Schema,
@@ -797,6 +794,35 @@ function guardedQueryVoid<Output>(
   fn: () => Promise<Output>
 ): RemoteQueryFunction<void, Output>;
 ```
+
+---
+
+### `@webamoki/web-svelte/utils/command`
+
+Client-side handler for command remote functions. Manages submission state, toast notifications, and callbacks.
+
+```ts
+class CommandAction<S, O extends CommandSuccess> {
+  input: S; // reactive ($state), set before calling execute()
+
+  get submitting(): boolean; // reactive, true while a request is in-flight
+
+  constructor(
+    remote: RemoteCommand<S, Promise<CommandResult<O>>>,
+    defaultInput: S,
+    config?: {
+      onError?: (error: ResponseError) => void;
+      onSuccess?: (result: O) => void;
+      toastError?: boolean;   // default: true
+      toastSuccess?: boolean; // default: true
+    }
+  );
+
+  execute(): Promise<O>; // submits input to the remote command, toasts on result
+}
+```
+
+`execute()` calls the remote command with the current `input`. On success it toasts `result.message` and calls `onSuccess`. On error it toasts the error and calls `onError`, then throws the error.
 
 ---
 

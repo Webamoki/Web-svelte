@@ -764,7 +764,7 @@ All guarded functions run the `CheckFunction` before the handler. On check failu
 function guardedCommand<Schema extends StandardSchemaV1, Output extends CommandSuccess>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<CommandResult<Output>>
+  fn: (output: InferInput<Schema>) => Promise<CommandResult<Output>>
 ): RemoteCommand<InferInput<Schema>, Promise<CommandResult<Output>>>;
 
 function guardedCommandVoid<Output extends CommandSuccess>(
@@ -775,7 +775,7 @@ function guardedCommandVoid<Output extends CommandSuccess>(
 function guardedForm<Schema extends StandardSchemaV1, Output>(
   schema: Schema,
   check: CheckFunction,
-  fn: (output: InferOutput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
+  fn: (output: InferInput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
 ): RemoteForm<InferInput<Schema>, Output>;
 
 function guardedFormVoid<Output>(
@@ -786,7 +786,7 @@ function guardedFormVoid<Output>(
 function guardedQuery<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<Output>
+  fn: (output: InferInput<Schema>) => Promise<Output>
 ): RemoteQueryFunction<InferInput<Schema>, Output>;
 
 function guardedQueryVoid<Output>(
@@ -807,16 +807,16 @@ Client handler for command remote functions that take schema-validated input.
 
 ```ts
 class CommandAction<Schema extends StandardSchemaV1, O extends CommandSuccess> {
-  input: InferOutput<Schema>; // reactive ($state), set before calling execute()
+  input: InferInput<Schema>; // reactive ($state), set before calling execute()
 
   get submitting(): boolean; // reactive, true while a request is in-flight
 
   constructor(
     remote: RemoteCommand<InferInput<Schema>, Promise<CommandResult<O>>>,
-    defaultInput: InferOutput<Schema>,
+    defaultInput: InferInput<Schema>,
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (state: { input: InferOutput<Schema>; result: O }) => void;
+      onSuccess?: (state: { input: InferInput<Schema>; result: O }) => void;
       toastError?: boolean;   // default: true
       toastSuccess?: boolean; // default: true
     }

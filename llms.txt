@@ -764,7 +764,7 @@ All guarded functions run the `CheckFunction` before the handler. On check failu
 function guardedCommand<Schema extends StandardSchemaV1, Output extends CommandSuccess>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<CommandResult<Output>>
+  fn: (output: InferInput<Schema>) => Promise<CommandResult<Output>>
 ): RemoteCommand<InferInput<Schema>, Promise<CommandResult<Output>>>;
 
 function guardedCommandVoid<Output extends CommandSuccess>(
@@ -775,7 +775,7 @@ function guardedCommandVoid<Output extends CommandSuccess>(
 function guardedForm<Schema extends StandardSchemaV1, Output>(
   schema: Schema,
   check: CheckFunction,
-  fn: (output: InferOutput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
+  fn: (output: InferInput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
 ): RemoteForm<InferInput<Schema>, Output>;
 
 function guardedFormVoid<Output>(
@@ -786,7 +786,7 @@ function guardedFormVoid<Output>(
 function guardedQuery<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferOutput<Schema>) => Promise<Output>
+  fn: (output: InferInput<Schema>) => Promise<Output>
 ): RemoteQueryFunction<InferInput<Schema>, Output>;
 
 function guardedQueryVoid<Output>(
@@ -801,15 +801,41 @@ function guardedQueryVoid<Output>(
 
 Client-side handler for command remote functions. Manages submission state, toast notifications, and callbacks.
 
+#### `CommandAction`
+
+Client handler for command remote functions that take schema-validated input.
+
 ```ts
-class CommandAction<S, O extends CommandSuccess> {
-  input: S; // reactive ($state), set before calling execute()
+class CommandAction<Schema extends StandardSchemaV1, O extends CommandSuccess> {
+  input: InferInput<Schema>; // reactive ($state), set before calling execute()
 
   get submitting(): boolean; // reactive, true while a request is in-flight
 
   constructor(
-    remote: RemoteCommand<S, Promise<CommandResult<O>>>,
-    defaultInput: S,
+    remote: RemoteCommand<InferInput<Schema>, Promise<CommandResult<O>>>,
+    defaultInput: InferInput<Schema>,
+    config?: {
+      onError?: (error: ResponseError) => void;
+      onSuccess?: (state: { input: InferInput<Schema>; result: O }) => void;
+      toastError?: boolean;   // default: true
+      toastSuccess?: boolean; // default: true
+    }
+  );
+
+  execute(): Promise<void>;
+}
+```
+
+#### `CommandActionVoid`
+
+Client handler for input-less command remote functions.
+
+```ts
+class CommandActionVoid<O extends CommandSuccess> {
+  get submitting(): boolean; // reactive, true while a request is in-flight
+
+  constructor(
+    remote: RemoteCommand<void, Promise<CommandResult<O>>>,
     config?: {
       onError?: (error: ResponseError) => void;
       onSuccess?: (result: O) => void;
@@ -818,11 +844,11 @@ class CommandAction<S, O extends CommandSuccess> {
     }
   );
 
-  execute(): Promise<O>; // submits input to the remote command, toasts on result
+  execute(): Promise<void>;
 }
 ```
 
-`execute()` calls the remote command with the current `input`. On success it toasts `result.message` and calls `onSuccess`. On error it toasts the error and calls `onError`, then throws the error.
+Both classes catch network errors as `Result.err({ code: 500, message: 'Internal Server Error' })`. On success they toast `result.message` and call `onSuccess`. On error they toast the error and call `onError`.
 
 ---
 

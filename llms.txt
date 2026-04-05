@@ -812,17 +812,17 @@ class CommandAction<S, O extends CommandSuccess> {
     defaultInput: S,
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (result: O) => void;
+      onSuccess?: (state: { input: S; result: O }) => void;
       toastError?: boolean;   // default: true
       toastSuccess?: boolean; // default: true
     }
   );
 
-  execute(): Promise<O>; // submits input to the remote command, toasts on result
+  execute(): Promise<void>;
 }
 ```
 
-`execute()` calls the remote command with the current `input`. On success it toasts `result.message` and calls `onSuccess`. On error it toasts the error and calls `onError`, then throws the error.
+`execute()` calls the remote command with the current `input`. Network errors are caught and converted to `Result.err({ code: 500, message: 'Internal Server Error' })`. On success it toasts `result.message` and calls `onSuccess` with `{ input, result }`. On error it toasts the error and calls `onError`.
 
 ---
 

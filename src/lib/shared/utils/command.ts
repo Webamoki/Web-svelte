@@ -49,7 +49,7 @@ export class CommandAction<S, O extends CommandSuccess> {
   }
 
   /** Executes the command with the current input. */
-  execute() {
+  execute(): Promise<void> {
     return this.executeWith(this.input);
   }
 

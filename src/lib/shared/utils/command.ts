@@ -82,7 +82,6 @@ type RCV<O extends CommandSuccess> = RemoteCommand<void, Promise<CommandResult<O
 
 /**
  * Command Remote function handler for Client without input
- * - state for dynamic input
  * - execute function, which handles toast and callbacks
  * - submitting state for tracking pending executions
  */

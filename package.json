@@ -71,8 +71,8 @@
       "import": "./dist/shared/server/form-processor.js"
     },
     "./utils/remote": {
-      "types": "./dist/shared/utils/remote.d.ts",
-      "import": "./dist/shared/utils/remote.js"
+      "types": "./dist/shared/utils/remote/index.d.ts",
+      "import": "./dist/shared/utils/remote/index.js"
     }
   },
   "peerDependencies": {

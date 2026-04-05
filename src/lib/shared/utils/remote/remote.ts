@@ -1,6 +1,7 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 
 import { command, form, query } from '$app/server';
+import { Result } from '$lib/shared/utils/functional/index.js';
 import {
   error,
   type InvalidField,
@@ -9,8 +10,6 @@ import {
   type RemoteFormInput,
   type RemoteQueryFunction
 } from '@sveltejs/kit';
-
-import { Result } from './functional/index.js';
 
 export type CheckFunction = () => Promise<CheckResult>;
 export type CheckResult = Result<void, ResponseError>;
@@ -116,29 +115,4 @@ export function guardedQueryVoid<Output>(
     ResponseResult.unwrap(await check());
     return await fn();
   });
-}
-
-// Client side handling
-
-export class CommandAction<S, O> {
-  get submitting(): boolean {
-    return this.#submitCount > 0;
-  }
-
-  #remote: RemoteCommand<S, Promise<ResponseResult<O>>>;
-  #submitCount = $state(0);
-
-  constructor(remote: RemoteCommand<S, Promise<ResponseResult<O>>>) {
-    this.#remote = remote;
-  }
-
-  async execute(input: Parameters<RemoteCommand<S, Promise<ResponseResult<O>>>>[0]): Promise<O> {
-    this.#submitCount++;
-    try {
-      const result = await this.#remote(input);
-      return ResponseResult.unwrap(result);
-    } finally {
-      this.#submitCount--;
-    }
-  }
 }

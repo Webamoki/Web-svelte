@@ -48,10 +48,15 @@ export class CommandAction<S, O extends CommandSuccess> {
     this.#onSuccess = config?.onSuccess;
   }
 
-  async execute(): Promise<void> {
+  /** Executes the command with the current input. */
+  execute(): Promise<void> {
+    return this.executeWith(this.input);
+  }
+
+  /** Executes the command with the provided input. */
+  async executeWith(input: S): Promise<void> {
     this.#submitCount++;
     try {
-      const input = this.input;
       const result: CommandResult<O> = await this.#remote(input).catch(() =>
         Result.err({ code: 500, message: 'Internal Server Error' })
       );

@@ -803,20 +803,20 @@ Client-side handler for command remote functions. Manages submission state, toas
 
 #### `CommandAction`
 
-Client handler for command remote functions that take schema-validated input.
+Client handler for command remote functions that take input.
 
 ```ts
-class CommandAction<Schema extends StandardSchemaV1, O extends CommandSuccess> {
-  input: InferInput<Schema>; // reactive ($state), set before calling execute()
+class CommandAction<S, O extends CommandSuccess> {
+  input: S; // reactive ($state), set before calling execute()
 
   get submitting(): boolean; // reactive, true while a request is in-flight
 
   constructor(
-    remote: RemoteCommand<InferInput<Schema>, Promise<CommandResult<O>>>,
-    defaultInput: InferInput<Schema>,
+    remote: RemoteCommand<S, Promise<CommandResult<O>>>,
+    defaultInput: S,
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (state: { input: InferInput<Schema>; result: O }) => void;
+      onSuccess?: (state: { input: S; result: O }) => void;
       toastError?: boolean;   // default: true
       toastSuccess?: boolean; // default: true
     }

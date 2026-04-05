@@ -13,7 +13,7 @@ type RC<Schema extends StandardSchemaV1, O extends CommandSuccess> = RemoteComma
   StandardSchemaV1.InferInput<Schema>,
   Promise<CommandResult<O>>
 >;
-type RCInput<Schema extends StandardSchemaV1> = StandardSchemaV1.InferOutput<Schema>;
+type RCInput<Schema extends StandardSchemaV1> = StandardSchemaV1.InferInput<Schema>;
 
 /**
  * Command Remote function handler for Client

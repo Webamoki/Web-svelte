@@ -822,7 +822,8 @@ class CommandAction<S, O extends CommandSuccess> {
     }
   );
 
-  execute(): Promise<void>;
+  execute(): Promise<void>;         // executes with this.input
+  executeWith(input: S): Promise<void>; // executes with provided input
 }
 ```
 

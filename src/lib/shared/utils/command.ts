@@ -1,6 +1,5 @@
 // Client side handling
 
-import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { RemoteCommand } from '@sveltejs/kit';
 
 import { toast } from 'svelte-sonner';

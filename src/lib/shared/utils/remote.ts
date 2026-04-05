@@ -11,35 +11,34 @@ import {
   type RemoteQueryFunction
 } from '@sveltejs/kit';
 
+export type ResponseError = {
+  code: number;
+  message: string;
+};
+
 export type CheckFunction = () => Promise<CheckResult>;
 export type CheckResult = Result<void, ResponseError>;
 export const CheckResult = {
   /* Helper function for ok check result. */
   ok(): { ok: true; value: void } {
     return Result.ok(undefined) satisfies CheckResult;
+  },
+
+  /** Throws a sveltekit error if the result is an error result. */
+  enforceOk(r: CheckResult) {
+    if (Result.isErr(r)) throw error(r.error.code, r.error.message);
   }
 };
 
-export type ResponseError = {
-  code: number;
-  message: string;
-};
-export type ResponseResult<T> = Result<T, ResponseError>;
-export const ResponseResult = {
-  /**
-   * Unwraps a ResponseResult, throwing a sveltekit error if it is an error result.
-   */
-  unwrap<T>(result: ResponseResult<T>): T {
-    return Result.unwrapOrElse(result, (err) => error(err.code, err.message));
-  }
-};
+export type CommandResult<T extends CommandSuccess> = Result<T, ResponseError>;
+export type CommandSuccess = { message: string };
 
 /* Guards command remote function with a check function. */
-export function guardedCommand<Schema extends StandardSchemaV1, Output>(
+export function guardedCommand<Schema extends StandardSchemaV1, Output extends CommandSuccess>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<ResponseResult<Output>>
-): RemoteCommand<StandardSchemaV1.InferInput<Schema>, Promise<ResponseResult<Output>>> {
+  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<CommandResult<Output>>
+): RemoteCommand<StandardSchemaV1.InferInput<Schema>, Promise<CommandResult<Output>>> {
   return command(schema, async (output) => {
     const outcome = await check();
     // Command remote functions cannot redirect for error,
@@ -50,10 +49,10 @@ export function guardedCommand<Schema extends StandardSchemaV1, Output>(
 }
 
 /* Guards input-less command remote function with a check function. */
-export function guardedCommandVoid<Output>(
+export function guardedCommandVoid<Output extends CommandSuccess>(
   check: CheckFunction,
-  fn: () => Promise<ResponseResult<Output>>
-): RemoteCommand<void, Promise<ResponseResult<Output>>> {
+  fn: () => Promise<CommandResult<Output>>
+): RemoteCommand<void, Promise<CommandResult<Output>>> {
   return command(async () => {
     const outcome = await check();
     if (!outcome.ok) return Result.err(outcome.error);
@@ -75,7 +74,7 @@ export function guardedForm<
 ): RemoteForm<StandardSchemaV1.InferInput<Schema>, Output> {
   return form(schema, async (output, issue) => {
     // Enforce auth check or throw sveltekit error
-    ResponseResult.unwrap(await check());
+    CheckResult.enforceOk(await check());
     return await fn(output, issue);
   });
 }
@@ -87,7 +86,7 @@ export function guardedFormVoid<Output>(
 ): RemoteForm<void, Output> {
   return form(async () => {
     // Enforce auth check or throw sveltekit error
-    ResponseResult.unwrap(await check());
+    CheckResult.enforceOk(await check());
     return await fn();
   });
 }
@@ -100,7 +99,7 @@ export function guardedQuery<Schema extends StandardSchemaV1, Output>(
 ): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, Output> {
   return query(schema, async (output) => {
     // Enforce auth check or throw sveltekit error
-    ResponseResult.unwrap(await check());
+    CheckResult.enforceOk(await check());
     return await fn(output);
   });
 }
@@ -112,7 +111,7 @@ export function guardedQueryVoid<Output>(
 ): RemoteQueryFunction<void, Output> {
   return query(async () => {
     // Enforce auth check or throw sveltekit error
-    ResponseResult.unwrap(await check());
+    CheckResult.enforceOk(await check());
     return await fn();
   });
 }

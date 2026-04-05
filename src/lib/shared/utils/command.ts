@@ -6,6 +6,14 @@ import { toast } from 'svelte-sonner';
 
 import type { CommandResult, CommandSuccess, ResponseError } from './remote.js';
 
+import { Result } from './functional/result.js';
+
+/**
+ * Command Remote function handler for Client
+ * - state for dynamic input
+ * - execute function, which handles toast and callbacks
+ * - submitting state for tracking pending executions
+ */
 export class CommandAction<S, O extends CommandSuccess> {
   input: Parameters<RemoteCommand<S, Promise<CommandResult<O>>>>[0] = $state()!;
 
@@ -14,7 +22,12 @@ export class CommandAction<S, O extends CommandSuccess> {
   }
 
   #onError: ((error: ResponseError) => void) | undefined;
-  #onSuccess: ((result: O) => void) | undefined;
+  #onSuccess:
+    | ((state: {
+        input: Parameters<RemoteCommand<S, Promise<CommandResult<O>>>>[0];
+        result: O;
+      }) => void)
+    | undefined;
   #remote: RemoteCommand<S, Promise<CommandResult<O>>>;
   #submitCount = $state(0);
   #toastError: boolean;
@@ -25,7 +38,10 @@ export class CommandAction<S, O extends CommandSuccess> {
     defaultInput: Parameters<RemoteCommand<S, Promise<CommandResult<O>>>>[0],
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (result: O) => void;
+      onSuccess?: (state: {
+        input: Parameters<RemoteCommand<S, Promise<CommandResult<O>>>>[0];
+        result: O;
+      }) => void;
       toastError?: boolean;
       toastSuccess?: boolean;
     }
@@ -38,18 +54,24 @@ export class CommandAction<S, O extends CommandSuccess> {
     this.#onSuccess = config?.onSuccess;
   }
 
-  async execute(): Promise<O> {
+  async execute(): Promise<void> {
     this.#submitCount++;
     try {
-      const result = await this.#remote(this.input);
+      const input = this.input;
+      const result: CommandResult<O> = await this.#remote(input).catch(() =>
+        Result.err({ code: 500, message: 'Internal Server Error' })
+      );
+
       if (result.ok) {
         if (this.#toastSuccess) toast.success(result.value.message);
-        this.#onSuccess?.(result.value);
-        return result.value;
+        this.#onSuccess?.({
+          input: input,
+          result: result.value
+        });
+        return;
       } else {
         if (this.#toastError) toast.error(`${result.error.code} - ${result.error.message}`);
         this.#onError?.(result.error);
-        throw result.error;
       }
     } finally {
       this.#submitCount--;

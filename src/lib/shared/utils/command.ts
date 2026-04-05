@@ -16,7 +16,7 @@ type RC<S, O extends CommandSuccess> = RemoteCommand<S, Promise<CommandResult<O>
  * - execute function, which handles toast and callbacks
  * - submitting state for tracking pending executions
  */
-export class CommandAction<S, O extends CommandSuccess> {
+export class CommandActionState<S, O extends CommandSuccess> {
   input: S = $state()!;
 
   get submitting(): boolean {
@@ -49,12 +49,66 @@ export class CommandAction<S, O extends CommandSuccess> {
   }
 
   /** Executes the command with the current input. */
-  execute(): Promise<void> {
-    return this.executeWith(this.input);
+  async execute(): Promise<void> {
+    const input = this.input;
+    this.#submitCount++;
+    try {
+      const result: CommandResult<O> = await this.#remote(input).catch(() =>
+        Result.err({ code: 500, message: 'Internal Server Error' })
+      );
+
+      if (result.ok) {
+        if (this.#toastSuccess) toast.success(result.value.message);
+        this.#onSuccess?.({
+          input: input,
+          result: result.value
+        });
+        return;
+      } else {
+        if (this.#toastError) toast.error(`${result.error.code} - ${result.error.message}`);
+        this.#onError?.(result.error);
+      }
+    } finally {
+      this.#submitCount--;
+    }
+  }
+}
+
+/**
+ * Command Remote function handler for Client
+ * - execute function takes input and handles toast and callbacks
+ * - submitting state for tracking pending executions
+ */
+export class CommandAction<S, O extends CommandSuccess> {
+  get submitting(): boolean {
+    return this.#submitCount > 0;
+  }
+
+  #onError: ((error: ResponseError) => void) | undefined;
+  #onSuccess: ((state: { input: S; result: O }) => void) | undefined;
+  #remote: RC<S, O>;
+  #submitCount = $state(0);
+  #toastError: boolean;
+  #toastSuccess: boolean;
+
+  constructor(
+    remote: RC<S, O>,
+    config?: {
+      onError?: (error: ResponseError) => void;
+      onSuccess?: (state: { input: S; result: O }) => void;
+      toastError?: boolean;
+      toastSuccess?: boolean;
+    }
+  ) {
+    this.#remote = remote;
+    this.#toastError = config?.toastError ?? true;
+    this.#toastSuccess = config?.toastSuccess ?? true;
+    this.#onError = config?.onError;
+    this.#onSuccess = config?.onSuccess;
   }
 
   /** Executes the command with the provided input. */
-  async executeWith(input: S): Promise<void> {
+  async execute(input: S): Promise<void> {
     this.#submitCount++;
     try {
       const result: CommandResult<O> = await this.#remote(input).catch(() =>

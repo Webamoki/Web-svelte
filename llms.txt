@@ -801,12 +801,12 @@ function guardedQueryVoid<Output>(
 
 Client-side handler for command remote functions. Manages submission state, toast notifications, and callbacks.
 
-#### `CommandAction`
+#### `CommandActionState`
 
-Client handler for command remote functions that take input.
+Stateful client handler — holds reactive `input` and executes with it.
 
 ```ts
-class CommandAction<S, O extends CommandSuccess> {
+class CommandActionState<S, O extends CommandSuccess> {
   input: S; // reactive ($state), set before calling execute()
 
   get submitting(): boolean; // reactive, true while a request is in-flight
@@ -822,8 +822,29 @@ class CommandAction<S, O extends CommandSuccess> {
     }
   );
 
-  execute(): Promise<void>;         // executes with this.input
-  executeWith(input: S): Promise<void>; // executes with provided input
+  execute(): Promise<void>; // executes with this.input
+}
+```
+
+#### `CommandAction`
+
+Stateless client handler — `execute` takes input directly.
+
+```ts
+class CommandAction<S, O extends CommandSuccess> {
+  get submitting(): boolean; // reactive, true while a request is in-flight
+
+  constructor(
+    remote: RemoteCommand<S, Promise<CommandResult<O>>>,
+    config?: {
+      onError?: (error: ResponseError) => void;
+      onSuccess?: (state: { input: S; result: O }) => void;
+      toastError?: boolean;   // default: true
+      toastSuccess?: boolean; // default: true
+    }
+  );
+
+  execute(input: S): Promise<void>;
 }
 ```
 

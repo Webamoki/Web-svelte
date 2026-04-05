@@ -93,7 +93,6 @@ export class CommandAction<S, O extends CommandSuccess> {
 
   constructor(
     remote: RC<S, O>,
-    defaultInput: S,
     config?: {
       onError?: (error: ResponseError) => void;
       onSuccess?: (state: { input: S; result: O }) => void;

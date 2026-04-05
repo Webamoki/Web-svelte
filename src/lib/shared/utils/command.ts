@@ -9,11 +9,7 @@ import type { CommandResult, CommandSuccess, ResponseError } from './remote.js';
 
 import { Result } from './functional/result.js';
 
-type RC<Schema extends StandardSchemaV1, O extends CommandSuccess> = RemoteCommand<
-  StandardSchemaV1.InferInput<Schema>,
-  Promise<CommandResult<O>>
->;
-type RCInput<Schema extends StandardSchemaV1> = StandardSchemaV1.InferInput<Schema>;
+type RC<S, O extends CommandSuccess> = RemoteCommand<S, Promise<CommandResult<O>>>;
 
 /**
  * Command Remote function handler for Client
@@ -21,26 +17,26 @@ type RCInput<Schema extends StandardSchemaV1> = StandardSchemaV1.InferInput<Sche
  * - execute function, which handles toast and callbacks
  * - submitting state for tracking pending executions
  */
-export class CommandAction<Schema extends StandardSchemaV1, O extends CommandSuccess> {
-  input: RCInput<Schema> = $state()!;
+export class CommandAction<S, O extends CommandSuccess> {
+  input: S = $state()!;
 
   get submitting(): boolean {
     return this.#submitCount > 0;
   }
 
   #onError: ((error: ResponseError) => void) | undefined;
-  #onSuccess: ((state: { input: RCInput<Schema>; result: O }) => void) | undefined;
-  #remote: RC<Schema, O>;
+  #onSuccess: ((state: { input: S; result: O }) => void) | undefined;
+  #remote: RC<S, O>;
   #submitCount = $state(0);
   #toastError: boolean;
   #toastSuccess: boolean;
 
   constructor(
-    remote: RC<Schema, O>,
-    defaultInput: RCInput<Schema>,
+    remote: RC<S, O>,
+    defaultInput: S,
     config?: {
       onError?: (error: ResponseError) => void;
-      onSuccess?: (state: { input: RCInput<Schema>; result: O }) => void;
+      onSuccess?: (state: { input: S; result: O }) => void;
       toastError?: boolean;
       toastSuccess?: boolean;
     }

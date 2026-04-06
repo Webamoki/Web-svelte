@@ -44,39 +44,48 @@
     },
     "./utils/datetime": {
       "types": "./dist/shared/utils/datetime/index.d.ts",
-      "import": "./dist/shared/utils/datetime/index.js"
+      "import": "./dist/shared/utils/datetime/index.js",
+      "require": "./dist/shared/utils/datetime/index.js"
     },
     "./utils/arktype": {
       "types": "./dist/shared/utils/arktype.d.ts",
-      "import": "./dist/shared/utils/arktype.js"
+      "import": "./dist/shared/utils/arktype.js",
+      "require": "./dist/shared/utils/arktype.js"
     },
     "./utils/form": {
       "types": "./dist/shared/utils/form/index.d.ts",
-      "import": "./dist/shared/utils/form/index.js"
+      "import": "./dist/shared/utils/form/index.js",
+      "require": "./dist/shared/utils/form/index.js"
     },
     "./utils/email": {
       "types": "./dist/shared/utils/email/index.d.ts",
-      "import": "./dist/shared/utils/email/index.js"
+      "import": "./dist/shared/utils/email/index.js",
+      "require": "./dist/shared/utils/email/index.js"
     },
     "./utils/functional": {
       "types": "./dist/shared/utils/functional/index.d.ts",
-      "import": "./dist/shared/utils/functional/index.js"
+      "import": "./dist/shared/utils/functional/index.js",
+      "require": "./dist/shared/utils/functional/index.js"
     },
     "./server/form-handler": {
       "types": "./dist/shared/server/form-handler.d.ts",
-      "import": "./dist/shared/server/form-handler.js"
+      "import": "./dist/shared/server/form-handler.js",
+      "require": "./dist/shared/server/form-handler.js"
     },
     "./server/form-processor": {
       "types": "./dist/shared/server/form-processor.d.ts",
-      "import": "./dist/shared/server/form-processor.js"
+      "import": "./dist/shared/server/form-processor.js",
+      "require": "./dist/shared/server/form-processor.js"
     },
     "./utils/remote": {
       "types": "./dist/shared/utils/remote.d.ts",
-      "import": "./dist/shared/utils/remote.js"
+      "import": "./dist/shared/utils/remote.js",
+      "require": "./dist/shared/utils/remote.js"
     },
     "./utils/command": {
       "types": "./dist/shared/utils/command.d.ts",
-      "import": "./dist/shared/utils/command.js"
+      "import": "./dist/shared/utils/command.js",
+      "require": "./dist/shared/utils/command.js"
     }
   },
   "peerDependencies": {

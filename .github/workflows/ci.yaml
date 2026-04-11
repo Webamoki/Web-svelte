@@ -22,6 +22,8 @@ jobs:
             .cache/.eslintcache
             .cache/.prettier-cache
           key: ${{ runner.os }}-checks-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-checks-
 
       - name: Run Linting and Type Checks
         env:

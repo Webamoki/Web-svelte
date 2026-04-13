@@ -84,6 +84,7 @@
     },
     "./utils/command": {
       "types": "./dist/shared/utils/command.svelte.d.ts",
+      "svelte": "./dist/shared/utils/command.svelte.js",
       "import": "./dist/shared/utils/command.svelte.js",
       "require": "./dist/shared/utils/command.svelte.js"
     }

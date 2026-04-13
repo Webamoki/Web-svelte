@@ -83,9 +83,10 @@
       "require": "./dist/shared/utils/remote.js"
     },
     "./utils/command": {
-      "types": "./dist/shared/utils/command.d.ts",
-      "import": "./dist/shared/utils/command.js",
-      "require": "./dist/shared/utils/command.js"
+      "types": "./dist/shared/utils/command.svelte.d.ts",
+      "svelte": "./dist/shared/utils/command.svelte.js",
+      "import": "./dist/shared/utils/command.svelte.js",
+      "require": "./dist/shared/utils/command.svelte.js"
     }
   },
   "peerDependencies": {

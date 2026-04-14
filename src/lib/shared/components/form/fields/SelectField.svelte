@@ -35,7 +35,7 @@
 </script>
 
 <FieldWrapper {...fieldProps}>
-  {#snippet formElem()}
+  {#snippet formElem(props)}
     <Select
       class={className}
       {getKey}
@@ -47,6 +47,7 @@
       {onchange}
       {placeholder}
       bind:value
+      {...props}
     />
   {/snippet}
 </FieldWrapper>

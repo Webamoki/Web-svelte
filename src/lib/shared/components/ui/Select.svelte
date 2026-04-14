@@ -1,4 +1,5 @@
 <script generics="I, V, K extends number | string" lang="ts">
+  import type { ControlAttrs } from 'formsnap';
   import type { Component } from 'svelte';
 
   import {
@@ -12,7 +13,7 @@
   import { cn } from '$lib/shadcn/utils.js';
   import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
-  interface Props {
+  type Props = Partial<ControlAttrs> & {
     class?: string;
     getKey: (item: I) => K;
     getLabel: (item: I) => string;
@@ -23,7 +24,7 @@
     onchange?: (value: undefined | V) => void;
     placeholder: string;
     value?: V;
-  }
+  };
   let {
     class: className,
     getKey: _getKey,
@@ -34,7 +35,8 @@
     label,
     onchange,
     placeholder,
-    value = $bindable(undefined)
+    value = $bindable(undefined),
+    ...rest
   }: Props = $props();
 
   // svelte-ignore state_referenced_locally
@@ -65,7 +67,7 @@
 <ShadSelect type="single" bind:value={getKeyFromValue, setValueFromKey}>
   <IconInputWrapper {icon}>
     {#snippet children({ class: iconClass })}
-      <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)}>
+      <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)} {...rest}>
         <span class="block truncate">
           {value ? getLabel(valueToItem.get(value)!) : placeholder}
         </span>

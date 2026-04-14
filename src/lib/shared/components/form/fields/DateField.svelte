@@ -23,7 +23,7 @@
 </script>
 
 <FieldWrapper {...fieldProps}>
-  {#snippet formElem()}
-    <DateInput class={className} {icon} {showDate} bind:value />
+  {#snippet formElem(props)}
+    <DateInput class={className} {icon} {showDate} bind:value {...props} />
   {/snippet}
 </FieldWrapper>

@@ -3,9 +3,7 @@
   import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
   import type { FormPath } from 'sveltekit-superforms';
 
-  import { Input } from '$lib/shadcn/components/ui/input/index.js';
-  import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
+  import Input from '$lib/shared/components/ui/Input.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
@@ -31,10 +29,6 @@
 
 <FieldWrapper {...fieldProps}>
   {#snippet formElem(props)}
-    <IconInputWrapper {icon}>
-      {#snippet children({ class: iconClass })}
-        <Input class={cn(iconClass, className)} {placeholder} {type} bind:value {...props} />
-      {/snippet}
-    </IconInputWrapper>
+    <Input class={className} {icon} {placeholder} {type} bind:value {...props} />
   {/snippet}
 </FieldWrapper>

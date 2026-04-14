@@ -2,9 +2,7 @@
   import type { Component } from 'svelte';
   import type { FormPath } from 'sveltekit-superforms';
 
-  import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
-  import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
+  import TextArea from '$lib/shared/components/ui/TextArea.svelte';
 
   import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
@@ -29,17 +27,14 @@
 
 <FieldWrapper {...fieldProps}>
   {#snippet formElem(props)}
-    <!-- Textarea itself with optional left icon -->
-    <IconInputWrapper flex {icon} iconPosition="top">
-      {#snippet children({ class: iconClass })}
-        <Textarea
-          style="height: {defaultHeight}px; min-height: {defaultHeight}px;"
-          class={cn(resize ? 'resize-y' : 'resize-none', iconClass, className)}
-          {placeholder}
-          bind:value
-          {...props}
-        />
-      {/snippet}
-    </IconInputWrapper>
+    <TextArea
+      class={className}
+      {defaultHeight}
+      {icon}
+      {placeholder}
+      {resize}
+      bind:value
+      {...props}
+    />
   {/snippet}
 </FieldWrapper>

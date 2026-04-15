@@ -46,11 +46,12 @@ In your project's main CSS entry point (e.g., `src/app.css`), include the follow
 
 If you want to make changes to `@webamoki/web-svelte` and test them in a host application simultaneously without publishing:
 
-1. Clone this repository:
+1. Clone this repository and build the library:
    ```bash
    git clone git@github.com:Webamoki/Web-svelte.git
    cd Web-svelte
    pnpm install
+   pnpm build:lib
    ```
 2. In your host application, link the local package:
    ```json

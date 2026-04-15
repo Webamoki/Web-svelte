@@ -62,6 +62,13 @@
     value = newValue;
     onchange?.(newValue);
   }
+
+  function getLabelFromValue(): string {
+    if (value === undefined) return placeholder;
+    const item = valueToItem.get(value);
+    if (item === undefined) return placeholder;
+    return getLabel(item);
+  }
 </script>
 
 <ShadSelect type="single" bind:value={getKeyFromValue, setValueFromKey}>
@@ -69,7 +76,7 @@
     {#snippet children({ class: iconClass })}
       <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)} {...rest}>
         <span class="block truncate">
-          {value ? getLabel(valueToItem.get(value)!) : placeholder}
+          {getLabelFromValue()}
         </span>
       </SelectTrigger>
     {/snippet}

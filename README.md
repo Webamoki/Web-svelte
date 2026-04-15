@@ -52,13 +52,17 @@ If you want to make changes to `@webamoki/web-svelte` and test them in a host ap
    cd Web-svelte
    pnpm install
    ```
-2. Link the package globally:
-   ```bash
-   pnpm link --global
+2. In your host application, link the local package:
+   ```json
+   {
+     "dependencies": {
+       "@webamoki/web-svelte": "file:../Web-svelte"
+     }
+   }
    ```
-3. In your host application, link the local package:
+3. Run pnpm install:
    ```bash
-   pnpm link --global @webamoki/web-svelte
+   pnpm install
    ```
 4. Run the package watcher in the library directory to automatically rebuild on changes:
    ```bash

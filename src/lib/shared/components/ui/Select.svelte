@@ -39,10 +39,19 @@
     ...rest
   }: Props = $props();
 
-  // svelte-ignore state_referenced_locally
-  let valueToItem: Map<V, I> = new Map(items.map((item) => [getValue(item), item] as const));
-  // svelte-ignore state_referenced_locally
-  let keyToItem: Map<string, I> = new Map(items.map((item) => [getKey(item), item] as const));
+  let valueToItem: Map<V, I> = $derived(
+    new Map(items.map((item) => [getValue(item), item] as const))
+  );
+  let keyToItem: Map<string, I> = $derived(
+    new Map(items.map((item) => [getKey(item), item] as const))
+  );
+
+  let displayLabel: string = $derived.by(() => {
+    if (value === undefined) return placeholder;
+    const item = valueToItem.get(value);
+    if (item === undefined) return placeholder;
+    return getLabel(item);
+  });
 
   function getKey(item: I) {
     return _getKey(item).toString();
@@ -62,13 +71,6 @@
     value = newValue;
     onchange?.(newValue);
   }
-
-  function getLabelFromValue(): string {
-    if (value === undefined) return placeholder;
-    const item = valueToItem.get(value);
-    if (item === undefined) return placeholder;
-    return getLabel(item);
-  }
 </script>
 
 <ShadSelect type="single" bind:value={getKeyFromValue, setValueFromKey}>
@@ -76,7 +78,7 @@
     {#snippet children({ class: iconClass })}
       <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)} {...rest}>
         <span class="block truncate">
-          {getLabelFromValue()}
+          {displayLabel}
         </span>
       </SelectTrigger>
     {/snippet}

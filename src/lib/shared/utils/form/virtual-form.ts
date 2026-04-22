@@ -1,14 +1,15 @@
 import type { Transport } from '@sveltejs/kit';
+import type { Type } from 'arktype';
 import type { SuperValidated } from 'sveltekit-superforms/client';
 
-import { type } from 'arktype';
+import { type } from '$lib/shared/utils/arktype.js';
 import { parse, stringify } from 'devalue';
 import { toast } from 'svelte-sonner';
 import { createSubscriber } from 'svelte/reactivity';
 
 import { dateTransport } from '../datetime/index.js';
 
-export class VirtualForm<S extends type.Any<Record<string, unknown>>> {
+export class VirtualForm<S extends Type<Record<string, unknown>>> {
   get isProcessing(): boolean {
     this.#subscribe();
     return this.#isProcessing;

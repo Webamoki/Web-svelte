@@ -3,7 +3,7 @@ import { scope, type Type } from 'arktype';
 
 import { Days } from './datetime/index.js';
 
-/** Global scope for jitles config: required for cloudflare workers
+/** Global scope for jitless config: required for cloudflare workers
  *   Use this instead of global arktype
  */
 export const arktype = scope({}, { jitless: true });

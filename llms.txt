@@ -558,7 +558,18 @@ SvelteKit `Transport` for `CalendarDate`, `Time`, and `ZonedDateTime` serializat
 
 ### `@webamoki/web-svelte/utils/arktype`
 
-Common ArkType validators.
+Jitless ArkType scope and common validators. Required for Cloudflare Workers (no JIT).
+
+#### Scope
+
+```ts
+const arktype: Scope;           // scope({}, { jitless: true })
+const type = arktype.type;      // use instead of importing `type` from 'arktype'
+```
+
+Import `type` from here — not from `arktype` directly — so schemas inherit the jitless scope.
+
+#### Validators
 
 ```ts
 const IntegerId: Type<number>;   // number.integer >= 0
@@ -584,7 +595,7 @@ Form initialization utilities for sveltekit-superforms.
 Initializes a superform with an ArkType schema and pre-validated data.
 
 ```ts
-function prepareForm<S extends type.Any<Record<string, unknown>>>(
+function prepareForm<S extends Type<Record<string, unknown>>>(
   schema: S,
   validated: S['infer'] | SuperValidated<S['infer']>,
   options?: {
@@ -602,7 +613,7 @@ function prepareForm<S extends type.Any<Record<string, unknown>>>(
 Initializes a superform with defaults (no initial data needed).
 
 ```ts
-function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
+function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
   schema: S,
   options?: {
     invalidateAll?: boolean;
@@ -619,7 +630,7 @@ function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
 Client-side form submission without a `<form>` element. Useful for programmatic submissions.
 
 ```ts
-class VirtualForm<S extends type.Any<Record<string, unknown>>> {
+class VirtualForm<S extends Type<Record<string, unknown>>> {
   constructor(
     schema: S,
     action: string,
@@ -727,7 +738,7 @@ function isDuplicateDbError(err: unknown): boolean;
 Server-side form validation.
 
 ```ts
-function processForm<S extends type.Any<Record<string, unknown>>>(
+function processForm<S extends Type<Record<string, unknown>>>(
   request: Request,
   schema: S
 ): Promise<SuperValidated<S['infer']>>;
@@ -764,19 +775,25 @@ All guarded functions run the `CheckFunction` before the handler. On check failu
 function guardedCommand<Schema extends StandardSchemaV1, Output extends CommandSuccess>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferInput<Schema>) => Promise<CommandResult<Output>>
-): RemoteCommand<InferInput<Schema>, Promise<CommandResult<Output>>>;
+  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<CommandResult<Output>>
+): RemoteCommand<StandardSchemaV1.InferInput<Schema>, Promise<CommandResult<Output>>>;
 
 function guardedCommandVoid<Output extends CommandSuccess>(
   check: CheckFunction,
   fn: () => Promise<CommandResult<Output>>
 ): RemoteCommand<void, Promise<CommandResult<Output>>>;
 
-function guardedForm<Schema extends StandardSchemaV1, Output>(
+function guardedForm<
+  Schema extends StandardSchemaV1<RemoteFormInput, Record<string, unknown>>,
+  Output
+>(
   schema: Schema,
   check: CheckFunction,
-  fn: (output: InferInput<Schema>, issue: InvalidField<InferInput<Schema>>) => Promise<Output>
-): RemoteForm<InferInput<Schema>, Output>;
+  fn: (
+    output: StandardSchemaV1.InferOutput<Schema>,
+    issue: InvalidField<StandardSchemaV1.InferInput<Schema>>
+  ) => Promise<Output>
+): RemoteForm<StandardSchemaV1.InferInput<Schema>, Output>;
 
 function guardedFormVoid<Output>(
   check: CheckFunction,
@@ -786,8 +803,8 @@ function guardedFormVoid<Output>(
 function guardedQuery<Schema extends StandardSchemaV1, Output>(
   check: CheckFunction,
   schema: Schema,
-  fn: (output: InferInput<Schema>) => Promise<Output>
-): RemoteQueryFunction<InferInput<Schema>, Output>;
+  fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<Output>
+): RemoteQueryFunction<StandardSchemaV1.InferInput<Schema>, Output>;
 
 function guardedQueryVoid<Output>(
   check: CheckFunction,
@@ -880,7 +897,7 @@ Both classes catch network errors as `Result.err({ code: 500, message: 'Internal
 <script lang="ts">
   import { Form, Button, TextField, NumberField } from '@webamoki/web-svelte/components/form';
   import { prepareForm } from '@webamoki/web-svelte/utils/form';
-  import { type } from 'arktype';
+  import { type } from '@webamoki/web-svelte/utils/arktype';
 
   const Schema = type({
     name: 'string >= 1',

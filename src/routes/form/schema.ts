@@ -1,5 +1,5 @@
 import { CalendarDate, Day, Time } from '$lib/shared/utils/arktype.js';
-import { type } from 'arktype';
+import { type } from '$lib/shared/utils/arktype.js';
 
 import { PasswordType } from './types/password.js';
 

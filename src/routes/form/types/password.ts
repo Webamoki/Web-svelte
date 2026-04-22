@@ -1,4 +1,4 @@
-import { type } from 'arktype';
+import { type } from '$lib/shared/utils/arktype.js';
 
 const passwordMaxLength = 20;
 const passwordMinLength = 8;

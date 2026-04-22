@@ -1,4 +1,4 @@
-import type { type } from 'arktype';
+import type { Type } from 'arktype';
 
 import { toast } from 'svelte-sonner';
 import { defaults, superForm, type SuperValidated } from 'sveltekit-superforms';
@@ -6,7 +6,7 @@ import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
 
 import { dateTransport } from '../datetime/index.js';
 export * from './virtual-form.js';
-export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
+export function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
   schema: S,
   options?: Partial<{
     invalidateAll: boolean;
@@ -53,7 +53,7 @@ export function prepareEmptyForm<S extends type.Any<Record<string, unknown>>>(
   return { data: form.form, errors, form, isProcessing };
 }
 
-export function prepareForm<S extends type.Any<Record<string, unknown>>>(
+export function prepareForm<S extends Type<Record<string, unknown>>>(
   schema: S,
   validated: S['infer'] | SuperValidated<S['infer']>,
   options?: Partial<{

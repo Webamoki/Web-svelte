@@ -1,9 +1,13 @@
-import type { Type } from 'arktype';
-
 import { CalendarDate as calendarImport, Time as timeImport } from '@internationalized/date';
-import { type } from 'arktype';
+import { scope, type Type } from 'arktype';
 
 import { Days } from './datetime/index.js';
+
+/** Global scope for jitles config: required for cloudflare workers
+ *   Use this instead of global arktype
+ */
+export const arktype = scope({}, { jitless: true });
+export const type = arktype.type;
 
 // Useful common types
 

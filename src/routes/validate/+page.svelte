@@ -1,11 +1,12 @@
 <script lang="ts">
   import Button from '$lib/shared/components/form/Button.svelte';
   import TextField from '$lib/shared/components/form/fields/TextField.svelte';
-  import { trimTo, type } from '$lib/shared/utils/arktype.js';
   import { prepareEmptyForm } from '$lib/shared/utils/form/index.js';
+  import { trimTo } from '$lib/shared/utils/zod.js';
+  import { z } from 'zod/v4';
 
-  const Schema = type({
-    text: trimTo(type.string.atLeastLength(1))
+  const Schema = z.object({
+    text: trimTo(z.string().min(1))
   });
 
   const { data, form } = prepareEmptyForm(Schema);

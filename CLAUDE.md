@@ -6,7 +6,7 @@ A Svelte 5 component library for SvelteKit, providing type-safe forms, UI compon
 
 - **Package:** `@webamoki/web-svelte`
 - **Framework:** Svelte 5 (Runes) & SvelteKit
-- **Tech Stack:** Tailwind CSS v4, ArkType, Superforms, Bits UI, Lucide Svelte.
+- **Tech Stack:** Tailwind CSS v4, Zod, Superforms, Bits UI, Lucide Svelte.
 
 ## Package Management
 
@@ -20,7 +20,7 @@ Use `pnpm`, never use `npm`.
 
 ## Guidelines
 
-1. **Type Safety:** Always use **ArkType** for runtime validation and type definitions.
+1. **Type Safety:** Always use **Zod** (v4) for runtime validation and type definitions. Import from `$lib/shared/utils/zod.js`.
 2. **UI Components:** Use **shadcn**, **bits-ui**, and **Tailwind CSS v4** to build/extend UI components. Shadcn components are in `src/lib/shadcn/components/ui`.
 3. **Consistency:** Follow existing patterns in `src/lib/shared/components/form` for new fields.
 
@@ -28,7 +28,7 @@ Use `pnpm`, never use `npm`.
 
 ### 1. Form System (`src/lib/shared/components/form`)
 
-Type-safe form handling via `superforms` and `arktype`.
+Type-safe form handling via `superforms` and `zod`.
 
 - **`Form`**: Main wrapper with validation.
 - **`Button`**: Submission with loading states.
@@ -67,10 +67,10 @@ Use Context7 for documentation grounding on the core stack. When looking up docs
 - `/tailwindlabs/tailwindcss`
 - `/huntabyte/bits-ui`
 - `/huntabyte/shadcn-svelte`
-- `/arktypeio/arktype`
+- `/colinhacks/zod`
 - `/microsoft/typescript`
 
 ## Common Workflows
 
-- **New Form**: Define ArkType schema -> Initialize with `prepareForm()` -> Use `Form` + Field components.
+- **New Form**: Define Zod schema -> Initialize with `prepareForm()` -> Use `Form` + Field components.
 - **New Field**: Extend existing fields or use `IconInputWrapper` for consistent styling.

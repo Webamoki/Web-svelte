@@ -1,28 +1,28 @@
-import type { Type } from 'arktype';
+import type { z } from 'zod/v4';
 
 import { toast } from 'svelte-sonner';
 import { defaults, superForm, type SuperValidated } from 'sveltekit-superforms';
-import { arktype, arktypeClient } from 'sveltekit-superforms/adapters';
+import { type Infer, zod4, zod4Client } from 'sveltekit-superforms/adapters';
 
 import { dateTransport } from '../datetime/index.js';
 export * from './virtual-form.js';
-export function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
+export function prepareEmptyForm<S extends z.ZodType<Record<string, unknown>>>(
   schema: S,
   options?: Partial<{
     invalidateAll: boolean;
     onError: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     onSuccess: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     onUpdated: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     resetForm: boolean;
   }>
 ) {
-  const form = superForm(defaults(arktype(schema)), {
+  const form = superForm(defaults(zod4(schema)), {
     dataType: 'json',
     invalidateAll: options?.invalidateAll ?? false,
     onError({ result }) {
@@ -46,26 +46,26 @@ export function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
     },
     resetForm: options?.resetForm ?? true,
     transport: dateTransport,
-    validators: arktypeClient(schema)
+    validators: zod4Client(schema)
   });
   const isProcessing = form.delayed;
   const errors = form.errors;
   return { data: form.form, errors, form, isProcessing };
 }
 
-export function prepareForm<S extends Type<Record<string, unknown>>>(
+export function prepareForm<S extends z.ZodType<Record<string, unknown>>>(
   schema: S,
-  validated: S['infer'] | SuperValidated<S['infer']>,
+  validated: Infer<S, 'zod4'> | SuperValidated<Infer<S, 'zod4'>>,
   options?: Partial<{
     invalidateAll: boolean;
     onError: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     onSuccess: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     onUpdated: (
-      form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+      form: Readonly<SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message, Infer<S, 'zod4'>>>
     ) => void;
     resetForm: boolean;
   }>
@@ -94,7 +94,7 @@ export function prepareForm<S extends Type<Record<string, unknown>>>(
     },
     resetForm: options?.resetForm ?? true,
     transport: dateTransport,
-    validators: arktypeClient(schema)
+    validators: zod4Client(schema)
   });
   const isProcessing = form.delayed;
   const errors = form.errors;

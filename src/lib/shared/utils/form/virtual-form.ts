@@ -1,15 +1,14 @@
 import type { Transport } from '@sveltejs/kit';
-import type { Type } from 'arktype';
 import type { SuperValidated } from 'sveltekit-superforms/client';
 
-import { type } from '$lib/shared/utils/arktype.js';
 import { parse, stringify } from 'devalue';
 import { toast } from 'svelte-sonner';
 import { createSubscriber } from 'svelte/reactivity';
+import { z } from 'zod/v4';
 
 import { dateTransport } from '../datetime/index.js';
 
-export class VirtualForm<S extends Type<Record<string, unknown>>> {
+export class VirtualForm<S extends z.ZodType<Record<string, unknown>>> {
   get isProcessing(): boolean {
     this.#subscribe();
     return this.#isProcessing;
@@ -18,7 +17,7 @@ export class VirtualForm<S extends Type<Record<string, unknown>>> {
   #isProcessing = false;
   #onError?: (message: App.Superforms.Message) => void;
   #onSuccess?: (
-    form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+    form: Readonly<SuperValidated<z.infer<S>, App.Superforms.Message, z.infer<S>>>
   ) => void;
   #schema: S;
   // svelte reactive tracking
@@ -34,7 +33,7 @@ export class VirtualForm<S extends Type<Record<string, unknown>>> {
       actionName?: string;
       onError?: (message: App.Superforms.Message) => void;
       onSuccess?: (
-        form: Readonly<SuperValidated<S['infer'], App.Superforms.Message, S['infer']>>
+        form: Readonly<SuperValidated<z.infer<S>, App.Superforms.Message, z.infer<S>>>
       ) => void;
       transport?: Transport;
     } = {}
@@ -50,15 +49,16 @@ export class VirtualForm<S extends Type<Record<string, unknown>>> {
     });
   }
 
-  async submit(data: S['infer']) {
+  async submit(data: z.infer<S>) {
     this.#isProcessing = true;
     this.#update();
     // Validate data against schema
-    const validated = this.#schema(data);
-    if (validated instanceof type.errors) {
-      console.error('Validation failed:', validated.summary);
+    const result = this.#schema.safeParse(data);
+    if (!result.success) {
+      const summary = z.prettifyError(result.error);
+      console.error('Validation failed:', summary);
       this.#onError?.({
-        data: validated.summary,
+        data: summary,
         showToast: false,
         success: false,
         text: 'Validation failed'
@@ -67,7 +67,7 @@ export class VirtualForm<S extends Type<Record<string, unknown>>> {
     }
     try {
       // Apply transport encoding before sending
-      const encodedData = this.#encodeTransport(validated);
+      const encodedData = this.#encodeTransport(result.data);
 
       // Encode JSON as form data (like superforms does)
       const formData = new FormData();
@@ -79,21 +79,21 @@ export class VirtualForm<S extends Type<Record<string, unknown>>> {
         method: 'POST'
       });
 
-      const result = await res.json();
-      if (!res.ok || result.status === 400) {
-        console.error('Request failed:', result);
-        this.#onError?.(result);
+      const response = await res.json();
+      if (!res.ok || response.status === 400) {
+        console.error('Request failed:', response);
+        this.#onError?.(response);
         this.#isProcessing = false;
         this.#update();
         return;
       }
       // Parse and decode the response
-      const parsedData = parse(result['data']);
+      const parsedData = parse(response['data']);
       const decodedData = this.#decodeTransport(parsedData);
       const form = (decodedData as Record<string, unknown>)['form'] as SuperValidated<
-        S['infer'],
+        z.infer<S>,
         App.Superforms.Message,
-        S['infer']
+        z.infer<S>
       >;
       if (form.valid && form.message?.success) {
         this.#onSuccess?.(form);

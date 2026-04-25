@@ -47,10 +47,10 @@
       "import": "./dist/shared/utils/datetime/index.js",
       "require": "./dist/shared/utils/datetime/index.js"
     },
-    "./utils/arktype": {
-      "types": "./dist/shared/utils/arktype.d.ts",
-      "import": "./dist/shared/utils/arktype.js",
-      "require": "./dist/shared/utils/arktype.js"
+    "./utils/zod": {
+      "types": "./dist/shared/utils/zod.d.ts",
+      "import": "./dist/shared/utils/zod.js",
+      "require": "./dist/shared/utils/zod.js"
     },
     "./utils/form": {
       "types": "./dist/shared/utils/form/index.d.ts",
@@ -94,10 +94,10 @@
     "@sveltejs/kit": "catalog:",
     "@tailwindcss/forms": "catalog:",
     "@tailwindcss/typography": "catalog:",
-    "arktype": "catalog:",
     "svelte": "catalog:",
     "sveltekit-superforms": "catalog:",
-    "tailwindcss": "catalog:"
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@anolilab/semantic-release-pnpm": "^8.1.1",
@@ -116,7 +116,6 @@
     "@types/node": "^25.6.0",
     "@types/ramda": "^0.31.1",
     "@types/sorted-array-functions": "^1.3.3",
-    "arktype": "catalog:",
     "clsx": "^2.1.1",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "^9.39.4",
@@ -141,7 +140,8 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.8",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.4",
+    "zod": "catalog:"
   },
   "keywords": [
     "svelte"

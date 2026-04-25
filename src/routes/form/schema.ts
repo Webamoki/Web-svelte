@@ -1,35 +1,35 @@
-import { CalendarDate, Day, Time } from '$lib/shared/utils/arktype.js';
-import { type } from '$lib/shared/utils/arktype.js';
+import { CalendarDate, Day, Time } from '$lib/shared/utils/zod.js';
+import { z } from 'zod/v4';
 
 import { PasswordType } from './types/password.js';
 
-export const MasterSchema = type({
-  agreed: type.boolean,
+export const MasterSchema = z.object({
+  agreed: z.boolean(),
   calendarDate: CalendarDate,
-  color: type.string.atLeastLength(4).atMostLength(7),
-  email: type.keywords.string.email,
-  emailNull: type.keywords.string.email.or(type.null).default(null),
-  message: type.string,
+  color: z.string().min(4).max(7),
+  email: z.email(),
+  emailNull: z.email().nullable().default(null),
+  message: z.string(),
   password: PasswordType,
-  pin: type.string.exactlyLength(6),
-  select: type.number,
-  selects: type.number.array(),
-  tag: type.string,
-  tags: type.string.array().moreThanLength(0),
+  pin: z.string().length(6),
+  select: z.number(),
+  selects: z.array(z.number()),
+  tag: z.string(),
+  tags: z.array(z.string()).min(1),
   time: Time,
   weekday: Day,
-  weekdays: Day.array().moreThanLength(0)
+  weekdays: z.array(Day).min(1)
 });
 
-export const TextNullSchema = type({
-  emailNull: type.keywords.string.email.or(type.null).default(null)
+export const TextNullSchema = z.object({
+  emailNull: z.email().nullable().default(null)
 });
 
-export const VirtualFormSchema = type({
-  email: type.keywords.string.email,
-  message: type.string.atLeastLength(10)
+export const VirtualFormSchema = z.object({
+  email: z.email(),
+  message: z.string().min(10)
 });
-export const FormSchema = type({
-  email: type.keywords.string.email,
-  message: type.string.atLeastLength(10)
+export const FormSchema = z.object({
+  email: z.email(),
+  message: z.string().min(10)
 });

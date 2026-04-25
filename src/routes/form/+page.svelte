@@ -502,7 +502,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical"
               vertical
               bind:value={$formData.tag}
@@ -514,7 +514,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical Disabled"
               vertical
               bind:value={$formData.tag}
@@ -525,7 +525,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical Readonly"
               readonly
               vertical
@@ -539,12 +539,12 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal"
               bind:value={$formData.tag}
             >
               {#snippet buttonContent(label)}
-                <span class="text-sm font-medium">s{label}</span>
+                <span class="text-sm font-medium">{label}</span>
               {/snippet}
             </ChoiceField>
             <ChoiceField
@@ -554,7 +554,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal Disabled"
               bind:value={$formData.tag}
             />
@@ -564,7 +564,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal Readonly"
               readonly
               bind:value={$formData.tag}
@@ -578,7 +578,7 @@
 						{form}
 						label="Tag"
 						name="tag"
-						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
 						getKey={item => item}
 						getLabel={item => item}
 						bind:value={$formData.tag}
@@ -596,7 +596,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical"
               vertical
               bind:value={$formData.tags}
@@ -608,7 +608,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical Disabled"
               vertical
               bind:value={$formData.tags}
@@ -619,7 +619,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Vertical Readonly"
               readonly
               vertical
@@ -633,7 +633,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal"
               bind:value={$formData.tags}
             />
@@ -644,7 +644,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal Disabled"
               bind:value={$formData.tags}
             />
@@ -654,7 +654,7 @@
               getKey={identity}
               getLabel={identity}
               getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
               label="Horizontal Readonly"
               readonly
               bind:value={$formData.tags}
@@ -668,7 +668,7 @@
 						{form}
 						label="Tags"
 						name="tags"
-						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'arktype']}
+						items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
 						getKey={item => item}
 						getLabel={item => item}
 						bind:value={$formData.tags}

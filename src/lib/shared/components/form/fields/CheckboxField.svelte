@@ -35,7 +35,7 @@
           <Checkbox {disabled} bind:checked {...props} {...restProps} />
           {#if label}
             <Label
-              class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              class="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               {label}
               {#if props['aria-required'] === 'true'}

@@ -3,14 +3,6 @@
     "deny": ["Bash(npm *)"],
     "allow": ["Bash(pnpm test*)", "Bash(pnpm lint*)", "Bash(pnpm fmt*)", "Bash(pnpm check*)"]
   },
-  "mcpServers": {
-    "svelte": {
-      "command": "pnpm",
-      "args": ["dlx", "@sveltejs/mcp"]
-    },
-    "context7": {
-      "command": "pnpm",
-      "args": ["dlx", "@upstash/context7-mcp", "--api-key", "${CONTEXT7_API_KEY}"]
-    }
-  }
+  "enabledMcpjsonServers": ["svelte"],
+  "enableAllProjectMcpServers": true
 }

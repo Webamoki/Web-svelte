@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "svelte": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": ["dlx", "-y", "@sveltejs/mcp"]
+    }
+  }
+}

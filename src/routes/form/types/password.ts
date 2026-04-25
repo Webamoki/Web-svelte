@@ -4,7 +4,7 @@ const passwordMaxLength = 20;
 const passwordMinLength = 8;
 const allowedChars = /^[A-Za-z0-9!@$#()]+$/;
 
-export const PasswordType = type('string')
+export const PasswordType = type.string
   .atLeastLength(passwordMinLength)
   .atMostLength(passwordMaxLength)
   .narrow((data, ctx) => {

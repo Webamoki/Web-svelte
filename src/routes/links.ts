@@ -10,5 +10,6 @@ export const links: Link[] = [
   {
     href: resolve('/ui'),
     name: 'ui'
-  }
+  },
+  { href: resolve('/validate'), name: 'validate' }
 ];

@@ -11,10 +11,10 @@ export const type = arktype.type;
 
 // Useful common types
 
-export const IntegerId = type('number.integer >= 0');
+export const IntegerId = type.keywords.number.integer.atLeast(0);
 
 // Phone arktype: allows "+", digits, and spaces only
-export const Phone = type('string').narrow((value, ctx) => {
+export const Phone = type.string.narrow((value, ctx) => {
   if (!/^[+0-9 ]+$/.test(value)) {
     return ctx.reject({
       problem: 'invalid phone number. Only +, digits, and spaces are allowed.'
@@ -23,7 +23,7 @@ export const Phone = type('string').narrow((value, ctx) => {
   return true;
 });
 
-export const HexColor = type('string').narrow((value, ctx) => {
+export const HexColor = type.string.narrow((value, ctx) => {
   // Regex explanation:
   // ^           : start of string
   // [0-9A-Fa-f]{3} : three hex digits (short form)
@@ -53,5 +53,5 @@ export const CalendarDate = type.instanceOf(calendarImport).configure({
 
 /** Type string which is trimmed before narrowing the type checking */
 export function trimTo(typeTo: Type<string>) {
-  return type('string.trim').to(typeTo);
+  return type.keywords.string.trim.root.to(typeTo);
 }

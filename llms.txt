@@ -4,7 +4,7 @@
 
 - **Framework:** Svelte 5 (Runes) & SvelteKit
 - **Styling:** Tailwind CSS v4
-- **Validation:** ArkType
+- **Validation:** Zod (v4)
 - **Forms:** sveltekit-superforms
 
 ---
@@ -15,7 +15,7 @@
 pnpm add @webamoki/web-svelte
 ```
 
-Peer dependencies: `svelte`, `@sveltejs/kit`, `arktype`, `sveltekit-superforms`, `tailwindcss`, `@tailwindcss/forms`, `@tailwindcss/typography`, `@internationalized/date`
+Peer dependencies: `svelte`, `@sveltejs/kit`, `zod`, `sveltekit-superforms`, `tailwindcss`, `@tailwindcss/forms`, `@tailwindcss/typography`, `@internationalized/date`
 
 ---
 
@@ -23,7 +23,7 @@ Peer dependencies: `svelte`, `@sveltejs/kit`, `arktype`, `sveltekit-superforms`,
 
 ### `@webamoki/web-svelte/components/form`
 
-Type-safe form components built on sveltekit-superforms and ArkType.
+Type-safe form components built on sveltekit-superforms and Zod.
 
 All field components extend `FieldWrapperProps`:
 
@@ -333,7 +333,73 @@ Wrapper that adds an icon to input fields.
 
 ### `@webamoki/web-svelte/components/ui`
 
-Higher-level UI components.
+Higher-level UI components (standalone, not tied to a form).
+
+#### `Input`
+
+Standalone text input with optional icon.
+
+```svelte
+<Input
+  class?: string
+  icon?: Component
+  type?: HTMLInputElement['type'] // 'file' excluded
+  bind:value?: string
+  {...HTMLInputAttributes}
+/>
+```
+
+#### `TextArea`
+
+Standalone textarea with optional icon.
+
+```svelte
+<TextArea
+  class?: string
+  defaultHeight?: number
+  icon?: Component
+  resize?: boolean
+  bind:value?: string
+  {...HTMLTextareaAttributes}
+/>
+```
+
+`defaultHeight` defaults to `100`. `resize` defaults to `false`.
+
+#### `DateInput`
+
+Standalone native date input bound to `CalendarDate`.
+
+```svelte
+<DateInput
+  class?: string
+  icon?: Component
+  showDate?: boolean
+  bind:value?: CalendarDate
+  {...HTMLInputAttributes}
+/>
+```
+
+When `showDate` is true, renders the formatted full date below the input.
+
+#### `Select`
+
+Standalone single-select dropdown.
+
+```svelte
+<Select
+  class?: string
+  getKey: (item: I) => K
+  getLabel: (item: I) => string
+  getValue: (item: I) => V
+  icon?: Component
+  items: readonly I[]
+  label?: string
+  onchange?: (value: V | undefined) => void
+  placeholder: string
+  bind:value?: V
+/>
+```
 
 #### `Choice`
 
@@ -556,33 +622,24 @@ SvelteKit `Transport` for `CalendarDate`, `Time`, and `ZonedDateTime` serializat
 
 ---
 
-### `@webamoki/web-svelte/utils/arktype`
+### `@webamoki/web-svelte/utils/zod`
 
-Jitless ArkType scope and common validators. Required for Cloudflare Workers (no JIT).
-
-#### Scope
-
-```ts
-const arktype: Scope;           // scope({}, { jitless: true })
-const type = arktype.type;      // use instead of importing `type` from 'arktype'
-```
-
-Import `type` from here — not from `arktype` directly — so schemas inherit the jitless scope.
+Common Zod (v4) validators and helpers. Import from `zod/v4` directly for the rest of Zod's API.
 
 #### Validators
 
 ```ts
-const IntegerId: Type<number>;   // number.integer >= 0
-const Phone: Type<string>;       // allows "+", digits, and spaces
-const HexColor: Type<string>;    // 3 or 6 hex digit color (without #)
-const Day: Type<Day>;            // enum of weekday names
-const Time: Type<Time>;          // instanceof @internationalized/date Time
-const CalendarDate: Type<CalendarDate>; // instanceof @internationalized/date CalendarDate
+const IntegerId: z.ZodNumber;          // z.int().min(1)
+const Phone: z.ZodString;              // allows "+", digits, and spaces
+const HexColor: z.ZodString;           // 3 or 6 hex digit color (without #)
+const Day: z.ZodEnum;                  // enum of weekday names
+const Time: z.ZodType<Time>;           // instanceof @internationalized/date Time
+const CalendarDate: z.ZodType<CalendarDate>; // instanceof @internationalized/date CalendarDate
 
-function trimTo(typeTo: Type<string>): Type<string>;
+function trimTo<T extends z.ZodType<string, string>>(typeTo: T): z.ZodPipe<z.ZodString, T>;
 ```
 
-`trimTo` creates a type that trims whitespace before applying the inner validation.
+`trimTo` creates a schema that trims whitespace before applying the inner validation.
 
 ---
 
@@ -592,20 +649,20 @@ Form initialization utilities for sveltekit-superforms.
 
 #### `prepareForm`
 
-Initializes a superform with an ArkType schema and pre-validated data.
+Initializes a superform with a Zod schema and pre-validated data.
 
 ```ts
-function prepareForm<S extends Type<Record<string, unknown>>>(
+function prepareForm<S extends z.ZodType<Record<string, unknown>>>(
   schema: S,
-  validated: S['infer'] | SuperValidated<S['infer']>,
+  validated: Infer<S, 'zod4'> | SuperValidated<Infer<S, 'zod4'>>,
   options?: {
     invalidateAll?: boolean;
-    onError?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
-    onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
-    onUpdated?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onError?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
+    onSuccess?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
+    onUpdated?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
     resetForm?: boolean;
   }
-): { data: Writable<S['infer']>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+): { data: Writable<Infer<S, 'zod4'>>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
 ```
 
 #### `prepareEmptyForm`
@@ -613,16 +670,16 @@ function prepareForm<S extends Type<Record<string, unknown>>>(
 Initializes a superform with defaults (no initial data needed).
 
 ```ts
-function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
+function prepareEmptyForm<S extends z.ZodType<Record<string, unknown>>>(
   schema: S,
   options?: {
     invalidateAll?: boolean;
-    onError?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
-    onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
-    onUpdated?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+    onError?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
+    onSuccess?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
+    onUpdated?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
     resetForm?: boolean;
   }
-): { data: Writable<S['infer']>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+): { data: Writable<Infer<S, 'zod4'>>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
 ```
 
 #### `VirtualForm`
@@ -630,19 +687,19 @@ function prepareEmptyForm<S extends Type<Record<string, unknown>>>(
 Client-side form submission without a `<form>` element. Useful for programmatic submissions.
 
 ```ts
-class VirtualForm<S extends Type<Record<string, unknown>>> {
+class VirtualForm<S extends z.ZodType<Record<string, unknown>>> {
   constructor(
     schema: S,
     action: string,
     options?: {
       actionName?: string;
       onError?: (message: App.Superforms.Message) => void;
-      onSuccess?: (form: SuperValidated<S['infer'], App.Superforms.Message>) => void;
+      onSuccess?: (form: SuperValidated<z.infer<S>, App.Superforms.Message>) => void;
       transport?: Transport;
     }
   );
   get isProcessing(): boolean;
-  submit(data: S['infer']): Promise<void>;
+  submit(data: z.infer<S>): Promise<void>;
 }
 ```
 
@@ -738,10 +795,10 @@ function isDuplicateDbError(err: unknown): boolean;
 Server-side form validation.
 
 ```ts
-function processForm<S extends Type<Record<string, unknown>>>(
+function processForm<S extends z.ZodType<Record<string, unknown>>>(
   request: Request,
   schema: S
-): Promise<SuperValidated<S['infer']>>;
+): Promise<SuperValidated<Infer<S, 'zod4'>>>;
 ```
 
 ---
@@ -897,11 +954,11 @@ Both classes catch network errors as `Result.err({ code: 500, message: 'Internal
 <script lang="ts">
   import { Form, Button, TextField, NumberField } from '@webamoki/web-svelte/components/form';
   import { prepareForm } from '@webamoki/web-svelte/utils/form';
-  import { type } from '@webamoki/web-svelte/utils/arktype';
+  import { z } from 'zod/v4';
 
-  const Schema = type({
-    name: 'string >= 1',
-    age: 'number.integer >= 0'
+  const Schema = z.object({
+    name: z.string().min(1),
+    age: z.int().min(0)
   });
 
   let { data } = $props();

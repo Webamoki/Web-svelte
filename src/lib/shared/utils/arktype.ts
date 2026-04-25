@@ -52,6 +52,7 @@ export const CalendarDate = type.instanceOf(calendarImport).configure({
 // Arktype utilities
 
 /** Type string which is trimmed before narrowing the type checking */
-export function trimTo(typeTo: Type<string>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function trimTo(typeTo: Type<string, any>) {
   return type.keywords.string.trim.root.to(typeTo);
 }

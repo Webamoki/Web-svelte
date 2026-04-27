@@ -4,7 +4,7 @@
 
   interface Props {
     actionName?: string;
-    actionPath: string;
+    actionPath?: string;
     children?: Snippet;
     class?: string;
     form: FsSuperForm<T, M>;

@@ -42,7 +42,7 @@ interface FieldWrapperProps<T extends Record<string, unknown>, U extends FormPat
 Main form wrapper with server action handling.
 
 ```svelte
-<Form actionName?: string actionPath: string class?: string form: FsSuperForm<T, M>>
+<Form actionName?: string actionPath?: string class?: string form: FsSuperForm<T, M>>
   {children}
 </Form>
 ```

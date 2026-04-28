@@ -1,9 +1,10 @@
+import type { z, ZodObject, ZodRawShape } from 'zod/v4';
+
 import { getRequestEvent } from '$app/server';
 import { env as dynamicEnv } from '$env/dynamic/private';
-import { type ZodObject, type ZodRawShape, z } from 'zod/v4';
 
-type SecretBinding = { get(): Promise<string | null> };
-type PlatformEnv = Record<string, string | SecretBinding | undefined>;
+type PlatformEnv = Record<string, SecretBinding | string | undefined>;
+type SecretBinding = { get(): Promise<null | string> };
 
 function makePrivate<L extends ZodRawShape, S extends ZodRawShape>(
   localSchema: ZodObject<L>,

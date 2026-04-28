@@ -1,5 +1,6 @@
+import type { ZodObject, ZodRawShape } from 'zod/v4';
+
 import { env as dynamicEnv } from '$env/dynamic/public';
-import { type ZodObject, type ZodRawShape } from 'zod/v4';
 
 function makePublic<S extends ZodRawShape>(schema: ZodObject<S>) {
   type Result = ReturnType<typeof schema.parse>;

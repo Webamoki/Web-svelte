@@ -27,9 +27,10 @@ function makePrivate<S extends ZodRawShape>(schema: ZodObject<S>) {
       const values = await Promise.all(
         keys.map((key) => {
           const val = platformEnv![key];
-          if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function')
-            return val.get();
-          return Promise.resolve(typeof val === 'string' ? val : undefined);
+          if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function') {
+            return val.get().catch(() => (dynamicEnv as Record<string, string | undefined>)[key]);
+          }
+          return typeof val === 'string' ? val : undefined;
         })
       );
       for (let i = 0; i < keys.length; i++) {

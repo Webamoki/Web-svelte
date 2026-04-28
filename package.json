@@ -67,6 +67,16 @@
       "import": "./dist/shared/utils/functional/index.js",
       "require": "./dist/shared/utils/functional/index.js"
     },
+    "./utils/env": {
+      "types": "./dist/shared/utils/env.d.ts",
+      "import": "./dist/shared/utils/env.js",
+      "require": "./dist/shared/utils/env.js"
+    },
+    "./server/env": {
+      "types": "./dist/shared/server/env.d.ts",
+      "import": "./dist/shared/server/env.js",
+      "require": "./dist/shared/server/env.js"
+    },
     "./server/form-handler": {
       "types": "./dist/shared/server/form-handler.d.ts",
       "import": "./dist/shared/server/form-handler.js",

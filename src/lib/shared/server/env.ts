@@ -8,12 +8,11 @@ type SecretBinding = { get(): Promise<null | string> };
 
 function makePrivate<S extends ZodRawShape>(schema: ZodObject<S>) {
   type Result = z.infer<ZodObject<S>>;
+  const keys = Object.keys(schema.shape);
   let _cached: Result | undefined;
 
   return async (): Promise<Result> => {
     if (_cached) return _cached;
-
-    const keys = Object.keys(schema.shape);
     const raw: Record<string, string | undefined> = {};
 
     let platformEnv: PlatformEnv | undefined;

@@ -25,10 +25,16 @@ function makePrivate<S extends ZodRawShape>(schema: ZodObject<S>) {
 
     if (platformEnv) {
       const values = await Promise.all(
-        keys.map((key) => {
+        keys.map(async (key) => {
           const val = platformEnv![key];
-          if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function')
-            return val.get();
+          if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function') {
+            try {
+              return await val.get();
+            } catch {
+              // Secrets Store not seeded locally (Miniflare) — fall back to .env
+              return (dynamicEnv as Record<string, string | undefined>)[key];
+            }
+          }
           return Promise.resolve(typeof val === 'string' ? val : undefined);
         })
       );

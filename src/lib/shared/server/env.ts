@@ -6,18 +6,13 @@ import { env as dynamicEnv } from '$env/dynamic/private';
 type PlatformEnv = Record<string, SecretBinding | string | undefined>;
 type SecretBinding = { get(): Promise<null | string> };
 
-function makePrivate<L extends ZodRawShape, S extends ZodRawShape>(
-  localSchema: ZodObject<L>,
-  sharedSchema: ZodObject<S>
-) {
-  type Result = z.infer<ZodObject<L>> & z.infer<ZodObject<S>>;
+function makePrivate<S extends ZodRawShape>(schema: ZodObject<S>) {
+  type Result = z.infer<ZodObject<S>>;
+  const keys = Object.keys(schema.shape);
   let _cached: Result | undefined;
 
   return async (): Promise<Result> => {
     if (_cached) return _cached;
-
-    const localKeys = Object.keys(localSchema.shape);
-    const sharedKeys = Object.keys(sharedSchema.shape);
     const raw: Record<string, string | undefined> = {};
 
     let platformEnv: PlatformEnv | undefined;
@@ -29,29 +24,25 @@ function makePrivate<L extends ZodRawShape, S extends ZodRawShape>(
     }
 
     if (platformEnv) {
-      for (const key of localKeys) {
-        const val = platformEnv[key];
-        raw[key] = typeof val === 'string' ? val : undefined;
-      }
-      const sharedValues = await Promise.all(
-        sharedKeys.map((key) => {
+      const values = await Promise.all(
+        keys.map((key) => {
           const val = platformEnv![key];
           if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function')
             return val.get();
           return Promise.resolve(typeof val === 'string' ? val : undefined);
         })
       );
-      for (let i = 0; i < sharedKeys.length; i++) {
-        raw[sharedKeys[i]] = sharedValues[i] ?? undefined;
+      for (let i = 0; i < keys.length; i++) {
+        raw[keys[i]] = values[i] ?? undefined;
       }
     } else {
       const fallback = dynamicEnv as Record<string, string | undefined>;
-      for (const key of [...localKeys, ...sharedKeys]) {
+      for (const key of keys) {
         raw[key] = fallback[key];
       }
     }
 
-    const result = localSchema.merge(sharedSchema).safeParse(raw);
+    const result = schema.safeParse(raw);
     if (!result.success) {
       throw new Error(
         `Environment validation failed: ${result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(', ')}`

@@ -36,7 +36,8 @@ function makePrivate<L extends ZodRawShape, S extends ZodRawShape>(
       const sharedValues = await Promise.all(
         sharedKeys.map((key) => {
           const val = platformEnv![key];
-          if (val && typeof val !== 'string' && 'get' in val) return val.get();
+          if (val && typeof val === 'object' && 'get' in val && typeof val.get === 'function')
+            return val.get();
           return Promise.resolve(typeof val === 'string' ? val : undefined);
         })
       );
@@ -52,8 +53,9 @@ function makePrivate<L extends ZodRawShape, S extends ZodRawShape>(
 
     const result = localSchema.merge(sharedSchema).safeParse(raw);
     if (!result.success) {
-      const missing = result.error.issues.map((i) => i.path.join('.')).join(', ');
-      throw new Error(`Missing required environment variables: ${missing}`);
+      throw new Error(
+        `Environment validation failed: ${result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(', ')}`
+      );
     }
     _cached = result.data as Result;
     return _cached;

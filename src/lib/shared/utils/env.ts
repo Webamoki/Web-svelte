@@ -11,8 +11,9 @@ function makePublic<S extends ZodRawShape>(schema: ZodObject<S>) {
 
     const result = schema.safeParse(dynamicEnv);
     if (!result.success) {
-      const missing = result.error.issues.map((i) => i.path.join('.')).join(', ');
-      throw new Error(`Missing required environment variables: ${missing}`);
+      throw new Error(
+        `Environment validation failed: ${result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(', ')}`
+      );
     }
     _cached = result.data;
     return _cached;

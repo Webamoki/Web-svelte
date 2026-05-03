@@ -2,6 +2,7 @@
   import type { ButtonProps } from '$lib/shadcn/components/ui/button/index.js';
 
   import { Button } from '$lib/shadcn/components/ui/button/index.js';
+  import { cn } from '$lib/shadcn/utils.js';
   import Loader2Icon from '@lucide/svelte/icons/loader-2';
 
   type Props = ButtonProps & {
@@ -20,7 +21,7 @@
   }: Props = $props();
 </script>
 
-<Button class={className} disabled={disabled || loading} {...restProps}>
+<Button class={cn('cursor-pointer', className)} disabled={disabled || loading} {...restProps}>
   {#if loading}
     <Loader2Icon class="mr-2 animate-spin" />
     {loadingMessage}

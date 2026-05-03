@@ -17,11 +17,21 @@
     disabled,
     loading,
     loadingMessage = 'Please wait',
+    variant,
     ...restProps
   }: Props = $props();
 </script>
 
-<Button class={cn('cursor-pointer', className)} disabled={disabled || loading} {...restProps}>
+<Button
+  class={cn(
+    'cursor-pointer',
+    variant === 'link' && 'text-blue-600 visited:text-purple-600',
+    className
+  )}
+  disabled={disabled || loading}
+  {variant}
+  {...restProps}
+>
   {#if loading}
     <Loader2Icon class="mr-2 animate-spin" />
     {loadingMessage}

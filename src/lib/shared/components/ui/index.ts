@@ -1,3 +1,5 @@
+import * as Sidebar from '$lib/shadcn/components/ui/sidebar/index.js';
+
 import Choice from './choice/Choice.svelte';
 import ChoiceMulti from './choice/ChoiceMulti.svelte';
 import WeekdayChoice from './choice/WeekdayChoice.svelte';
@@ -33,9 +35,12 @@ export {
   // drag drop
   DragManager,
   Dropzone,
+
+  // Components
   Input,
   SearchBar,
   Select,
+  Sidebar,
   TextArea,
   WeekdayChoice,
   WeekdayChoiceMulti

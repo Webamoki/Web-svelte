@@ -2,8 +2,6 @@
   import { resolve } from '$app/paths';
   import Container from '$lib/components/showcase/Container.svelte';
   import Preview from '$lib/components/showcase/Preview.svelte';
-  import Sidebar from '$lib/components/showcase/Sidebar.svelte';
-  import SidebarLink from '$lib/components/showcase/SidebarLink.svelte';
   import Button from '$lib/shared/components/form/Button.svelte';
   import CheckboxField from '$lib/shared/components/form/fields/CheckboxField.svelte';
   import ChoiceField from '$lib/shared/components/form/fields/ChoiceField.svelte';
@@ -21,6 +19,7 @@
   import WeekdayChoiceField from '$lib/shared/components/form/fields/WeekdayChoiceField.svelte';
   import WeekdayChoiceMultiField from '$lib/shared/components/form/fields/WeekdayChoiceMultiField.svelte';
   import Form from '$lib/shared/components/form/Form.svelte';
+  import { Sidebar } from '$lib/shared/components/ui/index.js';
   import { prepareEmptyForm } from '$lib/shared/utils/form/index.js';
   import { VirtualForm } from '$lib/shared/utils/form/virtual-form.js';
   import { Calendar, Clock, Lock, Mail, MessageSquare, Tag } from '@lucide/svelte';
@@ -113,53 +112,149 @@
   </div>
 </div>
 
-<div class="flex min-h-screen bg-gray-50">
-  <Sidebar>
-    <SidebarLink title="CheckboxField" />
-    <SidebarLink title="TextField" />
-    <SidebarLink title="PasswordField" />
-    <SidebarLink title="PinField" />
-    <SidebarLink title="MessageField" />
-    <SidebarLink title="HexColorField" />
-    <SidebarLink title="SelectField" />
-    <SidebarLink title="SelectMultiField" />
-    <SidebarLink title="TimeField" />
-    <SidebarLink title="DateField" />
-    <SidebarLink title="ChoiceField" />
-    <SidebarLink title="ChoiceMultiField" />
-    <SidebarLink title="WeekdayChoiceField" />
-    <SidebarLink title="WeekdayChoiceMultiField" />
-  </Sidebar>
-  <!-- Main content -->
-  <main class="flex-1 p-8">
-    <h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>
-    <Container description="A checkbox field for boolean values" title="CheckboxField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <CheckboxField
-            name="agreed"
-            {form}
-            label="I agree to the terms"
-            bind:checked={$formData.agreed}
-          />
-          <CheckboxField
-            name="agreed"
-            description="You must accept to continue"
-            {form}
-            label="With Description"
-            bind:checked={$formData.agreed}
-          />
-          <CheckboxField
-            name="agreed"
-            disabled
-            {form}
-            label="Disabled"
-            bind:checked={$formData.agreed}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+<Sidebar.Provider>
+  <Sidebar.Root>
+    <Sidebar.Header>
+      <h2 class="px-2 text-xl font-bold">Components</h2>
+    </Sidebar.Header>
+    <Sidebar.Content>
+      <Sidebar.Group>
+        <Sidebar.GroupContent>
+          <Sidebar.Menu>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#checkboxfield" {...props}>CheckboxField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#textfield" {...props}>TextField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#passwordfield" {...props}>PasswordField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#pinfield" {...props}>PinField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#messagefield" {...props}>MessageField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#hexcolorfield" {...props}>HexColorField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#selectfield" {...props}>SelectField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#selectmultifield" {...props}>SelectMultiField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#timefield" {...props}>TimeField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#datefield" {...props}>DateField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#choicefield" {...props}>ChoiceField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#choicemultifield" {...props}>ChoiceMultiField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#weekdaychoicefield" {...props}>WeekdayChoiceField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                {#snippet child({ props })}
+                  <a href="#weekdaychoicemultifield" {...props}>WeekdayChoiceMultiField</a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.GroupContent>
+      </Sidebar.Group>
+    </Sidebar.Content>
+  </Sidebar.Root>
+
+  <Sidebar.Inset>
+    <main class="p-8">
+      <h1 class="mb-8 text-3xl font-bold text-gray-900">Form Components Showcase</h1>
+      <Container description="A checkbox field for boolean values" title="CheckboxField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <CheckboxField
+              name="agreed"
+              {form}
+              label="I agree to the terms"
+              bind:checked={$formData.agreed}
+            />
+            <CheckboxField
+              name="agreed"
+              description="You must accept to continue"
+              {form}
+              label="With Description"
+              bind:checked={$formData.agreed}
+            />
+            <CheckboxField
+              name="agreed"
+              disabled
+              {form}
+              label="Disabled"
+              bind:checked={$formData.agreed}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				<CheckboxField
 					{form}
 					label="I agree to the terms"
@@ -169,42 +264,42 @@
 					bind:checked={$formData.agreed}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container description="A basic input field with validation support" title="TextField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <TextField
-            name="email"
-            {form}
-            label="Email"
-            placeholder="johndoe@gmail.com"
-            type="email"
-            bind:value={$formData.email}
-          />
-          <TextField
-            name="email"
-            {form}
-            icon={Mail}
-            label="Email with Icon"
-            placeholder="johndoe@gmail.com"
-            type="email"
-            bind:value={$formData.email}
-          />
-        </form>
-        <form class="space-y-5" method="POST" use:textNullForm.enhance>
-          <TextFieldNullable
-            name="emailNull"
-            form={textNullForm}
-            label="Email"
-            placeholder="johndoe@gmail.com"
-            type="email"
-            bind:value={$textNullData.emailNull}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="A basic input field with validation support" title="TextField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <TextField
+              name="email"
+              {form}
+              label="Email"
+              placeholder="johndoe@gmail.com"
+              type="email"
+              bind:value={$formData.email}
+            />
+            <TextField
+              name="email"
+              {form}
+              icon={Mail}
+              label="Email with Icon"
+              placeholder="johndoe@gmail.com"
+              type="email"
+              bind:value={$formData.email}
+            />
+          </form>
+          <form class="space-y-5" method="POST" use:textNullForm.enhance>
+            <TextFieldNullable
+              name="emailNull"
+              form={textNullForm}
+              label="Email"
+              placeholder="johndoe@gmail.com"
+              type="email"
+              bind:value={$textNullData.emailNull}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { Mail } from '@lucide/svelte';
 
 				<TextField | TextfieldNullable
@@ -217,23 +312,28 @@
 					bind:value={$formData.email}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container description="A password input with show/hide toggle" title="PasswordField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <PasswordField name="password" {form} label="Password" bind:value={$formData.password} />
-          <PasswordField
-            name="password"
-            {form}
-            icon={Lock}
-            label="Password with Icon"
-            bind:value={$formData.password}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="A password input with show/hide toggle" title="PasswordField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <PasswordField
+              name="password"
+              {form}
+              label="Password"
+              bind:value={$formData.password}
+            />
+            <PasswordField
+              name="password"
+              {form}
+              icon={Lock}
+              label="Password with Icon"
+              bind:value={$formData.password}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { Lock } from '@lucide/svelte';
 
 				<PasswordField
@@ -244,25 +344,25 @@
 					bind:value={$formData.password}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
+        </CodeBlock>
+      </Container>
 
-    <Container description="A 6-digit PIN input for 2FA verification" title="PinField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <PinField name="pin" {form} label="Verification Code" bind:value={$formData.pin} />
-          <PinField
-            name="pin"
-            description="Enter the 6-digit code sent to your device"
-            {form}
-            label="With Description"
-            bind:value={$formData.pin}
-          />
-          <PinField name="pin" disabled {form} label="Disabled" bind:value={$formData.pin} />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+      <Container description="A 6-digit PIN input for 2FA verification" title="PinField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <PinField name="pin" {form} label="Verification Code" bind:value={$formData.pin} />
+            <PinField
+              name="pin"
+              description="Enter the 6-digit code sent to your device"
+              {form}
+              label="With Description"
+              bind:value={$formData.pin}
+            />
+            <PinField name="pin" disabled {form} label="Disabled" bind:value={$formData.pin} />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				<PinField
 					{form}
 					label="Verification Code"
@@ -272,41 +372,41 @@
 					bind:value={$formData.pin}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container description="A textarea field with height lock feature" title="MessageField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <MessageField
-            name="message"
-            defaultHeight={150}
-            {form}
-            label="Message"
-            placeholder="Enter your message here..."
-            bind:value={$formData.message}
-          />
-          <MessageField
-            name="message"
-            defaultHeight={100}
-            {form}
-            label="Message Resisable"
-            placeholder="Enter your message here..."
-            resize
-            bind:value={$formData.message}
-          />
-          <MessageField
-            name="message"
-            defaultHeight={150}
-            {form}
-            icon={MessageSquare}
-            label="Message with Icon"
-            placeholder="Enter your message here..."
-            bind:value={$formData.message}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="A textarea field with height lock feature" title="MessageField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <MessageField
+              name="message"
+              defaultHeight={150}
+              {form}
+              label="Message"
+              placeholder="Enter your message here..."
+              bind:value={$formData.message}
+            />
+            <MessageField
+              name="message"
+              defaultHeight={100}
+              {form}
+              label="Message Resisable"
+              placeholder="Enter your message here..."
+              resize
+              bind:value={$formData.message}
+            />
+            <MessageField
+              name="message"
+              defaultHeight={150}
+              {form}
+              icon={MessageSquare}
+              label="Message with Icon"
+              placeholder="Enter your message here..."
+              bind:value={$formData.message}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { MessageSquare } from '@lucide/svelte';
 
 				<MessageField
@@ -319,18 +419,18 @@
 					bind:value={$formData.message}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
+        </CodeBlock>
+      </Container>
 
-    <Container description="A hex color input" title="HexColorField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <HexColorField name="color" {form} label="Color" bind:value={$formData.color} />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+      <Container description="A hex color input" title="HexColorField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <HexColorField name="color" {form} label="Color" bind:value={$formData.color} />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				<HexColorField
 					{form}
 					label="Color"
@@ -338,39 +438,39 @@
 					bind:value={$formData.color}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
+        </CodeBlock>
+      </Container>
 
-    <Container description="select field" title="SelectField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <SelectField
-            name="select"
-            {form}
-            getKey={identity}
-            getLabel={(n: number) => (n * 2).toString()}
-            getValue={identity}
-            items={[1, 2, 3]}
-            label="Select"
-            placeholder="Please select"
-            bind:value={$formData.select}
-          />
-          <SelectField
-            name="select"
-            {form}
-            getKey={identity}
-            getLabel={(n: number) => (n * 2).toString()}
-            getValue={identity}
-            icon={Tag}
-            items={[1, 2, 3]}
-            label="Select with Icon"
-            placeholder="Please select"
-            bind:value={$formData.select}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+      <Container description="select field" title="SelectField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <SelectField
+              name="select"
+              {form}
+              getKey={identity}
+              getLabel={(n: number) => (n * 2).toString()}
+              getValue={identity}
+              items={[1, 2, 3]}
+              label="Select"
+              placeholder="Please select"
+              bind:value={$formData.select}
+            />
+            <SelectField
+              name="select"
+              {form}
+              getKey={identity}
+              getLabel={(n: number) => (n * 2).toString()}
+              getValue={identity}
+              icon={Tag}
+              items={[1, 2, 3]}
+              label="Select with Icon"
+              placeholder="Please select"
+              bind:value={$formData.select}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { Tag } from '@lucide/svelte';
 
 				<SelectField
@@ -386,38 +486,38 @@
 						bind:value={$formData.select}
 					/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container description="select multi field" title="SelectMultiField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <SelectMultiField
-            name="selects"
-            {form}
-            getKey={identity}
-            getLabel={(n: number) => (n * 2).toString()}
-            getValue={identity}
-            items={[1, 2, 3]}
-            label="Select Multi"
-            placeholder="Please select"
-            bind:values={$formData.selects}
-          />
-          <SelectMultiField
-            name="selects"
-            {form}
-            getKey={identity}
-            getLabel={(n: number) => (n * 2).toString()}
-            getValue={identity}
-            icon={Tag}
-            items={[1, 2, 3]}
-            label="Select Multi with Icon"
-            placeholder="Please select"
-            bind:values={$formData.selects}
-          />
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="select multi field" title="SelectMultiField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <SelectMultiField
+              name="selects"
+              {form}
+              getKey={identity}
+              getLabel={(n: number) => (n * 2).toString()}
+              getValue={identity}
+              items={[1, 2, 3]}
+              label="Select Multi"
+              placeholder="Please select"
+              bind:values={$formData.selects}
+            />
+            <SelectMultiField
+              name="selects"
+              {form}
+              getKey={identity}
+              getLabel={(n: number) => (n * 2).toString()}
+              getValue={identity}
+              icon={Tag}
+              items={[1, 2, 3]}
+              label="Select Multi with Icon"
+              placeholder="Please select"
+              bind:values={$formData.selects}
+            />
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				<SelectMultiField
 						{form}
 						label="Select Multi"
@@ -430,24 +530,24 @@
 						bind:value={$formData.selects}
 					/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container description="time field" title="TimeField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <TimeField name="time" {form} label="Time" bind:value={$formData.time} />
-          <TimeField
-            name="time"
-            {form}
-            icon={Clock}
-            label="Time with Icon"
-            bind:value={$formData.time}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="time field" title="TimeField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <TimeField name="time" {form} label="Time" bind:value={$formData.time} />
+            <TimeField
+              name="time"
+              {form}
+              icon={Clock}
+              label="Time with Icon"
+              bind:value={$formData.time}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { Clock } from '@lucide/svelte';
 
 				<TimeField
@@ -458,25 +558,30 @@
 					bind:value={$formData.time}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
+        </CodeBlock>
+      </Container>
 
-    <Container description="date field" title="DateField">
-      <Preview slot="preview">
-        <form class="space-y-5" method="POST" use:enhance>
-          <DateField name="calendarDate" {form} label="Date" bind:value={$formData.calendarDate} />
-          <DateField
-            name="calendarDate"
-            {form}
-            icon={Calendar}
-            label="Date with Icon"
-            bind:value={$formData.calendarDate}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+      <Container description="date field" title="DateField">
+        <Preview slot="preview">
+          <form class="space-y-5" method="POST" use:enhance>
+            <DateField
+              name="calendarDate"
+              {form}
+              label="Date"
+              bind:value={$formData.calendarDate}
+            />
+            <DateField
+              name="calendarDate"
+              {form}
+              icon={Calendar}
+              label="Date with Icon"
+              bind:value={$formData.calendarDate}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 				import { Calendar } from '@lucide/svelte';
 
 				<DateField
@@ -487,93 +592,93 @@
 					bind:value={$formData.calendarDate}
 				/>
 			`}
-      </CodeBlock>
-    </Container>
-    <Container
-      description="A multiple choice selection component (one value only)"
-      title="ChoiceField"
-    >
-      <Preview slot="preview">
-        <form class="space-y" method="POST" use:enhance>
-          <div class="flex w-full space-x-5">
-            <ChoiceField
-              name="tag"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical"
-              vertical
-              bind:value={$formData.tag}
-            />
-            <ChoiceField
-              name="tag"
-              disabled
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical Disabled"
-              vertical
-              bind:value={$formData.tag}
-            />
-            <ChoiceField
-              name="tag"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical Readonly"
-              readonly
-              vertical
-              bind:value={$formData.tag}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <ChoiceField
-              name="tag"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal"
-              bind:value={$formData.tag}
-            >
-              {#snippet buttonContent(label)}
-                <span class="text-sm font-medium">{label}</span>
-              {/snippet}
-            </ChoiceField>
-            <ChoiceField
-              name="tag"
-              disabled
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal Disabled"
-              bind:value={$formData.tag}
-            />
-            <ChoiceField
-              name="tag"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal Readonly"
-              readonly
-              bind:value={$formData.tag}
-            />
-          </div>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container
+        description="A multiple choice selection component (one value only)"
+        title="ChoiceField"
+      >
+        <Preview slot="preview">
+          <form class="space-y" method="POST" use:enhance>
+            <div class="flex w-full space-x-5">
+              <ChoiceField
+                name="tag"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical"
+                vertical
+                bind:value={$formData.tag}
+              />
+              <ChoiceField
+                name="tag"
+                disabled
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical Disabled"
+                vertical
+                bind:value={$formData.tag}
+              />
+              <ChoiceField
+                name="tag"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical Readonly"
+                readonly
+                vertical
+                bind:value={$formData.tag}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <ChoiceField
+                name="tag"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal"
+                bind:value={$formData.tag}
+              >
+                {#snippet buttonContent(label)}
+                  <span class="text-sm font-medium">{label}</span>
+                {/snippet}
+              </ChoiceField>
+              <ChoiceField
+                name="tag"
+                disabled
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal Disabled"
+                bind:value={$formData.tag}
+              />
+              <ChoiceField
+                name="tag"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal Readonly"
+                readonly
+                bind:value={$formData.tag}
+              />
+            </div>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 					<ChoiceField
 						{form}
 						label="Tag"
@@ -584,86 +689,86 @@
 						bind:value={$formData.tag}
 					/>
 				`}
-      </CodeBlock>
-    </Container>
-    <Container description="A multiple choice selection component" title="ChoiceMultiField">
-      <Preview slot="preview">
-        <form class="space-y" method="POST" use:enhance>
-          <div class="flex w-full space-x-5">
-            <ChoiceMultiField
-              name="tags"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical"
-              vertical
-              bind:value={$formData.tags}
-            />
-            <ChoiceMultiField
-              name="tags"
-              disabled
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical Disabled"
-              vertical
-              bind:value={$formData.tags}
-            />
-            <ChoiceMultiField
-              name="tags"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Vertical Readonly"
-              readonly
-              vertical
-              bind:value={$formData.tags}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <ChoiceMultiField
-              name="tags"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal"
-              bind:value={$formData.tags}
-            />
-            <ChoiceMultiField
-              name="tags"
-              disabled
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal Disabled"
-              bind:value={$formData.tags}
-            />
-            <ChoiceMultiField
-              name="tags"
-              {form}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
-              label="Horizontal Readonly"
-              readonly
-              bind:value={$formData.tags}
-            />
-          </div>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container description="A multiple choice selection component" title="ChoiceMultiField">
+        <Preview slot="preview">
+          <form class="space-y" method="POST" use:enhance>
+            <div class="flex w-full space-x-5">
+              <ChoiceMultiField
+                name="tags"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical"
+                vertical
+                bind:value={$formData.tags}
+              />
+              <ChoiceMultiField
+                name="tags"
+                disabled
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical Disabled"
+                vertical
+                bind:value={$formData.tags}
+              />
+              <ChoiceMultiField
+                name="tags"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Vertical Readonly"
+                readonly
+                vertical
+                bind:value={$formData.tags}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <ChoiceMultiField
+                name="tags"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal"
+                bind:value={$formData.tags}
+              />
+              <ChoiceMultiField
+                name="tags"
+                disabled
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal Disabled"
+                bind:value={$formData.tags}
+              />
+              <ChoiceMultiField
+                name="tags"
+                {form}
+                getKey={identity}
+                getLabel={identity}
+                getValue={identity}
+                items={['svelte', 'sveltekit', 'formsnap', 'shadcn', 'zod']}
+                label="Horizontal Readonly"
+                readonly
+                bind:value={$formData.tags}
+              />
+            </div>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 					<ChoiceMultiField
 						{form}
 						label="Tags"
@@ -676,82 +781,82 @@
 						disabled?
 					/>
 				`}
-      </CodeBlock>
-    </Container>
+        </CodeBlock>
+      </Container>
 
-    <Container
-      description="A multiple choice selection component  for weekdays (single value)"
-      title="WeekdayChoiceField"
-    >
-      <Preview slot="preview">
-        <form class="space-y" method="POST" use:enhance>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Vertical"
-              vertical
-              bind:value={$formData.weekday}
-            />
-            <WeekdayChoiceField
-              name="weekday"
-              disabled
-              {form}
-              label="Vertical Disabled"
-              vertical
-              bind:value={$formData.weekday}
-            />
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Vertical Readonly"
-              readonly
-              vertical
-              bind:value={$formData.weekday}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Horizontal"
-              bind:value={$formData.weekday}
-            />
-            <WeekdayChoiceField
-              name="weekday"
-              disabled
-              {form}
-              label="Horizontal Disabled"
-              bind:value={$formData.weekday}
-            />
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Horizontal Readonly"
-              readonly
-              bind:value={$formData.weekday}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Horizontal LetterLabels"
-              letterLabels
-              bind:value={$formData.weekday}
-            />
-            <WeekdayChoiceField
-              name="weekday"
-              {form}
-              label="Horizontal LongLabels"
-              longLabels
-              bind:value={$formData.weekday}
-            />
-          </div>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+      <Container
+        description="A multiple choice selection component  for weekdays (single value)"
+        title="WeekdayChoiceField"
+      >
+        <Preview slot="preview">
+          <form class="space-y" method="POST" use:enhance>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Vertical"
+                vertical
+                bind:value={$formData.weekday}
+              />
+              <WeekdayChoiceField
+                name="weekday"
+                disabled
+                {form}
+                label="Vertical Disabled"
+                vertical
+                bind:value={$formData.weekday}
+              />
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Vertical Readonly"
+                readonly
+                vertical
+                bind:value={$formData.weekday}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Horizontal"
+                bind:value={$formData.weekday}
+              />
+              <WeekdayChoiceField
+                name="weekday"
+                disabled
+                {form}
+                label="Horizontal Disabled"
+                bind:value={$formData.weekday}
+              />
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Horizontal Readonly"
+                readonly
+                bind:value={$formData.weekday}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Horizontal LetterLabels"
+                letterLabels
+                bind:value={$formData.weekday}
+              />
+              <WeekdayChoiceField
+                name="weekday"
+                {form}
+                label="Horizontal LongLabels"
+                longLabels
+                bind:value={$formData.weekday}
+              />
+            </div>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 					<WeekdayChoiceField
 						{form}
 						label="Weekday"
@@ -763,81 +868,81 @@
 						longLabels?
 					/>
 				`}
-      </CodeBlock>
-    </Container>
-    <Container
-      description="A multiple choice selection component  for weekdays"
-      title="WeekdayChoiceMultiField"
-    >
-      <Preview slot="preview">
-        <form class="space-y" method="POST" use:enhance>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Vertical"
-              vertical
-              bind:value={$formData.weekdays}
-            />
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              disabled
-              {form}
-              label="Vertical Disabled"
-              vertical
-              bind:value={$formData.weekdays}
-            />
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Vertical Readonly"
-              readonly
-              vertical
-              bind:value={$formData.weekdays}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Horizontal"
-              bind:value={$formData.weekdays}
-            />
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              disabled
-              {form}
-              label="Horizontal Disabled"
-              bind:value={$formData.weekdays}
-            />
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Horizontal Readonly"
-              readonly
-              bind:value={$formData.weekdays}
-            />
-          </div>
-          <div class="flex w-full space-x-5">
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Horizontal LetterLabels"
-              letterLabels
-              bind:value={$formData.weekdays}
-            />
-            <WeekdayChoiceMultiField
-              name="weekdays"
-              {form}
-              label="Horizontal LongLabels"
-              longLabels
-              bind:value={$formData.weekdays}
-            />
-          </div>
-        </form>
-      </Preview>
-      <CodeBlock slot="code">
-        {`
+        </CodeBlock>
+      </Container>
+      <Container
+        description="A multiple choice selection component  for weekdays"
+        title="WeekdayChoiceMultiField"
+      >
+        <Preview slot="preview">
+          <form class="space-y" method="POST" use:enhance>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Vertical"
+                vertical
+                bind:value={$formData.weekdays}
+              />
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                disabled
+                {form}
+                label="Vertical Disabled"
+                vertical
+                bind:value={$formData.weekdays}
+              />
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Vertical Readonly"
+                readonly
+                vertical
+                bind:value={$formData.weekdays}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Horizontal"
+                bind:value={$formData.weekdays}
+              />
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                disabled
+                {form}
+                label="Horizontal Disabled"
+                bind:value={$formData.weekdays}
+              />
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Horizontal Readonly"
+                readonly
+                bind:value={$formData.weekdays}
+              />
+            </div>
+            <div class="flex w-full space-x-5">
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Horizontal LetterLabels"
+                letterLabels
+                bind:value={$formData.weekdays}
+              />
+              <WeekdayChoiceMultiField
+                name="weekdays"
+                {form}
+                label="Horizontal LongLabels"
+                longLabels
+                bind:value={$formData.weekdays}
+              />
+            </div>
+          </form>
+        </Preview>
+        <CodeBlock slot="code">
+          {`
 					<WeekdayChoiceMultiField
 						{form}
 						label="Weekdays"
@@ -849,7 +954,8 @@
 						longLabels?
 					/>
 				`}
-      </CodeBlock>
-    </Container>
-  </main>
-</div>
+        </CodeBlock>
+      </Container>
+    </main>
+  </Sidebar.Inset>
+</Sidebar.Provider>

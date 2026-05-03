@@ -32,7 +32,13 @@
     <Control>
       {#snippet children({ props })}
         <div class="flex items-center gap-2">
-          <Checkbox {disabled} bind:checked {...props} {...restProps} />
+          <Checkbox
+            {disabled}
+            bind:checked
+            {...props}
+            {...restProps}
+            class="cursor-pointer hover:border-primary hover:bg-primary/10"
+          />
           {#if label}
             <Label
               class="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

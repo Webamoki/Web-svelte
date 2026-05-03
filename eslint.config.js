@@ -41,6 +41,12 @@ export default ts.config(
           partitionByNewLine: true
         }
       ],
+      'perfectionist/sort-named-exports': [
+        'error',
+        {
+          partitionByNewLine: true
+        }
+      ],
       'perfectionist/sort-objects': [
         'error',
         {

@@ -33,7 +33,7 @@
       <!-- Show/hide button outside input -->
       <button
         class={cn(
-          'aspect-square h-full items-center justify-center p-3',
+          'aspect-square h-full items-center justify-center p-1.5',
           'rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 focus:border-transparent',
           'cursor-pointer transition-all focus:ring-2 focus:ring-primary focus:outline-none'
         )}
@@ -42,9 +42,9 @@
         type="button"
       >
         {#if show}
-          <EyeOff class="size-6" />
+          <EyeOff class="size-5" />
         {:else}
-          <Eye class="size-6" />
+          <Eye class="size-5" />
         {/if}
       </button>
     </div>

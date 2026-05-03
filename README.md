@@ -20,7 +20,23 @@ This library is built with Tailwind CSS. To ensure styles are applied correctly 
 
 ### Theme Configuration
 
-Create a `theme.css` file in your project (or update your existing one) to match the CSS variables required by the library's theme.
+Visit (https://www.shadcn-svelte.com/create/preview) to generate a theme.
+
+Custom variables to add after generation:
+
+```
+:root {
+  --success: oklch(...);
+}
+.dark {
+  --success: oklch(...);
+}
+
+@theme inline {
+  ...
+  --color-success: var(--success);
+}
+```
 
 ### Main CSS Setup
 

@@ -20,8 +20,8 @@
 
   let iconClass = $derived(
     iconPosition === 'top'
-      ? 'pointer-events-none absolute top-4 left-4 text-gray-500'
-      : 'pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-500'
+      ? 'pointer-events-none absolute top-2 left-2 text-gray-500'
+      : 'pointer-events-none absolute top-1/2 left-2 -translate-y-1/2 text-gray-500'
   );
 
   let wrapperClass = $derived(flex ? 'relative flex-1' : 'relative');
@@ -33,7 +33,7 @@
     <div class={iconClass}>
       <Icon class="size-5" />
     </div>
-    {@render children({ class: 'pl-12' })}
+    {@render children({ class: 'pl-8' })}
   </div>
 {:else}
   {@render children({ class: '' })}

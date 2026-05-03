@@ -21,7 +21,7 @@ Use `pnpm`, never use `npm`.
 ## Guidelines
 
 1. **Type Safety:** Always use **Zod** (v4) for runtime validation and type definitions. Import from `$lib/shared/utils/zod.js`.
-2. **UI Components:** Use **shadcn**, **bits-ui**, and **Tailwind CSS v4** to build/extend UI components. Shadcn components are in `src/lib/shadcn/components/ui`.
+2. **UI Components:** Use **shadcn**, **bits-ui**, and **Tailwind CSS v4** to build/extend UI components. Shadcn components are in `src/lib/shadcn/components/ui`. Never edit the shadcn-generated components but if custom classes are required create or edit existing wrappers.
 3. **Consistency:** Follow existing patterns in `src/lib/shared/components/form` for new fields.
 
 ## Core Features

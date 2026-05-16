@@ -10,3 +10,10 @@ catalog:
   sveltekit-superforms: ^2.30.1
   tailwindcss: ^4.2.2
   zod: ^4.3.6
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
+  sharp: true
+  workerd: true
+engineStrict: true
+autoInstallPeers: false

@@ -7,12 +7,8 @@
       "Bash(pnpm check*)",
       "Read(//w/puzzly-dashboard/**)"
     ],
-    "deny": [
-      "Bash(npm *)"
-    ]
+    "deny": ["Bash(npm *)"]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "svelte"
-  ]
+  "enabledMcpjsonServers": ["svelte"]
 }

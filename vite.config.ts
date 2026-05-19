@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [sveltekit(), tailwindcss()],
   build: {
     rollupOptions: {
-      external: ['cloudflare:sockets'],
-    },
-  },
+      external: ['cloudflare:sockets']
+    }
+  }
 });

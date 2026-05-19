@@ -8,13 +8,13 @@ const config = {
     adapter: adapter({
       platformProxy: {
         configPath: 'wrangler.jsonc',
-        persist: true,
-      },
-    }),
+        persist: true
+      }
+    })
   },
   vitePlugin: {
-    inspector: true,
-  },
+    inspector: true
+  }
 };
 
 export default config;

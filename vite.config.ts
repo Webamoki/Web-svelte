@@ -4,5 +4,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   cacheDir: '.cache/.vite',
-  plugins: [sveltekit(), tailwindcss()]
+  plugins: [sveltekit(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      external: ['cloudflare:sockets'],
+    },
+  },
 });

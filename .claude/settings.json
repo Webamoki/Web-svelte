@@ -1,8 +1,14 @@
 {
   "permissions": {
-    "deny": ["Bash(npm *)"],
-    "allow": ["Bash(pnpm test*)", "Bash(pnpm lint*)", "Bash(pnpm fmt*)", "Bash(pnpm check*)"]
+    "allow": [
+      "Bash(pnpm test*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm fmt*)",
+      "Bash(pnpm check*)",
+      "Read(//w/puzzly-dashboard/**)"
+    ],
+    "deny": ["Bash(npm *)"]
   },
-  "enabledMcpjsonServers": ["svelte"],
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["svelte"]
 }

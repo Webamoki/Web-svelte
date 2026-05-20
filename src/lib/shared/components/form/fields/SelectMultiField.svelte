@@ -50,10 +50,10 @@
   }
 
   function getKeysFromValues(): string[] {
-    return values.map((value) => {
-      const item = valueToItem.get(value)!;
-      return getKey(item)!;
-    });
+    return values
+      .map((value) => valueToItem.get(value))
+      .filter((item): item is I => item !== undefined)
+      .map((item) => getKey(item));
   }
 
   function setValuesFromKeys(keys: string[]) {

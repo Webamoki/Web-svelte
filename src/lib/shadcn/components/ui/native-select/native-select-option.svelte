@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { HTMLAttributes } from 'svelte/elements';
+  import type { HTMLOptionAttributes } from 'svelte/elements';
 
   import { cn, type WithElementRef } from '$lib/shadcn/utils.js';
 
@@ -8,14 +8,14 @@
     class: className,
     ref = $bindable(null),
     ...restProps
-  }: WithElementRef<HTMLAttributes<HTMLDivElement>> & {} = $props();
+  }: WithElementRef<HTMLOptionAttributes> = $props();
 </script>
 
-<div
+<option
   bind:this={ref}
-  class={cn('px-1.5 py-1 text-xs text-muted-foreground', className)}
-  data-slot="select-label"
+  class={cn('bg-[Canvas] text-[CanvasText]', className)}
+  data-slot="native-select-option"
   {...restProps}
 >
   {@render children?.()}
-</div>
+</option>

@@ -3,13 +3,10 @@
   import type { Component } from 'svelte';
 
   import {
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    Select as ShadSelect
-  } from '$lib/shadcn/components/ui/select/index.js';
+    NativeSelect,
+    NativeSelectOptGroup,
+    NativeSelectOption
+  } from '$lib/shadcn/components/ui/native-select/index.js';
   import { cn } from '$lib/shadcn/utils.js';
   import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
@@ -46,13 +43,6 @@
     new Map(items.map((item) => [getKey(item), item] as const))
   );
 
-  let displayLabel: string = $derived.by(() => {
-    if (value === undefined) return placeholder;
-    const item = valueToItem.get(value);
-    if (item === undefined) return placeholder;
-    return getLabel(item);
-  });
-
   function getKey(item: I) {
     return _getKey(item).toString();
   }
@@ -66,31 +56,37 @@
 
   function setValueFromKey(key: string) {
     const item = keyToItem.get(key);
-    if (item === undefined) return;
+    if (item === undefined) {
+      value = undefined;
+      onchange?.(undefined);
+      return;
+    }
     const newValue = getValue(item);
     value = newValue;
     onchange?.(newValue);
   }
 </script>
 
-<ShadSelect type="single" bind:value={getKeyFromValue, setValueFromKey}>
-  <IconInputWrapper {icon}>
-    {#snippet children({ class: iconClass })}
-      <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)} {...rest}>
-        <span class="block truncate">
-          {displayLabel}
-        </span>
-      </SelectTrigger>
-    {/snippet}
-  </IconInputWrapper>
-  <SelectContent>
-    <SelectGroup>
+<IconInputWrapper {icon}>
+  {#snippet children({ class: iconClass })}
+    <NativeSelect
+      class={cn('w-full', className)}
+      selectClass={iconClass}
+      bind:value={getKeyFromValue, setValueFromKey}
+      {...rest}
+    >
+      <NativeSelectOption disabled value="">{placeholder}</NativeSelectOption>
       {#if label}
-        <SelectLabel>{label}</SelectLabel>
+        <NativeSelectOptGroup {label}>
+          {#each items as item (getKey(item))}
+            <NativeSelectOption value={getKey(item)}>{getLabel(item)}</NativeSelectOption>
+          {/each}
+        </NativeSelectOptGroup>
+      {:else}
+        {#each items as item (getKey(item))}
+          <NativeSelectOption value={getKey(item)}>{getLabel(item)}</NativeSelectOption>
+        {/each}
       {/if}
-      {#each items as item (getKey(item))}
-        <SelectItem class="cursor-pointer" label={getLabel(item)} value={getKey(item)} />
-      {/each}
-    </SelectGroup>
-  </SelectContent>
-</ShadSelect>
+    </NativeSelect>
+  {/snippet}
+</IconInputWrapper>

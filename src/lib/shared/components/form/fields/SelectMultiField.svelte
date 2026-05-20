@@ -6,13 +6,10 @@
   import type { FormPath } from 'sveltekit-superforms';
 
   import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger
-  } from '$lib/shadcn/components/ui/select/index.js';
+    NativeSelect,
+    NativeSelectOptGroup,
+    NativeSelectOption
+  } from '$lib/shadcn/components/ui/native-select/index.js';
   import { cn } from '$lib/shadcn/utils.js';
   import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
 
@@ -26,7 +23,7 @@
     icon?: Component;
     items: readonly I[];
     onchange?: (value: V[]) => void;
-    placeholder: string;
+    placeholder?: string;
     values?: V[];
   }
   let {
@@ -37,7 +34,6 @@
     icon,
     items,
     onchange,
-    placeholder,
     values = $bindable([]),
     ...fieldProps
   }: Props = $props();
@@ -53,49 +49,41 @@
     return key.toString();
   }
 
-  function getKeyFromValue(): string[] {
+  function getKeysFromValues(): string[] {
     return values.map((value) => {
       const item = valueToItem.get(value)!;
       return getKey(item)!;
     });
   }
 
-  function setValueFromKey(keys: string[]) {
+  function setValuesFromKeys(keys: string[]) {
     const newValues: V[] = keys
       .map((key) => keyToItem.get(key))
-      .filter((item): item is I => item !== undefined) // filter out missing keys
+      .filter((item): item is I => item !== undefined)
       .map((item) => getValue(item));
     values = newValues;
     onchange?.(newValues);
-  }
-
-  function getPreview() {
-    return values.length
-      ? values.map((value) => getLabel(valueToItem.get(value)!)).join(', ')
-      : placeholder;
   }
 </script>
 
 <FieldWrapper {...fieldProps}>
   {#snippet formElem(props)}
-    <Select type="multiple" {...props} bind:value={getKeyFromValue, setValueFromKey}>
-      <IconInputWrapper {icon}>
-        {#snippet children({ class: iconClass })}
-          <SelectTrigger class={cn('w-full cursor-pointer truncate', iconClass, className)}>
-            <span class="block truncate">
-              {getPreview()}
-            </span>
-          </SelectTrigger>
-        {/snippet}
-      </IconInputWrapper>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>{fieldProps.label}</SelectLabel>
-          {#each items as item (getKey(item))}
-            <SelectItem class="cursor-pointer" label={getLabel(item)} value={getKey(item)} />
-          {/each}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <IconInputWrapper {icon}>
+      {#snippet children({ class: iconClass })}
+        <NativeSelect
+          class={cn('w-full', className)}
+          multiple
+          selectClass={cn('h-auto', iconClass)}
+          bind:value={getKeysFromValues, setValuesFromKeys}
+          {...props}
+        >
+          <NativeSelectOptGroup label={fieldProps.label}>
+            {#each items as item (getKey(item))}
+              <NativeSelectOption value={getKey(item)}>{getLabel(item)}</NativeSelectOption>
+            {/each}
+          </NativeSelectOptGroup>
+        </NativeSelect>
+      {/snippet}
+    </IconInputWrapper>
   {/snippet}
 </FieldWrapper>

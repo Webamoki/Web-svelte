@@ -79,8 +79,8 @@ export class VirtualForm<S extends z.ZodType<Record<string, unknown>>> {
         method: 'POST'
       });
 
-      const response = await res.json();
-      if (!res.ok || response.status === 400) {
+      const response = (await res.json()) as App.Superforms.Message;
+      if (!res.ok || res.status === 400) {
         console.error('Request failed:', response);
         this.#onError?.(response);
         this.#isProcessing = false;
@@ -88,7 +88,7 @@ export class VirtualForm<S extends z.ZodType<Record<string, unknown>>> {
         return;
       }
       // Parse and decode the response
-      const parsedData = parse(response['data']);
+      const parsedData = parse(response['data'] as string);
       const decodedData = this.#decodeTransport(parsedData);
       const form = (decodedData as Record<string, unknown>)['form'] as SuperValidated<
         z.infer<S>,

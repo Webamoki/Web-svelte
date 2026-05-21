@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export const Schema = z.object({
-  email: z.email(),
-  name: z.string().min(1)
+  age: z.number().int(),
+  date: z.string(),
+  email: z.email()
 });

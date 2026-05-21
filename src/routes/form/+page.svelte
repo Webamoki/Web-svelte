@@ -26,16 +26,25 @@
     class="flex flex-col gap-4"
   >
     <label>
-      Name
-      <input {...testForm.fields.name.as('text')} />
-      {#each testForm.fields.name.issues() as issue (issue.path)}
+      Age
+      <input {...testForm.fields.age.as('number')} />
+      {#each testForm.fields.age.issues() as issue (issue.path)}
         <p class="text-destructive">{issue.message}</p>
       {/each}
     </label>
+
     <label>
       Email
       <input {...testForm.fields.email.as('email')} />
       {#each testForm.fields.email.issues() as issue (issue.path)}
+        <p class="text-destructive">{issue.message}</p>
+      {/each}
+    </label>
+
+    <label>
+      Date
+      <input {...testForm.fields.date.as('text')} />
+      {#each testForm.fields.date.issues() as issue (issue.path)}
         <p class="text-destructive">{issue.message}</p>
       {/each}
     </label>

@@ -6,10 +6,10 @@ type Link = {
 };
 
 export const links: Link[] = [
-  { href: resolve('/form'), name: 'form' },
+  { href: resolve('/fields'), name: 'fields' },
   {
     href: resolve('/ui'),
     name: 'ui'
   },
-  { href: resolve('/validate'), name: 'validate' }
+  { href: resolve('/form'), name: 'form' }
 ];

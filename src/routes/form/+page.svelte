@@ -48,6 +48,15 @@
         <p class="text-destructive">{issue.message}</p>
       {/each}
     </label>
+
+    <label>
+      Time
+      <input {...testForm.fields.time.as('text')} />
+      {#each testForm.fields.time.issues() as issue (issue.path)}
+        <p class="text-destructive">{issue.message}</p>
+      {/each}
+    </label>
+
     <button>Submit</button>
   </form>
 </div>

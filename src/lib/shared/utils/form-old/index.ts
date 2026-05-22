@@ -5,7 +5,7 @@ import { defaults, superForm, type SuperValidated } from 'sveltekit-superforms';
 import { type Infer, zod4, zod4Client } from 'sveltekit-superforms/adapters';
 
 import { dateTransport } from '../datetime/index.js';
-export * from './virtual-form.js';
+
 export function prepareEmptyForm<S extends z.ZodType<Record<string, unknown>>>(
   schema: S,
   options?: Partial<{

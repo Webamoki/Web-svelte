@@ -36,6 +36,14 @@ Type-safe form handling via `superforms` and `zod`.
 - **Icon Support**: Fields use `IconInputWrapper` for Lucide icons.
 - **Server Handlers**: Located in `src/lib/shared/server/form-handler.ts`.
 
+#### Migration: old forms -> new form system
+
+Migrating from the legacy `form-old` (superforms + `FieldWrapper`) to the new remote-form system (`form/`, SvelteKit remote forms). When building or migrating fields:
+
+- New field components live in `src/lib/shared/components/form/fields/` and take a `form` prop typed as `Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>` with `<script generics="Input extends RemoteFormInput">`.
+- **`Button` must accept the `form` prop whenever one is available.** Passing `form` drives the automatic pending/loading animation. Do not drop the `form` prop to dodge type errors — make the component generic over `Input extends RemoteFormInput` so typed forms stay assignable.
+- Legacy components remain in `form-old/` only for fields not yet migrated.
+
 ### 2. UI Components (`src/lib/shared/components/ui`)
 
 Higher-level UI components:

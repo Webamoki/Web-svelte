@@ -7,6 +7,7 @@ type Link = {
 
 export const links: Link[] = [
   { href: resolve('/fields'), name: 'fields' },
+  { href: resolve('/fields/legacy'), name: 'fields (legacy)' },
   {
     href: resolve('/ui'),
     name: 'ui'

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__svelte__list-sections",
+      "mcp__svelte__get-documentation",
+      "Bash(git mv *)",
+      "Bash(mv src/lib/shared/utils/form/parser.ts src/lib/shared/utils/form/schema.ts)",
+      "Bash(git rm *)",
+      "Bash(rm src/lib/shared/utils/form/form.server.ts)"
+    ]
+  }
+}

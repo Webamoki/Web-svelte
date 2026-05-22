@@ -16,7 +16,7 @@ export const FormResult = {
   },
 
   /** Returns a form error with a message */
-  err(message: string): FormResult<void> {
+  err(message?: string): FormResult<void> {
     return {
       data: undefined,
       message,
@@ -33,7 +33,7 @@ export const FormResult = {
   },
 
   /** Returns a form warning with a message */
-  warn(message: string): FormResult<void> {
+  warn(message?: string): FormResult<void> {
     return {
       data: undefined,
       message,
@@ -50,7 +50,7 @@ export const FormResult = {
   },
 
   /** Returns a form ok with a message */
-  ok(message: string): FormResult<void> {
+  ok(message?: string): FormResult<void> {
     return {
       data: undefined,
       message,

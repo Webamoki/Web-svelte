@@ -2,10 +2,6 @@
   import type { Component } from 'svelte';
   import type { HTMLTextareaAttributes } from 'svelte/elements';
 
-  import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
-  import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form-old/IconInputWrapper.svelte';
-
   type Props = HTMLTextareaAttributes & {
     class?: string;
     defaultHeight?: number;
@@ -13,6 +9,7 @@
     resize?: boolean;
     value?: string;
   };
+
   let {
     class: className,
     defaultHeight = 100,
@@ -23,13 +20,34 @@
   }: Props = $props();
 </script>
 
-<IconInputWrapper flex {icon} iconPosition="top">
-  {#snippet children({ class: iconClass })}
-    <Textarea
+{#if icon}
+  {@const Icon = icon}
+  <div class="form-input-wrapper">
+    <div class="form-input-icon form-input-icon--top">
+      <Icon />
+    </div>
+    <textarea
       style="height: {defaultHeight}px; min-height: {defaultHeight}px;"
-      class={cn(resize ? 'resize-y' : 'resize-none', iconClass, className)}
+      class={[
+        'form-input',
+        'form-textarea',
+        'form-input--with-icon',
+        resize && 'form-textarea--resize',
+        className
+      ]
+        .filter(Boolean)
+        .join(' ')}
       bind:value
       {...rest}
-    />
-  {/snippet}
-</IconInputWrapper>
+    ></textarea>
+  </div>
+{:else}
+  <textarea
+    style="height: {defaultHeight}px; min-height: {defaultHeight}px;"
+    class={['form-input', 'form-textarea', resize && 'form-textarea--resize', className]
+      .filter(Boolean)
+      .join(' ')}
+    bind:value
+    {...rest}
+  ></textarea>
+{/if}

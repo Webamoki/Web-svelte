@@ -1,50 +1,60 @@
-import type { Result } from '../functional/result.js';
-
-export type FormError = {
-  message: string;
-  status: number;
+export type FormResponseType = 'error' | 'ok' | 'warning';
+export type FormResult<T> = {
+  data: T;
+  message?: string;
+  type: FormResponseType;
 };
-export type FormResult<T> = Result<{ data: T; message?: string }, FormError>;
 
 /** Utility functions to return form responses */
 export const FormResult = {
-  /** Returns a form response with a error message */
-  errMsg(status: number, message: string): FormResult<never> {
+  /** Returns a form error with data and a message */
+  errData<T>(info: { data: T; message?: string }): FormResult<T> {
     return {
-      error: {
-        message,
-        status
-      },
-      ok: false
+      ...info,
+      type: 'error'
     };
   },
 
-  /** Returns a form success with no message */
-  ok(): FormResult<void> {
+  /** Returns a form error with a message */
+  err(message: string): FormResult<void> {
     return {
-      ok: true,
-      value: {
-        data: undefined
-      }
+      data: undefined,
+      message,
+      type: 'error'
     };
   },
 
-  /** Returns a form success with a message */
-  okMsg(message: string): FormResult<void> {
+  /** Returns a form warning with data and a message */
+  warnData<T>(info: { data: T; message?: string }): FormResult<T> {
     return {
-      ok: true,
-      value: {
-        data: undefined,
-        message
-      }
+      ...info,
+      type: 'warning'
     };
   },
 
-  /** Returns a form success with a message and data */
-  okData<T>(value: { data: T; message?: string }): FormResult<T> {
+  /** Returns a form warning with a message */
+  warn(message: string): FormResult<void> {
     return {
-      ok: true,
-      value
+      data: undefined,
+      message,
+      type: 'warning'
+    };
+  },
+
+  /** Returns a form ok with data and a message */
+  okData<T>(info: { data: T; message?: string }): FormResult<T> {
+    return {
+      ...info,
+      type: 'ok'
+    };
+  },
+
+  /** Returns a form ok with a message */
+  ok(message: string): FormResult<void> {
+    return {
+      data: undefined,
+      message,
+      type: 'ok'
     };
   }
 };

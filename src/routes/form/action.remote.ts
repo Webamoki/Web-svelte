@@ -17,7 +17,7 @@ export const testForm = form(Schema, async (data, issue) => {
   console.log(date.add({ days: 1 }));
 
   // Return just a message to toast
-  // return FormResult.okMsg('Success');
+  // return FormResult.ok('Success');
 
   // Or return a message and some data
   return FormResult.okData({

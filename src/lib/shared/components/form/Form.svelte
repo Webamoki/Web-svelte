@@ -37,13 +37,18 @@
         form.reset();
       }
       if (result !== undefined) {
-        if (result.ok) {
-          const val = result.value;
-          if (val.message) toast.success(val.message);
-          onSuccess?.(val.data);
-        } else {
-          const err = result.error;
-          toast.error(`${err.status}: ${err.message}`);
+        const { data, message, type } = result;
+        switch (type) {
+          case 'error':
+            if (message) toast.error(message);
+            break;
+          case 'ok':
+            if (message) toast.success(message);
+            onSuccess?.(data);
+            break;
+          case 'warning':
+            if (message) toast.warning(message);
+            break;
         }
       }
     } catch (e) {

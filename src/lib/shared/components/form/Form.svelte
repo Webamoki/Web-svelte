@@ -6,6 +6,7 @@
   lang="ts"
 >
   import type { FormResult } from '$lib/shared/utils/form/result.js';
+  import type { StandardSchemaV1 } from '@standard-schema/spec';
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
 
@@ -19,23 +20,45 @@
   interface Props {
     children?: Snippet;
     class?: string;
+    defaults?: Partial<Input>;
+    enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
+    form: AnyRemoteForm;
+    hidden?: Partial<Input>;
     onSuccess?: (data: Data) => void;
-    remote: AnyRemoteForm;
+    reset?: boolean;
+    schema: StandardSchemaV1<Input, unknown>;
   }
 
-  let { children, class: className, onSuccess, remote }: Props = $props();
+  let {
+    children,
+    class: className,
+    defaults,
+    enctype,
+    form: remote,
+    hidden,
+    onSuccess,
+    reset = true,
+    schema
+  }: Props = $props();
+  // svelte-ignore state_referenced_locally
+  if (defaults !== undefined) {
+    remote.fields.set(defaults);
+  }
 </script>
 
 <form
   class={className}
-  {...remote.enhance(async ({ form, submit }) => {
+  {enctype}
+  oninput={() => remote.validate()}
+  {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {
     try {
       const submitted = await submit();
       const result = remote.result;
 
-      if (submitted) {
-        form.reset();
+      if (submitted && reset && result?.type === 'ok') {
+        formElement.reset();
       }
+
       if (result !== undefined) {
         const { data, message, type } = result;
         switch (type) {
@@ -57,5 +80,10 @@
     }
   })}
 >
+  {#if hidden}
+    {#each Object.entries(hidden) as [name, value] (name)}
+      <input {...remote.fields[name].as('hidden', value)} />
+    {/each}
+  {/if}
   {@render children?.()}
 </form>

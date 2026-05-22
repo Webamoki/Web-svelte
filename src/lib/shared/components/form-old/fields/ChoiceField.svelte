@@ -4,9 +4,10 @@
 >
   import type { FormPath } from 'sveltekit-superforms';
 
+  import FieldWrapper, {
+    type FieldWrapperProps
+  } from '$lib/shared/components/form-old/FieldWrapper.svelte';
   import Choice, { type ChoiceProps } from '$lib/shared/components/ui/choice/Choice.svelte';
-
-  import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
 
   type Props = ChoiceProps<V, I, K> &
     FieldWrapperProps<T, U, M> & {

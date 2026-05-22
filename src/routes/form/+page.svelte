@@ -1,29 +1,15 @@
 <script lang="ts">
-  import { toast } from 'svelte-sonner';
+  import Form from '$lib/shared/components/form/Form.svelte';
 
   import { testForm } from './action.remote.js';
 </script>
 
 <div class="mx-auto max-w-md space-y-4 p-8">
   <h1 class="text-2xl font-bold">Form test</h1>
-  <form
-    {...testForm.enhance(async ({ form, submit }) => {
-      try {
-        const submitted = await submit();
-        const result = testForm.result;
-
-        if (submitted) {
-          form.reset();
-        }
-        if (result !== undefined) {
-          toast.success(result.message);
-        }
-      } catch (e) {
-        toast.error('An error occurred while submitting the form.');
-        throw e;
-      }
-    })}
+  <Form
     class="flex flex-col gap-4"
+    onSuccess={(data) => console.log('Client: Form Received:,', data.date.add({ days: 1 }))}
+    remote={testForm}
   >
     <label>
       Age
@@ -58,5 +44,5 @@
     </label>
 
     <button>Submit</button>
-  </form>
+  </Form>
 </div>

@@ -44,9 +44,13 @@
       "types": "./dist/shared/components/form/form.server.d.ts",
       "svelte": "./dist/shared/components/form/form.server.js"
     },
+    "./components/form/result": {
+      "types": "./dist/shared/components/form/result.d.ts",
+      "svelte": "./dist/shared/components/form/result.js"
+    },
     "./components/form/parser": {
-      "types": "./dist/shared/components/form/form.parser.d.ts",
-      "svelte": "./dist/shared/components/form/form.parser.js"
+      "types": "./dist/shared/components/form/parser.d.ts",
+      "svelte": "./dist/shared/components/form/parser.js"
     },
     "./components/ui": {
       "types": "./dist/shared/components/ui/index.d.ts",

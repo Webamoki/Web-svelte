@@ -4,7 +4,7 @@
 
   import { Textarea } from '$lib/shadcn/components/ui/textarea/index.js';
   import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
+  import IconInputWrapper from '$lib/shared/components/form-old/IconInputWrapper.svelte';
 
   type Props = HTMLTextareaAttributes & {
     class?: string;

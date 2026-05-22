@@ -15,7 +15,7 @@ import TextFieldNullable from './fields/TextFieldNullable.svelte';
 import TimeField from './fields/TimeField.svelte';
 import WeekdayChoiceField from './fields/WeekdayChoiceField.svelte';
 import WeekdayChoiceMultiField from './fields/WeekdayChoiceMultiField.svelte';
-import Form from './Form.svelte';
+import Form from '../form/Form.svelte';
 import IconInputWrapper from './IconInputWrapper.svelte';
 
 export {

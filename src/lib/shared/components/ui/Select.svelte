@@ -8,7 +8,7 @@
     NativeSelectOption
   } from '$lib/shadcn/components/ui/native-select/index.js';
   import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
+  import IconInputWrapper from '$lib/shared/components/form-old/IconInputWrapper.svelte';
 
   type Props = Partial<ControlAttrs> & {
     class?: string;

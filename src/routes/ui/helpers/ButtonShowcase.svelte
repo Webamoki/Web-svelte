@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from '$lib/shared/components/form/Button.svelte';
+  import Button from '$lib/shared/components/form-old/Button.svelte';
 </script>
 
 <h1 class="mb-4 text-xl font-semibold">Button</h1>

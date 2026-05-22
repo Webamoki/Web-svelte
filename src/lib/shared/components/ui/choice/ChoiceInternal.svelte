@@ -15,7 +15,7 @@
 </script>
 
 <script generics="V, I, K extends number | string | symbol" lang="ts">
-  import type { FormAttrs } from '$lib/shared/components/form/FieldWrapper.svelte';
+  import type { FormAttrs } from '$lib/shared/components/form-old/FieldWrapper.svelte';
   import type { Snippet } from 'svelte';
 
   import { cn } from '$lib/shadcn/utils.js';

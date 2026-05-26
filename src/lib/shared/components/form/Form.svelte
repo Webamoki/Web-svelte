@@ -44,11 +44,21 @@
   if (defaults !== undefined) {
     remote.fields.set(defaults);
   }
+
+  // Force enctype after the remote-form spread applies (which sets its own enctype).
+  // Defaults to multipart when the form contains file inputs, so consumers can't forget it.
+  function applyEnctype(node: HTMLFormElement) {
+    $effect(() => {
+      const wanted =
+        enctype ?? (node.querySelector('input[type="file"]') ? 'multipart/form-data' : undefined);
+      if (wanted) node.setAttribute('enctype', wanted);
+    });
+  }
 </script>
 
 <form
   class={className}
-  {enctype}
+  {@attach applyEnctype}
   oninput={() => remote.validate()}
   {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {
     try {

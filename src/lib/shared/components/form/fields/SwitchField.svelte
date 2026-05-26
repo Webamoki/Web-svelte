@@ -2,8 +2,7 @@
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
 
-  import CheckIcon from '@lucide/svelte/icons/check';
-  import { Checkbox } from 'bits-ui';
+  import { Switch } from 'bits-ui';
 
   type LooseField = {
     as(type: 'checkbox'): {
@@ -14,8 +13,6 @@
       value?: string;
     };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
-    set(input: unknown): unknown;
-    value(): unknown;
   };
 
   interface Props {
@@ -33,28 +30,24 @@
   let checked = $derived(attrs.checked);
 </script>
 
-<div class="form-checkbox-wrapper">
-  <div class="form-checkbox-row">
-    <Checkbox.Root
+<div class="form-switch-wrapper">
+  <div class="form-switch-row">
+    {#if children}
+      <label class="form-switch-label" for={attrs.name}>
+        {@render children()}
+      </label>
+    {/if}
+    <Switch.Root
       id={attrs.name}
       name={attrs.name}
-      class="form-checkbox"
+      class="form-switch"
       aria-invalid={attrs['aria-invalid']}
       {checked}
       {disabled}
       onCheckedChange={(v) => (checked = v === true)}
     >
-      {#snippet children({ checked })}
-        {#if checked}
-          <CheckIcon class="form-checkbox-icon" />
-        {/if}
-      {/snippet}
-    </Checkbox.Root>
-    {#if children}
-      <label class="form-checkbox-label" for={attrs.name}>
-        {@render children()}
-      </label>
-    {/if}
+      <Switch.Thumb class="form-switch-thumb" />
+    </Switch.Root>
   </div>
   {#if description}
     <p class="form-description form-description--indented">{description}</p>

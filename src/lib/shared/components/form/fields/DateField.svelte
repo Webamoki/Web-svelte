@@ -1,29 +1,16 @@
-<script generics="T extends Record<string, unknown>, U extends FormPath<T>, M" lang="ts">
-  import type { CalendarDate } from '@internationalized/date';
-  import type { Component } from 'svelte';
-  import type { FormPath } from 'sveltekit-superforms';
+<script generics="Input extends RemoteFormInput" lang="ts">
+  import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
+  import type { Snippet } from 'svelte';
 
-  import DateInput from '$lib/shared/components/ui/DateInput.svelte';
+  import Field from '../Field.svelte';
 
-  import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
-
-  interface Props extends FieldWrapperProps<T, U, M> {
-    class?: string;
-    icon?: Component;
-    showDate?: boolean;
-    value?: CalendarDate;
+  interface Props {
+    children?: Snippet;
+    form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    name: keyof Input & string;
   }
-  let {
-    class: className,
-    icon,
-    showDate = false,
-    value = $bindable(),
-    ...fieldProps
-  }: Props = $props();
+
+  let { children, form, name }: Props = $props();
 </script>
 
-<FieldWrapper {...fieldProps}>
-  {#snippet formElem(props)}
-    <DateInput class={className} {icon} {showDate} bind:value {...props} />
-  {/snippet}
-</FieldWrapper>
+<Field {name} {form} type="date">{@render children?.()}</Field>

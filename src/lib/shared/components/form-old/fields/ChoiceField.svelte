@@ -4,13 +4,16 @@
 >
   import type { FormPath } from 'sveltekit-superforms';
 
-  import ChoiceMulti, {
-    type ChoiceMultiProps
-  } from '$lib/shared/components/ui/choice/ChoiceMulti.svelte';
+  import FieldWrapper, {
+    type FieldWrapperProps
+  } from '$lib/shared/components/form-old/FieldWrapper.svelte';
+  import Choice, { type ChoiceProps } from '$lib/shared/components/ui/choice/Choice.svelte';
 
-  import FieldWrapper, { type FieldWrapperProps } from '../FieldWrapper.svelte';
+  type Props = ChoiceProps<V, I, K> &
+    FieldWrapperProps<T, U, M> & {
+      class?: string;
+    };
 
-  type Props = ChoiceMultiProps<V, I, K> & FieldWrapperProps<T, U, M> & { class?: string };
   let {
     buttonContent,
     class: className,
@@ -19,35 +22,33 @@
     form,
     getKey,
     getLabel,
-    getValue,
 
+    getValue,
     items,
     label,
     name,
-    onAdd,
-    onRemove,
+    onChange,
     readonly,
-    value = $bindable([]),
+    value = $bindable(undefined),
     vertical
   }: Props = $props();
 </script>
 
 <FieldWrapper {name} class={className} {description} {form} {label}>
   {#snippet formElem(props)}
-    <ChoiceMulti
+    <Choice
       {buttonContent}
       {disabled}
       {getKey}
       {getLabel}
       {getValue}
       {items}
-      {onAdd}
-      {onRemove}
+      {onChange}
       {readonly}
       {vertical}
+      bind:value
       {...props}
       class="w-full"
-      bind:value
     />
   {/snippet}
 </FieldWrapper>

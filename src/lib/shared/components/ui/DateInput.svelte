@@ -4,7 +4,7 @@
 
   import { Input as ShadInput } from '$lib/shadcn/components/ui/input/index.js';
   import { cn } from '$lib/shadcn/utils.js';
-  import IconInputWrapper from '$lib/shared/components/form/IconInputWrapper.svelte';
+  import IconInputWrapper from '$lib/shared/components/form-old/IconInputWrapper.svelte';
   import { formatDateFull } from '$lib/shared/utils/datetime/index.js';
   import { CalendarDate } from '@internationalized/date';
 

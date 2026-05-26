@@ -1,41 +1,57 @@
-<script lang="ts">
-  import type { ButtonProps } from '$lib/shadcn/components/ui/button/index.js';
+<script generics="Input extends RemoteFormInput" lang="ts">
+  import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
+  import type { Snippet } from 'svelte';
+  import type { HTMLButtonAttributes } from 'svelte/elements';
 
-  import { Button } from '$lib/shadcn/components/ui/button/index.js';
-  import { cn } from '$lib/shadcn/utils.js';
-  import Loader2Icon from '@lucide/svelte/icons/loader-2';
+  import Loader2 from '@lucide/svelte/icons/loader-2';
+  import { Button as ButtonPrimitive } from 'bits-ui';
 
-  type Props = ButtonProps & {
+  type Variant = 'default' | 'destructive' | 'ghost' | 'ghost-destructive';
+
+  interface Props extends Omit<HTMLButtonAttributes, 'form' | 'type'> {
+    children?: Snippet;
     class?: string;
+    form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    href?: string;
     loading?: boolean;
     loadingMessage?: string;
-  };
+    reset?: boolean;
+    variant?: Variant;
+  }
 
   let {
     children,
-    class: className,
+    class: className = '',
     disabled,
-    loading,
-    loadingMessage = 'Please wait',
-    variant,
+    form,
+    href,
+    loading = false,
+    loadingMessage,
+    reset = false,
+    variant = 'default',
     ...restProps
   }: Props = $props();
+
+  const isPending = $derived(form ? form.pending > 0 : loading);
+  const type = $derived(reset ? 'reset' : form ? 'submit' : 'button');
 </script>
 
-<Button
-  class={cn(
-    'cursor-pointer',
-    variant === 'link' && 'text-blue-600 visited:text-purple-600',
-    className
-  )}
-  disabled={disabled || loading}
-  {variant}
-  {...restProps}
->
-  {#if loading}
-    <Loader2Icon class="mr-2 animate-spin" />
-    {loadingMessage}
-  {:else}
+{#if href}
+  <ButtonPrimitive.Root class="btn {variant} {className}" {href}>
     {@render children?.()}
-  {/if}
-</Button>
+  </ButtonPrimitive.Root>
+{:else}
+  <ButtonPrimitive.Root
+    class="btn {variant} {className}"
+    disabled={disabled || isPending}
+    {type}
+    {...restProps}
+  >
+    {#if isPending}
+      <Loader2 class="animate-spin" size={14} />
+      {#if loadingMessage}{loadingMessage}{/if}
+    {:else}
+      {@render children?.()}
+    {/if}
+  </ButtonPrimitive.Root>
+{/if}

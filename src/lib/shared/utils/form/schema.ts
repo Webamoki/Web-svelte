@@ -25,8 +25,8 @@ export const formBoolean = z
   .transform((v) => v ?? false)
   .pipe(z.boolean());
 
-/** Number field — parses string input to a finite number */
-export const formNumber = z.string().transform((text, ctx) => {
+/** Number field — parses string input to any finite number (unbounded) */
+export const formInt = z.string().transform((text, ctx) => {
   const n = Number(text);
   if (text.trim() === '' || !Number.isFinite(n)) {
     ctx.issues.push({
@@ -39,6 +39,9 @@ export const formNumber = z.string().transform((text, ctx) => {
   }
   return n;
 });
+
+/** Number field — finite number bound to 0 or greater */
+export const formNumber = formInt.pipe(z.number().min(0, 'must be 0 or greater'));
 
 /** ISO 8601 date string to CalendarDate */
 export const formDate = z.string().transform((text, ctx) => {

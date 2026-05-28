@@ -33,6 +33,11 @@ export const ColorSchema = z.object({ color: formHexColor });
 export const MessageSchema = z.object({ message: formText });
 export const PinSchema = z.object({ pin: formPin() });
 export const SelectSchema = z.object({ select: formSelect(SELECT_OPTIONS) });
+export const HiddenSchema = z.object({
+  count: formNumber,
+  label: formText,
+  token: formText
+});
 
 export const TextNullableSchema = z.object({ text: nullable(formText) });
 export const EmailNullableSchema = z.object({ email: nullable(formEmail) });

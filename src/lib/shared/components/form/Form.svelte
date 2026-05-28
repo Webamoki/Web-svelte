@@ -45,6 +45,12 @@
     remote.fields.set(defaults);
   }
 
+  // Only render hidden inputs whose value is set — `as('hidden', value)` throws on
+  // null/undefined. Derived so value changes on `hidden` propagate to the inputs.
+  const hiddenEntries = $derived(
+    hidden ? Object.entries(hidden).filter(([, value]) => value != null) : []
+  );
+
   // Force enctype after the remote-form spread applies (which sets its own enctype).
   // Defaults to multipart when the form contains file inputs, so consumers can't forget it.
   function applyEnctype(node: HTMLFormElement) {
@@ -88,10 +94,8 @@
     }
   })}
 >
-  {#if hidden}
-    {#each Object.entries(hidden) as [name, value] (name)}
-      <input {...remote.fields[name].as('hidden', value)} />
-    {/each}
-  {/if}
+  {#each hiddenEntries as [name, value] (name)}
+    <input {...remote.fields[name].as('hidden', value)} />
+  {/each}
   {@render children?.()}
 </form>

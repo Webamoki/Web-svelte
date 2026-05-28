@@ -10,6 +10,7 @@ import {
   EmailNullableSchema,
   EmailSchema,
   FileSchema,
+  HiddenSchema,
   MessageSchema,
   NumberNullableSchema,
   NumberSchema,
@@ -83,6 +84,8 @@ export const dateRangeForm = form(DateRangeSchema, async (data) => {
 export const fileForm = form(FileSchema, async (data) =>
   ok({ name: data.file.name, size: data.file.size })
 );
+
+export const hiddenForm = form(HiddenSchema, async (data) => ok(data));
 
 export const showcaseForm = form(ShowcaseSchema, async (data) => ok(data));
 

@@ -34,6 +34,7 @@
     emailForm,
     emailNullableForm,
     fileForm,
+    hiddenForm,
     messageForm,
     numberForm,
     numberNullableForm,
@@ -56,6 +57,7 @@
     EmailNullableSchema,
     EmailSchema,
     FileSchema,
+    HiddenSchema,
     MessageSchema,
     NumberNullableSchema,
     NumberSchema,
@@ -70,6 +72,9 @@
     TextSchema,
     TimeSchema
   } from './schemas.js';
+
+  let hiddenToken = $state<string | undefined>('abc123');
+  let hiddenCount = $state<string | undefined>('1');
 </script>
 
 <Sidebar.Provider>
@@ -82,7 +87,7 @@
         <Sidebar.GroupLabel>New (Remote Forms)</Sidebar.GroupLabel>
         <Sidebar.GroupContent>
           <Sidebar.Menu>
-            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['filefield', 'FileField'], ['form', 'Form']] as [anchor, label] (anchor)}
+            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['filefield', 'FileField'], ['hidden', 'Hidden inputs'], ['form', 'Form']] as [anchor, label] (anchor)}
               <Sidebar.MenuItem>
                 <Sidebar.MenuButton>
                   {#snippet child({ props })}
@@ -535,6 +540,57 @@
         <CodeBlock slot="code">
           {`<FileField name="file" form={remoteForm}>Upload</FileField>
 <FileField name="file" form={remoteForm} variant="dropzone">Upload</FileField>`}
+        </CodeBlock>
+      </Container>
+
+      <Container
+        description="Hidden inputs driven by external state; cleared values are skipped (no render error) and changes propagate reactively"
+        title="Hidden inputs"
+      >
+        <Preview slot="preview">
+          <div class="flex gap-6">
+            <div class="flex flex-col gap-2">
+              <button
+                class="btn ghost"
+                onclick={() => (hiddenToken = crypto.randomUUID().slice(0, 8))}
+                type="button"
+              >
+                Set random token
+              </button>
+              <button class="btn ghost" onclick={() => (hiddenToken = undefined)} type="button">
+                Clear token
+              </button>
+              <button
+                class="btn ghost"
+                onclick={() => (hiddenCount = String(Number(hiddenCount ?? '0') + 1))}
+                type="button"
+              >
+                Increment count
+              </button>
+              <button class="btn ghost" onclick={() => (hiddenCount = undefined)} type="button">
+                Clear count
+              </button>
+              <p class="text-xs text-gray-600">
+                token: {hiddenToken ?? '(none)'}<br />count: {hiddenCount ?? '(none)'}
+              </p>
+            </div>
+            <Form
+              class="flex flex-1 flex-col gap-4"
+              form={hiddenForm}
+              hidden={{ count: hiddenCount, token: hiddenToken }}
+              onSuccess={(data) => console.log('Submitted:', data)}
+              schema={HiddenSchema}
+            >
+              <TextField name="label" form={hiddenForm}>Label</TextField>
+              <Button form={hiddenForm}>Submit</Button>
+            </Form>
+          </div>
+        </Preview>
+        <CodeBlock slot="code">
+          {`<Form form={hiddenForm} hidden={{ token, count }} schema={HiddenSchema}>
+  <TextField name="label" form={hiddenForm}>Label</TextField>
+  <Button form={hiddenForm}>Submit</Button>
+</Form>`}
         </CodeBlock>
       </Container>
 

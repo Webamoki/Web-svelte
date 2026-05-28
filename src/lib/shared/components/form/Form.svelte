@@ -24,7 +24,10 @@
     enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
     form: AnyRemoteForm;
     hidden?: Partial<Input>;
+    onError?: (info: { data?: Data; message?: string }) => void;
     onSuccess?: (data: Data) => void;
+    onThrow?: (error: unknown) => void;
+    onWarning?: (info: { data?: Data; message?: string }) => void;
     reset?: boolean;
     schema: StandardSchemaV1<Input, unknown>;
   }
@@ -36,7 +39,10 @@
     enctype,
     form: remote,
     hidden,
+    onError,
     onSuccess,
+    onThrow,
+    onWarning,
     reset = true,
     schema
   }: Props = $props();
@@ -78,6 +84,7 @@
         switch (type) {
           case 'error':
             if (message) toast.error(message);
+            onError?.({ data, message });
             break;
           case 'ok':
             if (message) toast.success(message);
@@ -85,11 +92,13 @@
             break;
           case 'warning':
             if (message) toast.warning(message);
+            onWarning?.({ data, message });
             break;
         }
       }
     } catch (e) {
       toast.error('An error occurred while submitting the form.');
+      onThrow?.(e);
       throw e;
     }
   })}

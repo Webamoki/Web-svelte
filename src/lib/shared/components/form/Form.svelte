@@ -46,9 +46,9 @@
   }
 
   // Only render hidden inputs whose value is set — `as('hidden', value)` throws on
-  // null/undefined. Derived so value changes on `hidden` propagate to the inputs.
+  // null/undefined/empty string. Derived so value changes on `hidden` propagate.
   const hiddenEntries = $derived(
-    hidden ? Object.entries(hidden).filter(([, value]) => value != null) : []
+    hidden ? Object.entries(hidden).filter(([, value]) => value != null && value !== '') : []
   );
 
   // Force enctype after the remote-form spread applies (which sets its own enctype).

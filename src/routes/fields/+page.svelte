@@ -87,7 +87,7 @@
         <Sidebar.GroupLabel>New (Remote Forms)</Sidebar.GroupLabel>
         <Sidebar.GroupContent>
           <Sidebar.Menu>
-            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['filefield', 'FileField'], ['hidden', 'Hidden inputs'], ['form', 'Form']] as [anchor, label] (anchor)}
+            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['filefield', 'FileField'], ['hidden-inputs', 'Hidden inputs'], ['form', 'Form']] as [anchor, label] (anchor)}
               <Sidebar.MenuItem>
                 <Sidebar.MenuButton>
                   {#snippet child({ props })}

@@ -1,7 +1,3 @@
-<script module>
-  let _counter = 0;
-</script>
-
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
@@ -40,44 +36,67 @@
     required,
     ...rest
   }: Props = $props();
-
-  const _uid = `cb-${++_counter}`;
-  const inputId = $derived(id ?? name ?? _uid);
 </script>
 
 <div class="form-checkbox-wrapper">
-  <div class="form-checkbox-row">
-    <Checkbox.Root
-      id={inputId}
-      {name}
-      class={['form-checkbox', className].filter(Boolean).join(' ')}
-      {checked}
-      {disabled}
-      {indeterminate}
-      onCheckedChange={(v) => {
-        checked = v === true;
-        onCheckedChange?.(checked);
-        if (checked) onChecked?.();
-        else onUnchecked?.();
-      }}
-      onIndeterminateChange={(v) => (indeterminate = v === true)}
-      {required}
-      {...rest}
-    >
-      {#snippet children({ checked, indeterminate })}
-        {#if checked}
-          <CheckIcon class="form-checkbox-icon" />
-        {:else if indeterminate}
-          <MinusIcon class="form-checkbox-icon" />
-        {/if}
-      {/snippet}
-    </Checkbox.Root>
-    {#if children}
-      <label class="form-checkbox-label" for={inputId}>
-        {@render children()}
-      </label>
-    {/if}
-  </div>
+  {#if children}
+    <label class="form-checkbox-row">
+      <Checkbox.Root
+        {id}
+        {name}
+        class={['form-checkbox', className].filter(Boolean).join(' ')}
+        {checked}
+        {disabled}
+        {indeterminate}
+        onCheckedChange={(v) => {
+          checked = v === true;
+          onCheckedChange?.(checked);
+          if (checked) onChecked?.();
+          else onUnchecked?.();
+        }}
+        onIndeterminateChange={(v) => (indeterminate = v === true)}
+        {required}
+        {...rest}
+      >
+        {#snippet children({ checked, indeterminate })}
+          {#if checked}
+            <CheckIcon class="form-checkbox-icon" />
+          {:else if indeterminate}
+            <MinusIcon class="form-checkbox-icon" />
+          {/if}
+        {/snippet}
+      </Checkbox.Root>
+      <span class="form-checkbox-label">{@render children()}</span>
+    </label>
+  {:else}
+    <div class="form-checkbox-row">
+      <Checkbox.Root
+        {id}
+        {name}
+        class={['form-checkbox', className].filter(Boolean).join(' ')}
+        {checked}
+        {disabled}
+        {indeterminate}
+        onCheckedChange={(v) => {
+          checked = v === true;
+          onCheckedChange?.(checked);
+          if (checked) onChecked?.();
+          else onUnchecked?.();
+        }}
+        onIndeterminateChange={(v) => (indeterminate = v === true)}
+        {required}
+        {...rest}
+      >
+        {#snippet children({ checked, indeterminate })}
+          {#if checked}
+            <CheckIcon class="form-checkbox-icon" />
+          {:else if indeterminate}
+            <MinusIcon class="form-checkbox-icon" />
+          {/if}
+        {/snippet}
+      </Checkbox.Root>
+    </div>
+  {/if}
   {#if description}
     <p class="form-description form-description--indented">{description}</p>
   {/if}

@@ -8,10 +8,10 @@
     children?: Snippet;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
-    required?: boolean;
+    optional?: boolean;
   }
 
-  let { children, form, name, required }: Props = $props();
+  let { children, form, name, optional }: Props = $props();
 </script>
 
-<Field {name} {children} {form} {required} type="time" />
+<Field {name} {children} {form} {optional} type="time" />

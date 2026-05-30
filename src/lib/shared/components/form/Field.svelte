@@ -16,21 +16,25 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
     name: keyof Input & string;
+    optional?: boolean;
     placeholder?: string;
-    required?: boolean;
     type: string;
   }
 
-  let { children, form, icon, name, placeholder, required, type }: Props = $props();
+  let { children, form, icon, name, optional, placeholder, type }: Props = $props();
   // svelte-ignore state_referenced_locally
   const field = (form.fields as Record<string, LooseField>)[name];
   // svelte-ignore state_referenced_locally
   const attrs = field.as(type);
 
+  const required = $derived(!optional);
+
+  // With a label the asterisk carries the required/optional cue; without one the
+  // placeholder does, so prefix it with (Required) / (Optional).
   const displayPlaceholder = $derived(
-    required === false && !children && placeholder != null
-      ? `(Optional) ${placeholder}`
-      : placeholder
+    children
+      ? placeholder
+      : `(${required ? 'Required' : 'Optional'})${placeholder != null ? ` ${placeholder}` : ''}`
   );
 </script>
 

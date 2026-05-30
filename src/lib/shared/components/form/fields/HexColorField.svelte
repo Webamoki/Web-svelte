@@ -21,18 +21,20 @@
     children?: Snippet;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
-    required?: boolean;
+    optional?: boolean;
   }
 
-  let { children, form, name, required }: Props = $props();
+  let { children, form, name, optional }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('text'));
+  const required = $derived(!optional);
 
   // ColorPicker expects '#rrggbb'; field stores without '#'. ColorPicker's hex
   // prop has a fallback, so it must never be bound to undefined.
   const DEFAULT_HEX = '#000000';
   let hex: string = $state(DEFAULT_HEX);
+  let hiddenInput: HTMLInputElement | undefined = $state();
 
   $effect(() => {
     const v = field.value();
@@ -44,6 +46,12 @@
     if (field.value() !== raw) {
       if (field.value() == null && hex === DEFAULT_HEX) return;
       field.set(raw);
+      if (hiddenInput) {
+        // Set DOM value synchronously before dispatching so handle_input reads the correct
+        // value instead of the stale pre-update value, which would cause an infinite loop.
+        hiddenInput.value = raw;
+        hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
     }
   });
 </script>
@@ -51,6 +59,9 @@
 {#if children}
   <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
 {/if}
+<!-- Hidden input puts the value into FormData so validate() and submit pick it up.
+     Value is managed directly in the $effect above — not via reactive binding. -->
+<input bind:this={hiddenInput} name={attrs.name} type="hidden" />
 <ColorPicker isAlpha={false} position="responsive" bind:hex />
 {#each field.issues() ?? [] as issue (`${issue.path}`)}
   <p class="form-error">{issue.message}</p>

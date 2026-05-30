@@ -13,12 +13,13 @@
     children?: Snippet;
     endName: keyof Input & string;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
-    required?: boolean;
+    optional?: boolean;
     startName: keyof Input & string;
   }
 
-  let { children, endName, form, required, startName }: Props = $props();
+  let { children, endName, form, optional, startName }: Props = $props();
 
+  const required = $derived(!optional);
   const startField = $derived((form.fields as Record<string, LooseField>)[startName]);
   const endField = $derived((form.fields as Record<string, LooseField>)[endName]);
   const startAttrs = $derived(startField.as('date'));

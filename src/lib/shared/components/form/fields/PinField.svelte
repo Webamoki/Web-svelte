@@ -24,7 +24,7 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     maxlength?: number;
     name: keyof Input & string;
-    required?: boolean;
+    optional?: boolean;
   }
 
   let {
@@ -35,11 +35,12 @@
     form,
     maxlength = 6,
     name,
-    required
+    optional
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('text'));
+  const required = $derived(!optional);
 
   let pinValue = $derived(String(attrs.value ?? ''));
 </script>

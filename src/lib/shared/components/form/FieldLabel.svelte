@@ -8,12 +8,12 @@
     required?: boolean;
   }
 
-  let { children, class: className = 'form-label', for: forId, required }: Props = $props();
+  let { children, class: className = 'form-label', for: forId, required = true }: Props = $props();
 </script>
 
 <label class={className} for={forId}>
   {@render children?.()}
-  {#if required === true}
+  {#if required}
     <span class="form-required-star" aria-hidden="true">*</span>
   {/if}
 </label>

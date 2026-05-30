@@ -26,12 +26,13 @@
     disabled?: boolean;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
-    required?: boolean;
+    optional?: boolean;
   }
 
-  let { children, description, disabled, form, name, required }: Props = $props();
+  let { children, description, disabled, form, name, optional }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
+  const required = $derived(!optional);
 </script>
 
 <div class="form-checkbox-wrapper">

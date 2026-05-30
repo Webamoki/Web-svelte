@@ -19,7 +19,7 @@
     multiple?: boolean;
     name: keyof Input & string;
     onSelect?: (files: File[]) => void;
-    required?: boolean;
+    optional?: boolean;
     variant?: 'button' | 'dropzone';
   }
 
@@ -31,12 +31,15 @@
     multiple = false,
     name,
     onSelect,
-    required,
+    optional,
     variant = 'button'
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('file'));
+  // required drives only the label asterisk here — the native `required` attribute is
+  // intentionally omitted from the file input (it blocks edit-form submits; see Zod validation).
+  const required = $derived(!optional);
 
   let input = $state<HTMLInputElement>();
   let files = $state<File[]>([]);
@@ -94,7 +97,6 @@
     {accept}
     {disabled}
     {multiple}
-    {required}
     {...attrs}
     onchange={sync}
   />

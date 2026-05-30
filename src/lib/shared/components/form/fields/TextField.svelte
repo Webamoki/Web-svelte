@@ -9,11 +9,11 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
     name: keyof Input & string;
+    optional?: boolean;
     placeholder?: string;
-    required?: boolean;
   }
 
-  let { children, form, icon, name, placeholder, required }: Props = $props();
+  let { children, form, icon, name, optional, placeholder }: Props = $props();
 </script>
 
-<Field {name} {children} {form} {icon} {placeholder} {required} type="text" />
+<Field {name} {children} {form} {icon} {optional} {placeholder} type="text" />

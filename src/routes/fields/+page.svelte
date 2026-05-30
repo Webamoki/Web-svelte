@@ -126,6 +126,13 @@
 
       <h2 class="mt-8 mb-4 text-2xl font-semibold">New (Remote Forms)</h2>
 
+      <p class="mb-8 text-sm text-gray-500">
+        Fields are <strong>required by default</strong> — a red star shows on the label. Add the
+        <code>optional</code> shorthand to drop the star. When a field has no label the cue moves to
+        the placeholder, which is prefixed with <code>(Required)</code> or <code>(Optional)</code>.
+        The “(optional)” examples below use <code>optional</code>.
+      </p>
+
       <Container description="A basic text input field" title="TextField">
         <Preview slot="preview">
           <Form class="flex flex-col gap-4" form={textForm} schema={TextSchema}>
@@ -143,14 +150,17 @@
             form={textNullableForm}
             schema={TextNullableSchema}
           >
-            <TextField name="text" form={textNullableForm} placeholder="optional">
-              Text (nullable)
+            <TextField name="text" form={textNullableForm} optional placeholder="no star">
+              Text (optional)
             </TextField>
+            <TextField name="text" form={textNullableForm} optional placeholder="no label" />
             <Button form={textNullableForm}>Submit</Button>
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<TextField name="text" form={remoteForm}>Text</TextField>`}
+          {`<TextField name="text" form={remoteForm}>Text</TextField>
+<TextField name="text" form={remoteForm} optional>Text</TextField>
+<TextField name="text" form={remoteForm} optional placeholder="no label" />`}
         </CodeBlock>
       </Container>
 
@@ -167,14 +177,15 @@
             form={emailNullableForm}
             schema={EmailNullableSchema}
           >
-            <EmailField name="email" form={emailNullableForm} placeholder="optional">
-              Email (nullable)
+            <EmailField name="email" form={emailNullableForm} optional placeholder="no star">
+              Email (optional)
             </EmailField>
             <Button form={emailNullableForm}>Submit</Button>
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<EmailField name="email" form={remoteForm}>Email</EmailField>`}
+          {`<EmailField name="email" form={remoteForm}>Email</EmailField>
+<EmailField name="email" form={remoteForm} optional>Email</EmailField>`}
         </CodeBlock>
       </Container>
 
@@ -218,14 +229,15 @@
             form={numberNullableForm}
             schema={NumberNullableSchema}
           >
-            <NumberField name="age" form={numberNullableForm} placeholder="optional">
-              Age (nullable)
+            <NumberField name="age" form={numberNullableForm} optional placeholder="no star">
+              Age (optional)
             </NumberField>
             <Button form={numberNullableForm}>Submit</Button>
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<NumberField name="age" form={remoteForm}>Age</NumberField>`}
+          {`<NumberField name="age" form={remoteForm}>Age</NumberField>
+<NumberField name="age" form={remoteForm} optional>Age</NumberField>`}
         </CodeBlock>
       </Container>
 
@@ -293,6 +305,16 @@
           </Form>
           <Form
             class="mt-4 flex flex-col gap-4"
+            form={checkboxForm.for('optional')}
+            schema={CheckboxSchema}
+          >
+            <CheckboxField name="agreed" form={checkboxForm.for('optional')} optional>
+              Optional (no star)
+            </CheckboxField>
+            <Button form={checkboxForm.for('optional')}>Submit</Button>
+          </Form>
+          <Form
+            class="mt-4 flex flex-col gap-4"
             form={checkboxForm.for('disabled')}
             schema={CheckboxSchema}
           >
@@ -335,9 +357,8 @@
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<CheckboxField name="agreed" form={remoteForm} description="...">
-  I agree to the terms
-</CheckboxField>`}
+          {`<CheckboxField name="agreed" form={remoteForm}>I agree to the terms</CheckboxField>
+<CheckboxField name="agreed" form={remoteForm} optional>Optional</CheckboxField>`}
         </CodeBlock>
       </Container>
 
@@ -352,12 +373,15 @@
             form={colorNullableForm}
             schema={ColorNullableSchema}
           >
-            <HexColorField name="color" form={colorNullableForm}>Color (nullable)</HexColorField>
+            <HexColorField name="color" form={colorNullableForm} optional>
+              Color (optional)
+            </HexColorField>
             <Button form={colorNullableForm}>Submit</Button>
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<HexColorField name="color" form={remoteForm}>Color</HexColorField>`}
+          {`<HexColorField name="color" form={remoteForm}>Color</HexColorField>
+<HexColorField name="color" form={remoteForm} optional>Color</HexColorField>`}
         </CodeBlock>
       </Container>
 
@@ -430,7 +454,7 @@
             <Button form={pinForm.for('disabled')}>Submit</Button>
           </Form>
           <Form class="mt-4 flex flex-col gap-4" form={pinNullableForm} schema={PinNullableSchema}>
-            <PinField name="pin" form={pinNullableForm}>PIN (nullable)</PinField>
+            <PinField name="pin" form={pinNullableForm} optional>PIN (optional)</PinField>
             <Button form={pinNullableForm}>Submit</Button>
           </Form>
         </Preview>
@@ -489,9 +513,10 @@
               getValue={identity}
               items={[...SELECT_OPTIONS]}
               nullable
-              placeholder="Optional"
+              optional
+              placeholder="Please select"
             >
-              Select (nullable)
+              Select (optional)
             </SelectField>
             <Button form={selectNullableForm}>Submit</Button>
           </Form>
@@ -507,7 +532,8 @@
   placeholder="Please select"
 >
   Select
-</SelectField>`}
+</SelectField>
+<SelectField name="select" form={remoteForm} nullable optional ...>Select</SelectField>`}
         </CodeBlock>
       </Container>
 
@@ -538,8 +564,11 @@
           </Form>
         </Preview>
         <CodeBlock slot="code">
-          {`<FileField name="file" form={remoteForm}>Upload</FileField>
-<FileField name="file" form={remoteForm} variant="dropzone">Upload</FileField>`}
+          {`<!-- required by default; the asterisk shows but the native input is never marked
+     required (it would block edit-form submits — validation is handled by Zod) -->
+<FileField name="file" form={remoteForm}>Upload</FileField>
+<FileField name="file" form={remoteForm} variant="dropzone">Upload</FileField>
+<FileField name="file" form={remoteForm} optional>Upload</FileField>`}
         </CodeBlock>
       </Container>
 

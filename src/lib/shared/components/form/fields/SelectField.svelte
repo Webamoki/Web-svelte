@@ -28,8 +28,8 @@
     name: keyof Input & string;
     nullable?: boolean;
     onchange?: (value: undefined | V) => void;
+    optional?: boolean;
     placeholder: string;
-    required?: boolean;
   }
 
   let {
@@ -44,12 +44,19 @@
     name,
     nullable = false,
     onchange,
-    placeholder,
-    required
+    optional,
+    placeholder
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('select'));
+  const required = $derived(!optional);
+
+  // With a label the asterisk carries the required/optional cue; without one the
+  // placeholder option does, so prefix it with (Required) / (Optional).
+  const displayPlaceholder = $derived(
+    children ? placeholder : `(${required ? 'Required' : 'Optional'}) ${placeholder}`
+  );
 
   const keyToValue = $derived(
     new Map(items.map((item) => [String(getKey(item)), String(getValue(item))]))
@@ -61,9 +68,10 @@
   function handleChange(e: Event) {
     const key = (e.currentTarget as HTMLSelectElement).value;
     const newValue = keyToValue.get(key) ?? '';
-    field.set(newValue);
     const item = valueToItem.get(newValue);
-    onchange?.(item === undefined ? undefined : getValue(item));
+    const typedValue = item === undefined ? undefined : getValue(item);
+    field.set(typedValue);
+    onchange?.(typedValue);
   }
 </script>
 
@@ -91,7 +99,7 @@
       {required}
       value={selectedValue}
     >
-      <option disabled={!nullable} value="">{placeholder}</option>
+      <option disabled={!nullable} value="">{displayPlaceholder}</option>
       {#each items as item (getKey(item))}
         <option value={String(getKey(item))}>{getLabel(item)}</option>
       {/each}

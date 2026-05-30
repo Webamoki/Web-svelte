@@ -30,9 +30,15 @@
     <FieldLabel for={startAttrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <div class="form-date-range">
-    <input id={startAttrs.name} class="form-date-range-input" type="date" {...startAttrs} />
+    <input
+      id={startAttrs.name}
+      class="form-date-range-input"
+      {required}
+      type="date"
+      {...startAttrs}
+    />
     <span class="form-date-range-sep" aria-hidden="true">–</span>
-    <input id={endAttrs.name} class="form-date-range-input" type="date" {...endAttrs} />
+    <input id={endAttrs.name} class="form-date-range-input" {required} type="date" {...endAttrs} />
   </div>
   {#each startField.issues() ?? [] as issue (`start-${issue.path}`)}
     <p class="form-error">{issue.message}</p>

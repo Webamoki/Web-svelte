@@ -18,6 +18,7 @@
     onChecked?: () => void;
     onCheckedChange?: (checked: boolean) => void;
     onUnchecked?: () => void;
+    required?: boolean;
   }
 
   let {
@@ -32,6 +33,7 @@
     onChecked,
     onCheckedChange,
     onUnchecked,
+    required,
     ...rest
   }: Props = $props();
 
@@ -54,6 +56,7 @@
         else onUnchecked?.();
       }}
       onIndeterminateChange={(v) => (indeterminate = v === true)}
+      {required}
       {...rest}
     >
       {#snippet children({ checked, indeterminate })}

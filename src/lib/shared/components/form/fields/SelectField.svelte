@@ -13,6 +13,7 @@
       readonly value: string;
     };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
+    set(input: unknown): unknown;
   };
 
   interface Props {
@@ -55,12 +56,12 @@
   );
   const valueToItem = $derived(new Map(items.map((item) => [String(getValue(item)), item])));
 
-  let selectedValue = $derived(attrs.value);
+  const selectedValue = $derived(attrs.value);
 
   function handleChange(e: Event) {
     const key = (e.currentTarget as HTMLSelectElement).value;
     const newValue = keyToValue.get(key) ?? '';
-    selectedValue = newValue;
+    field.set(newValue);
     const item = valueToItem.get(newValue);
     onchange?.(item === undefined ? undefined : getValue(item));
   }

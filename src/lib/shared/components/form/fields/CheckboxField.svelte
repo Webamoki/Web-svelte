@@ -32,8 +32,6 @@
   let { children, description, disabled, form, name, required }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
-
-  let checked = $derived(attrs.checked);
 </script>
 
 <div class="form-checkbox-wrapper">
@@ -43,9 +41,9 @@
       name={attrs.name}
       class="form-checkbox"
       aria-invalid={attrs['aria-invalid']}
-      {checked}
+      checked={attrs.checked}
       {disabled}
-      onCheckedChange={(v) => (checked = v === true)}
+      onCheckedChange={(v) => field.set(v === true)}
       {required}
     >
       {#snippet children({ checked })}

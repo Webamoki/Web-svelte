@@ -15,6 +15,7 @@
       value?: string;
     };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
+    set(input: unknown): unknown;
   };
 
   interface Props {
@@ -29,8 +30,6 @@
   let { children, description, disabled, form, name, required }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
-
-  let checked = $derived(attrs.checked);
 </script>
 
 <div class="form-switch-wrapper">
@@ -45,9 +44,9 @@
       name={attrs.name}
       class="form-switch"
       aria-invalid={attrs['aria-invalid']}
-      {checked}
+      checked={attrs.checked}
       {disabled}
-      onCheckedChange={(v) => (checked = v === true)}
+      onCheckedChange={(v) => field.set(v === true)}
       {required}
     >
       <Switch.Thumb class="form-switch-thumb" />

@@ -3,6 +3,7 @@
   import type { Snippet } from 'svelte';
 
   import Upload from '@lucide/svelte/icons/upload';
+  import FieldLabel from '../FieldLabel.svelte';
 
   type LooseField = {
     as(type: string): { [k: string]: unknown; name: string };
@@ -17,6 +18,7 @@
     multiple?: boolean;
     name: keyof Input & string;
     onSelect?: (files: File[]) => void;
+    required?: boolean;
     variant?: 'button' | 'dropzone';
   }
 
@@ -28,6 +30,7 @@
     multiple = false,
     name,
     onSelect,
+    required,
     variant = 'button'
   }: Props = $props();
 
@@ -80,7 +83,7 @@
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
 
   <input

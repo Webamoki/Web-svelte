@@ -3,6 +3,7 @@
   import type { Component, Snippet } from 'svelte';
 
   import TextArea from '$lib/shared/components/ui/TextArea.svelte';
+  import FieldLabel from '../FieldLabel.svelte';
 
   type LooseField = {
     as(type: string): { [k: string]: unknown; name: string };
@@ -17,6 +18,7 @@
     icon?: Component;
     name: keyof Input & string;
     placeholder?: string;
+    required?: boolean;
     resize?: boolean;
   }
 
@@ -28,24 +30,31 @@
     icon,
     name,
     placeholder,
+    required,
     resize = false
   }: Props = $props();
 
   // svelte-ignore state_referenced_locally
   const field = (form.fields as Record<string, LooseField>)[name];
   const attrs = field.as('text');
+
+  const displayPlaceholder = $derived(
+    required === false && !children && placeholder != null
+      ? `(Optional) ${placeholder}`
+      : placeholder
+  );
 </script>
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <TextArea
     id={attrs.name}
     class={className}
     {defaultHeight}
     {icon}
-    {placeholder}
+    placeholder={displayPlaceholder}
     {resize}
     {...attrs}
   />

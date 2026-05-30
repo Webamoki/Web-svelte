@@ -3,6 +3,7 @@
   import type { Snippet } from 'svelte';
 
   import { Switch } from 'bits-ui';
+  import FieldLabel from '../FieldLabel.svelte';
 
   type LooseField = {
     as(type: 'checkbox'): {
@@ -21,9 +22,10 @@
     disabled?: boolean;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
+    required?: boolean;
   }
 
-  let { children, description, disabled, form, name }: Props = $props();
+  let { children, description, disabled, form, name, required }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
 
@@ -33,9 +35,9 @@
 <div class="form-switch-wrapper">
   <div class="form-switch-row">
     {#if children}
-      <label class="form-switch-label" for={attrs.name}>
+      <FieldLabel class="form-switch-label" for={attrs.name} {required}>
         {@render children()}
-      </label>
+      </FieldLabel>
     {/if}
     <Switch.Root
       id={attrs.name}

@@ -12,6 +12,11 @@
   margin-bottom: 2px;
 }
 
+.form-required-star {
+  color: var(--err, #9b3838);
+  margin-left: 2px;
+}
+
 .form-input {
   display: block;
   width: 100%;

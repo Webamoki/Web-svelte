@@ -2,6 +2,8 @@
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: string): { [k: string]: unknown; name: string };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
@@ -11,10 +13,11 @@
     children?: Snippet;
     endName: keyof Input & string;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    required?: boolean;
     startName: keyof Input & string;
   }
 
-  let { children, endName, form, startName }: Props = $props();
+  let { children, endName, form, required, startName }: Props = $props();
 
   const startField = $derived((form.fields as Record<string, LooseField>)[startName]);
   const endField = $derived((form.fields as Record<string, LooseField>)[endName]);
@@ -24,7 +27,7 @@
 
 <div class="form-field">
   {#if children}
-    <label class="form-label">{@render children()}</label>
+    <FieldLabel for={startAttrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <div class="form-date-range">
     <input id={startAttrs.name} class="form-date-range-input" type="date" {...startAttrs} />

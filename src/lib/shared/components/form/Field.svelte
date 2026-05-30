@@ -30,7 +30,7 @@
     <label class="form-label" for={attrs.name}>{@render children()}</label>
   {/if}
   <UiInput id={attrs.name} {icon} {placeholder} {...attrs} />
-  {#each field.issues() ?? [] as issue (`${issue.path}`)}
+  {#each field.issues() ?? [] as issue, i (i)}
     <p class="form-error">{issue.message}</p>
   {/each}
 </div>

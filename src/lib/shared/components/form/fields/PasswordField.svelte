@@ -15,4 +15,4 @@
   let { children, form, name, placeholder, required }: Props = $props();
 </script>
 
-<Field {name} {form} {placeholder} {required} type="password">{@render children?.()}</Field>
+<Field {name} {children} {form} {placeholder} {required} type="password" />

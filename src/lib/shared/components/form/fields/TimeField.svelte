@@ -14,4 +14,4 @@
   let { children, form, name, required }: Props = $props();
 </script>
 
-<Field {name} {form} {required} type="time">{@render children?.()}</Field>
+<Field {name} {children} {form} {required} type="time" />

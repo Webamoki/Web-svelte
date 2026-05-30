@@ -16,4 +16,4 @@
   let { children, form, icon, name, placeholder, required }: Props = $props();
 </script>
 
-<Field {name} {form} {icon} {placeholder} {required} type="number">{@render children?.()}</Field>
+<Field {name} {children} {form} {icon} {placeholder} {required} type="number" />

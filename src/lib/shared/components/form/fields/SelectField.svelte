@@ -87,6 +87,7 @@
         .join(' ')}
       aria-invalid={attrs['aria-invalid']}
       onchange={handleChange}
+      {required}
       value={selectedValue}
     >
       <option disabled={!nullable} value="">{placeholder}</option>

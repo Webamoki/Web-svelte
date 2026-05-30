@@ -94,6 +94,7 @@
     {accept}
     {disabled}
     {multiple}
+    {required}
     {...attrs}
     onchange={sync}
   />

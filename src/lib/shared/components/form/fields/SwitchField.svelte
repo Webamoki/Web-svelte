@@ -48,6 +48,7 @@
       {checked}
       {disabled}
       onCheckedChange={(v) => (checked = v === true)}
+      {required}
     >
       <Switch.Thumb class="form-switch-thumb" />
     </Switch.Root>

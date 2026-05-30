@@ -46,6 +46,7 @@
       {checked}
       {disabled}
       onCheckedChange={(v) => (checked = v === true)}
+      {required}
     >
       {#snippet children({ checked })}
         {#if checked}

@@ -56,6 +56,7 @@
     {defaultHeight}
     {icon}
     placeholder={displayPlaceholder}
+    {required}
     {resize}
     {...attrs}
   />

@@ -38,7 +38,7 @@
   {#if children}
     <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
-  <UiInput id={attrs.name} {icon} placeholder={displayPlaceholder} {...attrs} />
+  <UiInput id={attrs.name} {icon} placeholder={displayPlaceholder} {required} {...attrs} />
   {#each field.issues() ?? [] as issue, i (i)}
     <p class="form-error">{issue.message}</p>
   {/each}

@@ -4,6 +4,8 @@
 
   import ColorPicker from 'svelte-awesome-color-picker';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'text'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -19,9 +21,10 @@
     children?: Snippet;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
+    required?: boolean;
   }
 
-  let { children, form, name }: Props = $props();
+  let { children, form, name, required }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('text'));
@@ -46,7 +49,7 @@
 </script>
 
 {#if children}
-  <label class="form-label" for={attrs.name}>{@render children()}</label>
+  <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
 {/if}
 <ColorPicker isAlpha={false} position="responsive" bind:hex />
 {#each field.issues() ?? [] as issue (`${issue.path}`)}

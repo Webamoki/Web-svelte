@@ -4,6 +4,8 @@
 
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'select'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -26,6 +28,7 @@
     nullable?: boolean;
     onchange?: (value: undefined | V) => void;
     placeholder: string;
+    required?: boolean;
   }
 
   let {
@@ -40,7 +43,8 @@
     name,
     nullable = false,
     onchange,
-    placeholder
+    placeholder,
+    required
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
@@ -64,7 +68,7 @@
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <div class={['form-select-wrapper', className].filter(Boolean).join(' ')}>
     {#if Icon}

@@ -5,6 +5,8 @@
   import MinusIcon from '@lucide/svelte/icons/minus';
   import { PinInput } from 'bits-ui';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'text'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -22,6 +24,7 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     maxlength?: number;
     name: keyof Input & string;
+    required?: boolean;
   }
 
   let {
@@ -31,7 +34,8 @@
     disabled,
     form,
     maxlength = 6,
-    name
+    name,
+    required
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
@@ -42,7 +46,7 @@
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <input name={attrs.name} type="hidden" value={pinValue} />
   <PinInput.Root

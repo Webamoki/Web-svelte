@@ -9,9 +9,10 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
     placeholder?: string;
+    required?: boolean;
   }
 
-  let { children, form, name, placeholder }: Props = $props();
+  let { children, form, name, placeholder, required }: Props = $props();
 </script>
 
-<Field {name} {form} {placeholder} type="password">{@render children?.()}</Field>
+<Field {name} {form} {placeholder} {required} type="password">{@render children?.()}</Field>

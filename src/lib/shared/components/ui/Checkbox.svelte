@@ -1,3 +1,7 @@
+<script module>
+  let _counter = 0;
+</script>
+
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
@@ -37,7 +41,8 @@
     ...rest
   }: Props = $props();
 
-  const inputId = $derived(id ?? name);
+  const _uid = `cb-${++_counter}`;
+  const inputId = $derived(id ?? name ?? _uid);
 </script>
 
 <div class="form-checkbox-wrapper">

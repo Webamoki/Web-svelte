@@ -5,6 +5,8 @@
   import CheckIcon from '@lucide/svelte/icons/check';
   import { Checkbox } from 'bits-ui';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'checkbox'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -24,13 +26,13 @@
     disabled?: boolean;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
+    optional?: boolean;
   }
 
-  let { children, description, disabled, form, name }: Props = $props();
+  let { children, description, disabled, form, name, optional }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
-
-  let checked = $derived(attrs.checked);
+  const required = $derived(!optional);
 </script>
 
 <div class="form-checkbox-wrapper">
@@ -40,9 +42,10 @@
       name={attrs.name}
       class="form-checkbox"
       aria-invalid={attrs['aria-invalid']}
-      {checked}
+      checked={attrs.checked}
       {disabled}
-      onCheckedChange={(v) => (checked = v === true)}
+      onCheckedChange={(v) => field.set(v === true)}
+      {required}
     >
       {#snippet children({ checked })}
         {#if checked}
@@ -51,9 +54,9 @@
       {/snippet}
     </Checkbox.Root>
     {#if children}
-      <label class="form-checkbox-label" for={attrs.name}>
+      <FieldLabel class="form-checkbox-label" for={attrs.name} {required}>
         {@render children()}
-      </label>
+      </FieldLabel>
     {/if}
   </div>
   {#if description}

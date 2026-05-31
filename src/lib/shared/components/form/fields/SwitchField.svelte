@@ -4,6 +4,8 @@
 
   import { Switch } from 'bits-ui';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'checkbox'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -13,6 +15,7 @@
       value?: string;
     };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
+    set(input: unknown): unknown;
   };
 
   interface Props {
@@ -21,30 +24,31 @@
     disabled?: boolean;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
+    optional?: boolean;
   }
 
-  let { children, description, disabled, form, name }: Props = $props();
+  let { children, description, disabled, form, name, optional }: Props = $props();
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('checkbox'));
-
-  let checked = $derived(attrs.checked);
+  const required = $derived(!optional);
 </script>
 
 <div class="form-switch-wrapper">
   <div class="form-switch-row">
     {#if children}
-      <label class="form-switch-label" for={attrs.name}>
+      <FieldLabel class="form-switch-label" for={attrs.name} {required}>
         {@render children()}
-      </label>
+      </FieldLabel>
     {/if}
     <Switch.Root
       id={attrs.name}
       name={attrs.name}
       class="form-switch"
       aria-invalid={attrs['aria-invalid']}
-      {checked}
+      checked={attrs.checked}
       {disabled}
-      onCheckedChange={(v) => (checked = v === true)}
+      onCheckedChange={(v) => field.set(v === true)}
+      {required}
     >
       <Switch.Thumb class="form-switch-thumb" />
     </Switch.Root>

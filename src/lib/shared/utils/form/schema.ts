@@ -2,14 +2,21 @@ import { parseDate, parseTime } from '@internationalized/date';
 import z from 'zod';
 
 /**
- * Wraps any string-input schema so an empty input becomes `null`.
+ * Wraps any string-or-number schema so an empty input becomes `null`.
  * Usage: `nullable(formText.min(3))`, `nullable(formNumber)`, `nullable(formEmail)`.
+ *
+ * Handles `undefined` at runtime without exposing it in the type: `convert_formdata` emits
+ * `undefined` for empty `n:`-prefixed (number) fields, which we treat as empty → null.
  */
-export function nullable<T extends z.ZodType<unknown, string>>(schema: T) {
+export function nullable<T extends z.ZodType<unknown, number | string>>(schema: T) {
   return z
-    .string()
-    .transform((v) => (v.trim() === '' ? null : v))
-    .pipe(schema.nullable()) as z.ZodType<null | z.infer<T>, string>;
+    .union([z.string(), z.number()])
+    .transform((v): null | number | string => {
+      // v may be undefined at runtime (empty n:-prefixed field) — treat as empty
+      if (v == null || (typeof v === 'string' && v.trim() === '')) return null;
+      return v;
+    })
+    .pipe(schema.nullable()) as z.ZodType<null | z.infer<T>, number | string>;
 }
 
 /** Non-empty text field (trimmed, min 1 character) */
@@ -25,14 +32,28 @@ export const formBoolean = z
   .transform((v) => v ?? false)
   .pipe(z.boolean());
 
-/** Number field — parses string input to any finite number (unbounded) */
-export const formInt = z.string().transform((text, ctx) => {
-  const n = Number(text);
-  if (text.trim() === '' || !Number.isFinite(n)) {
+/**
+ * Number field — parses string or number input to any finite number (unbounded).
+ * Accepts numbers directly because `convert_formdata` parses `n:`-prefixed fields
+ * via `parseFloat`, so preflight validation receives an already-parsed number.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const formInt: z.ZodType<number, number | string> = z.any().transform((input: any, ctx) => {
+  if (input === undefined || (typeof input === 'string' && input.trim() === '')) {
     ctx.issues.push({
       code: 'invalid_type',
       expected: 'number',
-      input: text,
+      input,
+      message: 'number is required'
+    });
+    return z.NEVER;
+  }
+  const n = typeof input === 'number' ? input : Number(input);
+  if (!Number.isFinite(n)) {
+    ctx.issues.push({
+      code: 'invalid_type',
+      expected: 'number',
+      input,
       message: 'invalid number'
     });
     return z.NEVER;

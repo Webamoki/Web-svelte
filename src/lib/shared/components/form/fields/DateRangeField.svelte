@@ -2,6 +2,8 @@
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: string): { [k: string]: unknown; name: string };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
@@ -11,11 +13,13 @@
     children?: Snippet;
     endName: keyof Input & string;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    optional?: boolean;
     startName: keyof Input & string;
   }
 
-  let { children, endName, form, startName }: Props = $props();
+  let { children, endName, form, optional, startName }: Props = $props();
 
+  const required = $derived(!optional);
   const startField = $derived((form.fields as Record<string, LooseField>)[startName]);
   const endField = $derived((form.fields as Record<string, LooseField>)[endName]);
   const startAttrs = $derived(startField.as('date'));
@@ -24,12 +28,18 @@
 
 <div class="form-field">
   {#if children}
-    <label class="form-label">{@render children()}</label>
+    <FieldLabel for={startAttrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <div class="form-date-range">
-    <input id={startAttrs.name} class="form-date-range-input" type="date" {...startAttrs} />
+    <input
+      id={startAttrs.name}
+      class="form-date-range-input"
+      {required}
+      type="date"
+      {...startAttrs}
+    />
     <span class="form-date-range-sep" aria-hidden="true">–</span>
-    <input id={endAttrs.name} class="form-date-range-input" type="date" {...endAttrs} />
+    <input id={endAttrs.name} class="form-date-range-input" {required} type="date" {...endAttrs} />
   </div>
   {#each startField.issues() ?? [] as issue (`start-${issue.path}`)}
     <p class="form-error">{issue.message}</p>

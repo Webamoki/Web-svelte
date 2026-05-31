@@ -4,6 +4,8 @@
 
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: 'select'): {
       'aria-invalid': 'false' | 'true' | boolean | undefined;
@@ -11,6 +13,7 @@
       readonly value: string;
     };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
+    set(input: unknown): unknown;
   };
 
   interface Props {
@@ -25,6 +28,7 @@
     name: keyof Input & string;
     nullable?: boolean;
     onchange?: (value: undefined | V) => void;
+    optional?: boolean;
     placeholder: string;
   }
 
@@ -40,31 +44,40 @@
     name,
     nullable = false,
     onchange,
+    optional,
     placeholder
   }: Props = $props();
 
   const field = $derived((form.fields as Record<string, LooseField>)[name]);
   const attrs = $derived(field.as('select'));
+  const required = $derived(!optional);
+
+  // With a label the asterisk carries the required/optional cue; without one the
+  // placeholder option does, so prefix it with (Required) / (Optional).
+  const displayPlaceholder = $derived(
+    children ? placeholder : `(${required ? 'Required' : 'Optional'}) ${placeholder}`
+  );
 
   const keyToValue = $derived(
     new Map(items.map((item) => [String(getKey(item)), String(getValue(item))]))
   );
   const valueToItem = $derived(new Map(items.map((item) => [String(getValue(item)), item])));
 
-  let selectedValue = $derived(attrs.value);
+  const selectedValue = $derived(attrs.value);
 
   function handleChange(e: Event) {
     const key = (e.currentTarget as HTMLSelectElement).value;
     const newValue = keyToValue.get(key) ?? '';
-    selectedValue = newValue;
     const item = valueToItem.get(newValue);
-    onchange?.(item === undefined ? undefined : getValue(item));
+    const typedValue = item === undefined ? undefined : getValue(item);
+    field.set(typedValue);
+    onchange?.(typedValue);
   }
 </script>
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <div class={['form-select-wrapper', className].filter(Boolean).join(' ')}>
     {#if Icon}
@@ -83,9 +96,10 @@
         .join(' ')}
       aria-invalid={attrs['aria-invalid']}
       onchange={handleChange}
+      {required}
       value={selectedValue}
     >
-      <option disabled={!nullable} value="">{placeholder}</option>
+      <option disabled={!nullable} value="">{displayPlaceholder}</option>
       {#each items as item (getKey(item))}
         <option value={String(getKey(item))}>{getLabel(item)}</option>
       {/each}

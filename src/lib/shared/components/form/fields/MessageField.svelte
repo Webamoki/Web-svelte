@@ -4,6 +4,8 @@
 
   import TextArea from '$lib/shared/components/ui/TextArea.svelte';
 
+  import FieldLabel from '../FieldLabel.svelte';
+
   type LooseField = {
     as(type: string): { [k: string]: unknown; name: string };
     issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
@@ -16,6 +18,7 @@
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
     name: keyof Input & string;
+    optional?: boolean;
     placeholder?: string;
     resize?: boolean;
   }
@@ -27,6 +30,7 @@
     form,
     icon,
     name,
+    optional,
     placeholder,
     resize = false
   }: Props = $props();
@@ -34,18 +38,29 @@
   // svelte-ignore state_referenced_locally
   const field = (form.fields as Record<string, LooseField>)[name];
   const attrs = field.as('text');
+
+  const required = $derived(!optional);
+
+  // With a label the asterisk carries the required/optional cue; without one the
+  // placeholder does, so prefix it with (Required) / (Optional).
+  const displayPlaceholder = $derived(
+    children
+      ? placeholder
+      : `(${required ? 'Required' : 'Optional'})${placeholder != null ? ` ${placeholder}` : ''}`
+  );
 </script>
 
 <div class="form-field">
   {#if children}
-    <label class="form-label" for={attrs.name}>{@render children()}</label>
+    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
   <TextArea
     id={attrs.name}
     class={className}
     {defaultHeight}
     {icon}
-    {placeholder}
+    placeholder={displayPlaceholder}
+    {required}
     {resize}
     {...attrs}
   />

@@ -8,9 +8,10 @@
     children?: Snippet;
     form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
+    optional?: boolean;
   }
 
-  let { children, form, name }: Props = $props();
+  let { children, form, name, optional }: Props = $props();
 </script>
 
-<Field {name} {form} type="date">{@render children?.()}</Field>
+<Field {name} {children} {form} {optional} type="date" />

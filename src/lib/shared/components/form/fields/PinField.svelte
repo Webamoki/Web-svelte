@@ -1,30 +1,27 @@
 <script generics="Input extends RemoteFormInput" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
+  import type { ZodType } from 'zod/v4';
 
   import MinusIcon from '@lucide/svelte/icons/minus';
   import { PinInput } from 'bits-ui';
 
+  import { createFormView, createLocalTextView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
-
-  type LooseField = {
-    as(type: 'text'): {
-      'aria-invalid': 'false' | 'true' | boolean | undefined;
-      name: string;
-      readonly value: number | string;
-    };
-    issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
-  };
 
   interface Props {
     children?: Snippet;
     class?: string;
     description?: string;
     disabled?: boolean;
-    form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     maxlength?: number;
     name: keyof Input & string;
+    onChange?: (value: string) => void;
+    onInput?: (value: string) => void;
     optional?: boolean;
+    schema?: ZodType;
+    value?: string;
   }
 
   let {
@@ -35,11 +32,27 @@
     form,
     maxlength = 6,
     name,
-    optional
+    onChange,
+    onInput,
+    optional,
+    schema,
+    value = $bindable('')
   }: Props = $props();
 
-  const field = $derived((form.fields as Record<string, LooseField>)[name]);
-  const attrs = $derived(field.as('text'));
+  // `as('text')` is reached only via the `form` branch; standalone uses local state.
+  // svelte-ignore state_referenced_locally
+  const view: FieldView = form
+    ? createFormView(form, name, 'text')
+    : createLocalTextView<string>({
+        get: () => value,
+        name,
+        onChange,
+        onInput,
+        schema,
+        write: (v) => (value = v)
+      });
+
+  const attrs = $derived(view.attrs);
   const required = $derived(!optional);
 
   let pinValue = $derived(String(attrs.value ?? ''));
@@ -54,6 +67,7 @@
     class={['form-pin', className].filter(Boolean).join(' ')}
     {disabled}
     {maxlength}
+    onValueChange={(v) => view.set(v)}
     textalign="center"
     bind:value={pinValue}
   >
@@ -91,7 +105,7 @@
   {#if description}
     <p class="form-description">{description}</p>
   {/if}
-  {#each field.issues() ?? [] as issue (`${issue.path}`)}
+  {#each view.issues() as issue (`${issue.path}`)}
     <p class="form-error">{issue.message}</p>
   {/each}
 </div>

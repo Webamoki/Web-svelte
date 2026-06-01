@@ -1,31 +1,59 @@
-<script generics="Input extends RemoteFormInput" lang="ts">
+<script generics="Input extends RemoteFormInput, T = string" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Component, Snippet } from 'svelte';
+  import type { ZodType } from 'zod/v4';
 
   import UiInput from '$lib/shared/components/ui/Input.svelte';
 
+  import { createFormView, createLocalTextView, type FieldView } from './field-view.svelte.js';
   import FieldLabel from './FieldLabel.svelte';
-
-  type LooseField = {
-    as(type: string): { [k: string]: unknown; name: string };
-    issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
-  };
 
   interface Props {
     children?: Snippet;
-    form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    /** When omitted the field is standalone — controlled via `bind:value`. */
+    form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
     name: keyof Input & string;
+    /** Standalone only — fired on the native `change` event. */
+    onChange?: (value: T) => void;
+    /** Standalone only — fired on every keystroke. */
+    onInput?: (value: T) => void;
     optional?: boolean;
     placeholder?: string;
+    /** Standalone only — optional per-field validation. */
+    schema?: ZodType;
     type: string;
+    /** Standalone only — bound value when no `form` is provided. */
+    value?: T;
   }
 
-  let { children, form, icon, name, optional, placeholder, type }: Props = $props();
+  let {
+    children,
+    form,
+    icon,
+    name,
+    onChange,
+    onInput,
+    optional,
+    placeholder,
+    schema,
+    type,
+    value = $bindable()
+  }: Props = $props();
+
+  // `form`, `name` and `type` are fixed for a field instance; reading them once is intended.
+  // `as()` is reached only via the `form` branch, so the standalone path never calls it.
   // svelte-ignore state_referenced_locally
-  const field = (form.fields as Record<string, LooseField>)[name];
-  // svelte-ignore state_referenced_locally
-  const attrs = field.as(type);
+  const view: FieldView = form
+    ? createFormView(form, name, type)
+    : createLocalTextView<T>({
+        get: () => value as T,
+        name,
+        onChange,
+        onInput,
+        schema,
+        write: (v) => (value = v)
+      });
 
   const required = $derived(!optional);
 
@@ -40,10 +68,17 @@
 
 <div class="form-field">
   {#if children}
-    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
+    <FieldLabel for={view.attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
-  <UiInput id={attrs.name} {icon} placeholder={displayPlaceholder} {required} {...attrs} />
-  {#each field.issues() ?? [] as issue, i (i)}
+  <UiInput
+    id={view.attrs.name}
+    {icon}
+    placeholder={displayPlaceholder}
+    {required}
+    {type}
+    {...view.attrs}
+  />
+  {#each view.issues() as issue, i (i)}
     <p class="form-error">{issue.message}</p>
   {/each}
 </div>

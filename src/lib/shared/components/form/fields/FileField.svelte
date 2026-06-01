@@ -1,25 +1,23 @@
 <script generics="Input extends RemoteFormInput" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Snippet } from 'svelte';
+  import type { ZodType } from 'zod/v4';
 
   import Upload from '@lucide/svelte/icons/upload';
 
+  import { createFormView, createLocalFileView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
-
-  type LooseField = {
-    as(type: string): { [k: string]: unknown; name: string };
-    issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
-  };
 
   interface Props {
     accept?: string;
     children?: Snippet;
     disabled?: boolean;
-    form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     multiple?: boolean;
     name: keyof Input & string;
     onSelect?: (files: File[]) => void;
     optional?: boolean;
+    schema?: ZodType;
     variant?: 'button' | 'dropzone';
   }
 
@@ -32,18 +30,25 @@
     name,
     onSelect,
     optional,
+    schema,
     variant = 'button'
   }: Props = $props();
-
-  const field = $derived((form.fields as Record<string, LooseField>)[name]);
-  const attrs = $derived(field.as('file'));
-  // required drives only the label asterisk here — the native `required` attribute is
-  // intentionally omitted from the file input (it blocks edit-form submits; see Zod validation).
-  const required = $derived(!optional);
 
   let input = $state<HTMLInputElement>();
   let files = $state<File[]>([]);
   let dragging = $state(false);
+
+  // `as('file')` is reached only via the `form` branch; standalone validates the
+  // selected files against the optional schema.
+  // svelte-ignore state_referenced_locally
+  const view: FieldView = form
+    ? createFormView(form, name, 'file')
+    : createLocalFileView({ get: () => files, name, schema });
+
+  const attrs = $derived(view.attrs);
+  // required drives only the label asterisk here — the native `required` attribute is
+  // intentionally omitted from the file input (it blocks edit-form submits; see Zod validation).
+  const required = $derived(!optional);
 
   const label = $derived(
     files.length === 0
@@ -132,7 +137,7 @@
     </div>
   {/if}
 
-  {#each field.issues() ?? [] as issue (`${issue.path}`)}
+  {#each view.issues() as issue (`${issue.path}`)}
     <p class="form-error">{issue.message}</p>
   {/each}
 </div>

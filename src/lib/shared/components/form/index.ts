@@ -10,6 +10,7 @@ export { default as NumberField } from './fields/NumberField.svelte';
 export { default as PasswordField } from './fields/PasswordField.svelte';
 export { default as PinField } from './fields/PinField.svelte';
 export { default as SelectField } from './fields/SelectField.svelte';
+export { default as SliderField } from './fields/SliderField.svelte';
 export { default as SwitchField } from './fields/SwitchField.svelte';
 export { default as TextField } from './fields/TextField.svelte';
 export { default as TimeField } from './fields/TimeField.svelte';

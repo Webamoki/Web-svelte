@@ -17,6 +17,7 @@
     PasswordField,
     PinField,
     SelectField,
+    SliderField,
     SwitchField,
     TextField,
     TimeField
@@ -24,6 +25,7 @@
   import { Sidebar } from '$lib/shared/components/ui/index.js';
   import { Hash, MessageSquare, Tag, User } from '@lucide/svelte';
   import { identity } from 'ramda';
+  import { z } from 'zod/v4';
 
   import {
     checkboxForm,
@@ -44,6 +46,7 @@
     selectForm,
     selectNullableForm,
     showcaseForm,
+    sliderForm,
     textForm,
     textNullableForm,
     timeForm
@@ -68,6 +71,7 @@
     SelectNullableSchema,
     SelectSchema,
     ShowcaseSchema,
+    SliderSchema,
     TextNullableSchema,
     TextSchema,
     TimeSchema
@@ -75,7 +79,39 @@
 
   let hiddenToken = $state<string | undefined>('abc123');
   let hiddenCount = $state<string | undefined>('1');
+
+  // Standalone (no form) demo state. Fields are controlled via bind:value /
+  // bind:checked, validate against an optional per-field Zod schema, and fire
+  // onInput / onChange callbacks.
+  let saText = $state('');
+  let saEmail = $state('');
+  let saPassword = $state('');
+  let saNumber = $state('');
+  let saDate = $state('');
+  let saTime = $state('');
+  let saChecked = $state(false);
+  let saSwitch = $state(false);
+  let saColor = $state('');
+  let saMessage = $state('');
+  let saPin = $state('');
+  let saSelect = $state<string | undefined>(undefined);
+  let saStartDate = $state('');
+  let saEndDate = $state('');
+  let saFiles = $state<File[]>([]);
+  let saSlider = $state(25);
+  let saSliderRange = $state<number[]>([20, 80]);
+
+  const StandaloneText = z.string().min(3, 'Minimum 3 characters');
+  const StandaloneEmail = z.email('Invalid email');
+  const StandaloneMessage = z.string().min(10, 'Minimum 10 characters');
+  const StandaloneFiles = z.array(z.instanceof(File)).min(1, 'Select at least one file');
 </script>
+
+{#snippet standaloneLabel(note?: string)}
+  <p class="mt-6 mb-3 border-t border-gray-200 pt-4 text-xs font-semibold text-gray-500">
+    Standalone (no form){note ? ` — ${note}` : ''}
+  </p>
+{/snippet}
 
 <Sidebar.Provider>
   <Sidebar.Root>
@@ -87,7 +123,7 @@
         <Sidebar.GroupLabel>New (Remote Forms)</Sidebar.GroupLabel>
         <Sidebar.GroupContent>
           <Sidebar.Menu>
-            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['filefield', 'FileField'], ['hidden-inputs', 'Hidden inputs'], ['form', 'Form']] as [anchor, label] (anchor)}
+            {#each [['textfield', 'TextField'], ['emailfield', 'EmailField'], ['passwordfield', 'PasswordField'], ['numberfield', 'NumberField'], ['datefield', 'DateField'], ['daterangefield', 'DateRangeField'], ['timefield', 'TimeField'], ['checkboxfield', 'CheckboxField'], ['hexcolorfield', 'HexColorField'], ['messagefield', 'MessageField'], ['pinfield', 'PinField'], ['selectfield', 'SelectField'], ['sliderfield', 'SliderField'], ['filefield', 'FileField'], ['hidden-inputs', 'Hidden inputs'], ['form', 'Form']] as [anchor, label] (anchor)}
               <Sidebar.MenuItem>
                 <Sidebar.MenuButton>
                   {#snippet child({ props })}
@@ -156,6 +192,17 @@
             <TextField name="text" form={textNullableForm} optional placeholder="no label" />
             <Button form={textNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value + schema + onInput')}
+          <TextField
+            name="text"
+            onInput={(v) => (saText = v)}
+            placeholder="min 3 chars"
+            schema={StandaloneText}
+            bind:value={saText}
+          >
+            Text
+          </TextField>
+          <p class="mt-1 text-xs text-gray-600">value: {saText || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<TextField name="text" form={remoteForm}>Text</TextField>
@@ -182,6 +229,9 @@
             </EmailField>
             <Button form={emailNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value + schema')}
+          <EmailField name="email" schema={StandaloneEmail} bind:value={saEmail}>Email</EmailField>
+          <p class="mt-1 text-xs text-gray-600">value: {saEmail || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<EmailField name="email" form={remoteForm}>Email</EmailField>
@@ -197,6 +247,9 @@
             >
             <Button form={passwordForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <PasswordField name="password" bind:value={saPassword}>Password</PasswordField>
+          <p class="mt-1 text-xs text-gray-600">length: {saPassword.length}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<PasswordField name="password" form={remoteForm}>Password</PasswordField>`}
@@ -234,6 +287,9 @@
             </NumberField>
             <Button form={numberNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <NumberField name="age" placeholder="any number" bind:value={saNumber}>Age</NumberField>
+          <p class="mt-1 text-xs text-gray-600">value: {saNumber || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<NumberField name="age" form={remoteForm}>Age</NumberField>
@@ -247,6 +303,9 @@
             <DateField name="date" form={dateForm}>Date (2026 or later)</DateField>
             <Button form={dateForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <DateField name="date" bind:value={saDate}>Date</DateField>
+          <p class="mt-1 text-xs text-gray-600">value: {saDate || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<DateField name="date" form={remoteForm}>Date</DateField>`}
@@ -261,6 +320,18 @@
             </DateRangeField>
             <Button form={dateRangeForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:startValue / bind:endValue')}
+          <DateRangeField
+            endName="endDate"
+            startName="startDate"
+            bind:endValue={saEndDate}
+            bind:startValue={saStartDate}
+          >
+            Date range
+          </DateRangeField>
+          <p class="mt-1 text-xs text-gray-600">
+            {saStartDate || '(empty)'} → {saEndDate || '(empty)'}
+          </p>
         </Preview>
         <CodeBlock slot="code">
           {`<DateRangeField startName="startDate" endName="endDate" form={remoteForm}>
@@ -275,6 +346,9 @@
             <TimeField name="time" form={timeForm}>Time (afternoon, 12:00+)</TimeField>
             <Button form={timeForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <TimeField name="time" bind:value={saTime}>Time</TimeField>
+          <p class="mt-1 text-xs text-gray-600">value: {saTime || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<TimeField name="time" form={remoteForm}>Time</TimeField>`}
@@ -355,10 +429,43 @@
             </SwitchField>
             <Button form={checkboxForm.for('switch-disabled')}>Submit</Button>
           </Form>
+          <Form
+            class="mt-4 flex flex-col gap-4"
+            form={checkboxForm.for('toggle')}
+            schema={CheckboxSchema}
+          >
+            <SwitchField name="agreed" form={checkboxForm.for('toggle')} variant="toggle">
+              As an ON/OFF toggle
+            </SwitchField>
+            <Button form={checkboxForm.for('toggle')}>Submit</Button>
+          </Form>
+          {@render standaloneLabel('bind:checked + onChange')}
+          <CheckboxField name="agreed" onChange={(v) => (saChecked = v)} bind:checked={saChecked}>
+            I agree
+          </CheckboxField>
+          <SwitchField name="enabled" bind:checked={saSwitch}>As a switch</SwitchField>
+          <SwitchField name="enabled" variant="toggle" bind:checked={saSwitch}>
+            As an ON/OFF toggle
+          </SwitchField>
+          <SwitchField
+            name="power"
+            offLabel="NO"
+            onLabel="YES"
+            variant="toggle"
+            bind:checked={saSwitch}
+          >
+            Custom labels
+          </SwitchField>
+          <p class="mt-1 text-xs text-gray-600">checkbox: {saChecked} · switch: {saSwitch}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<CheckboxField name="agreed" form={remoteForm}>I agree to the terms</CheckboxField>
-<CheckboxField name="agreed" form={remoteForm} optional>Optional</CheckboxField>`}
+<CheckboxField name="agreed" form={remoteForm} optional>Optional</CheckboxField>
+
+<!-- switch (default) vs ON/OFF toggle variant -->
+<SwitchField name="enabled" bind:checked>As a switch</SwitchField>
+<SwitchField name="enabled" variant="toggle" bind:checked>Toggle</SwitchField>
+<SwitchField name="power" variant="toggle" onLabel="YES" offLabel="NO" bind:checked>Custom</SwitchField>`}
         </CodeBlock>
       </Container>
 
@@ -378,6 +485,9 @@
             </HexColorField>
             <Button form={colorNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <HexColorField name="color" bind:value={saColor}>Color</HexColorField>
+          <p class="mt-1 text-xs text-gray-600">value: {saColor || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<HexColorField name="color" form={remoteForm}>Color</HexColorField>
@@ -416,6 +526,11 @@
             </MessageField>
             <Button form={messageForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value + schema')}
+          <MessageField name="message" schema={StandaloneMessage} bind:value={saMessage}>
+            Message
+          </MessageField>
+          <p class="mt-1 text-xs text-gray-600">length: {saMessage.length}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<MessageField
@@ -457,6 +572,9 @@
             <PinField name="pin" form={pinNullableForm} optional>PIN (optional)</PinField>
             <Button form={pinNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value')}
+          <PinField name="pin" bind:value={saPin}>PIN</PinField>
+          <p class="mt-1 text-xs text-gray-600">value: {saPin || '(empty)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<PinField name="pin" form={remoteForm} maxlength={6}>
@@ -520,6 +638,19 @@
             </SelectField>
             <Button form={selectNullableForm}>Submit</Button>
           </Form>
+          {@render standaloneLabel('bind:value + onchange')}
+          <SelectField
+            name="select"
+            getKey={identity}
+            getLabel={(s: string) => s.toUpperCase()}
+            getValue={identity}
+            items={['apple', 'banana', 'cherry']}
+            placeholder="Please select"
+            bind:value={saSelect}
+          >
+            Select
+          </SelectField>
+          <p class="mt-1 text-xs text-gray-600">value: {saSelect ?? '(none)'}</p>
         </Preview>
         <CodeBlock slot="code">
           {`<SelectField
@@ -534,6 +665,42 @@
   Select
 </SelectField>
 <SelectField name="select" form={remoteForm} nullable optional ...>Select</SelectField>`}
+        </CodeBlock>
+      </Container>
+
+      <Container
+        description="A range slider (single or dual-thumb) styled like the switch"
+        title="SliderField"
+      >
+        <Preview slot="preview">
+          <Form class="flex flex-col gap-4" form={sliderForm} schema={SliderSchema}>
+            <SliderField name="level" form={sliderForm}>Level (set 50 or higher)</SliderField>
+            <Button form={sliderForm}>Submit</Button>
+          </Form>
+          {@render standaloneLabel('single — bind:value + onChange')}
+          <SliderField
+            name="level"
+            onChange={(v) => (saSlider = v as number)}
+            bind:value={saSlider}
+          >
+            Volume
+          </SliderField>
+          <p class="mt-1 text-xs text-gray-600">value: {saSlider}</p>
+          {@render standaloneLabel('range — bind:value=[low, high]')}
+          <SliderField name="price" range bind:value={saSliderRange}>Price</SliderField>
+          <p class="mt-1 text-xs text-gray-600">
+            range: {saSliderRange[0]} – {saSliderRange[1]}
+          </p>
+        </Preview>
+        <CodeBlock slot="code">
+          {`<!-- form mode -->
+<SliderField name="level" form={remoteForm}>Level</SliderField>
+
+<!-- standalone single -->
+<SliderField name="volume" bind:value min={0} max={100} step={1}>Volume</SliderField>
+
+<!-- standalone dual-thumb range -->
+<SliderField name="price" range bind:value={[low, high]}>Price</SliderField>`}
         </CodeBlock>
       </Container>
 
@@ -562,6 +729,13 @@
             </FileField>
             <Button form={fileForm.for('dropzone')}>Submit</Button>
           </Form>
+          {@render standaloneLabel('onSelect + schema')}
+          <FileField name="file" multiple onSelect={(f) => (saFiles = f)} schema={StandaloneFiles}>
+            Upload
+          </FileField>
+          <p class="mt-1 text-xs text-gray-600">
+            selected: {saFiles.length === 0 ? '(none)' : saFiles.map((f) => f.name).join(', ')}
+          </p>
         </Preview>
         <CodeBlock slot="code">
           {`<!-- required by default; the asterisk shows but the native input is never marked

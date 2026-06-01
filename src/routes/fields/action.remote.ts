@@ -20,6 +20,7 @@ import {
   SelectNullableSchema,
   SelectSchema,
   ShowcaseSchema,
+  SliderSchema,
   TextNullableSchema,
   TextSchema,
   TimeSchema
@@ -83,6 +84,10 @@ export const dateRangeForm = form(DateRangeSchema, async (data) => {
 
 export const fileForm = form(FileSchema, async (data) =>
   ok({ name: data.file.name, size: data.file.size })
+);
+
+export const sliderForm = form(SliderSchema, async (data) =>
+  data.level >= 50 ? ok(data) : fail(data, 'Set the level to 50 or higher')
 );
 
 export const hiddenForm = form(HiddenSchema, async (data) => ok(data));

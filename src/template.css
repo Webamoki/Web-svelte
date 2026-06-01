@@ -206,6 +206,157 @@
   transform: translateX(18px);
 }
 
+.form-toggle {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 60px;
+  height: 22px;
+  border: none;
+  border-radius: 0;
+  background: var(--bd);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  outline: none;
+}
+
+.form-toggle[data-state='checked'] {
+  background: var(--tx);
+}
+
+.form-toggle[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-toggle:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tx) 15%, transparent);
+}
+
+.form-toggle-text {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.form-toggle-text--on {
+  left: 2px;
+  color: var(--bg);
+  opacity: 0;
+}
+
+.form-toggle-text--off {
+  right: 2px;
+  color: var(--tx);
+  opacity: 1;
+}
+
+.form-toggle[data-state='checked'] .form-toggle-text--on {
+  opacity: 1;
+}
+
+.form-toggle[data-state='checked'] .form-toggle-text--off {
+  opacity: 0;
+}
+
+.form-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 18px;
+  border-radius: 0;
+  background: var(--bg);
+  transition: transform 0.15s ease;
+  pointer-events: none;
+}
+
+.form-toggle[data-state='checked'] .form-toggle-thumb {
+  transform: translateX(28px);
+}
+
+.form-slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.form-slider-label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--tx);
+}
+
+.form-slider-value {
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--tx);
+}
+
+.form-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 20px;
+  touch-action: none;
+  user-select: none;
+}
+
+.form-slider[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-slider-track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: var(--bd);
+}
+
+.form-slider-range {
+  position: absolute;
+  height: 100%;
+  background: var(--tx);
+}
+
+.form-slider-thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  background: var(--tx);
+  cursor: grab;
+  outline: none;
+}
+
+.form-slider-thumb:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tx) 15%, transparent);
+}
+
+.form-slider-thumb:active {
+  cursor: grabbing;
+}
+
 .form-input-wrapper {
   position: relative;
 }

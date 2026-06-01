@@ -1,25 +1,17 @@
 <script generics="Input extends RemoteFormInput, I, V, K extends number | string" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Component, Snippet } from 'svelte';
+  import type { ZodType } from 'zod/v4';
 
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
 
+  import { createFormView, createLocalSelectView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
-
-  type LooseField = {
-    as(type: 'select'): {
-      'aria-invalid': 'false' | 'true' | boolean | undefined;
-      name: string;
-      readonly value: string;
-    };
-    issues(): Array<{ message: string; path: Array<number | string> }> | undefined;
-    set(input: unknown): unknown;
-  };
 
   interface Props {
     children?: Snippet;
     class?: string;
-    form: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
+    form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     getKey: (item: I) => K;
     getLabel: (item: I) => string;
     getValue: (item: I) => V;
@@ -30,6 +22,8 @@
     onchange?: (value: undefined | V) => void;
     optional?: boolean;
     placeholder: string;
+    schema?: ZodType;
+    value?: undefined | V;
   }
 
   let {
@@ -45,11 +39,23 @@
     nullable = false,
     onchange,
     optional,
-    placeholder
+    placeholder,
+    schema,
+    value = $bindable()
   }: Props = $props();
 
-  const field = $derived((form.fields as Record<string, LooseField>)[name]);
-  const attrs = $derived(field.as('select'));
+  // `as('select')` is reached only via the `form` branch; standalone uses local state.
+  // svelte-ignore state_referenced_locally
+  const view: FieldView = form
+    ? createFormView(form, name, 'select')
+    : createLocalSelectView<undefined | V>({
+        get: () => value,
+        name,
+        schema,
+        write: (v) => (value = v)
+      });
+
+  const attrs = $derived(view.attrs);
   const required = $derived(!optional);
 
   // With a label the asterisk carries the required/optional cue; without one the
@@ -62,15 +68,22 @@
     new Map(items.map((item) => [String(getKey(item)), String(getValue(item))]))
   );
   const valueToItem = $derived(new Map(items.map((item) => [String(getValue(item)), item])));
+  const valueToKey = $derived(
+    new Map(items.map((item) => [String(getValue(item)), String(getKey(item))]))
+  );
 
-  const selectedValue = $derived(attrs.value);
+  // Form mode stores the submitted value string; standalone tracks the typed value,
+  // so the selected option is resolved from its key.
+  const selectedValue = $derived(
+    form ? (attrs.value as string) : (valueToKey.get(String(value ?? '')) ?? '')
+  );
 
   function handleChange(e: Event) {
     const key = (e.currentTarget as HTMLSelectElement).value;
     const newValue = keyToValue.get(key) ?? '';
     const item = valueToItem.get(newValue);
     const typedValue = item === undefined ? undefined : getValue(item);
-    field.set(typedValue);
+    view.set(typedValue);
     onchange?.(typedValue);
   }
 </script>
@@ -94,7 +107,7 @@
       ]
         .filter(Boolean)
         .join(' ')}
-      aria-invalid={attrs['aria-invalid']}
+      aria-invalid={attrs['aria-invalid'] as 'false' | 'true' | boolean | undefined}
       onchange={handleChange}
       {required}
       value={selectedValue}
@@ -106,7 +119,7 @@
     </select>
     <ChevronDown class="form-select-chevron" size={14} />
   </div>
-  {#each field.issues() ?? [] as issue (`${issue.path}`)}
+  {#each view.issues() as issue (`${issue.path}`)}
     <p class="form-error">{issue.message}</p>
   {/each}
 </div>

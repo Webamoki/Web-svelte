@@ -58,10 +58,11 @@
   const attrs = $derived(view.attrs);
   const required = $derived(!optional);
 
-  // With a label the asterisk carries the required/optional cue; without one the
-  // placeholder option does, so prefix it with (Required) / (Optional).
+  // With a label the asterisk carries the required/optional cue. Without one,
+  // required fields just show the placeholder; optional fields get an (Optional)
+  // suffix so the cue reads naturally after the placeholder text.
   const displayPlaceholder = $derived(
-    children ? placeholder : `(${required ? 'Required' : 'Optional'}) ${placeholder}`
+    children || required ? placeholder : `${placeholder} (Optional)`
   );
 
   const keyToValue = $derived(

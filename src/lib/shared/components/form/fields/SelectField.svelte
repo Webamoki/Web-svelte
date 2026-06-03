@@ -62,7 +62,7 @@
   // required fields just show the placeholder; optional fields get an (Optional)
   // suffix so the cue reads naturally after the placeholder text.
   const displayPlaceholder = $derived(
-    children || required ? placeholder : `${placeholder} (Optional)`
+    children || required || !placeholder ? placeholder : `${placeholder} (Optional)`
   );
 
   const keyToValue = $derived(

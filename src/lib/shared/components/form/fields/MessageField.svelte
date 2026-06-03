@@ -61,7 +61,7 @@
   const displayPlaceholder = $derived(
     children || required
       ? placeholder
-      : placeholder != null
+      : placeholder
         ? `${placeholder} (Optional)`
         : '(Optional)'
   );

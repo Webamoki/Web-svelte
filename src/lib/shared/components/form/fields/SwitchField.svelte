@@ -15,15 +15,19 @@
     disabled?: boolean;
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
-    /** Label shown in the `toggle` variant when unchecked (default "OFF"). */
+    /** Label shown in the `onoff` variant when unchecked (default "OFF"). */
     offLabel?: string;
     onChange?: (value: boolean) => void;
-    /** Label shown in the `toggle` variant when checked (default "ON"). */
+    /** Label shown in the `onoff` variant when checked (default "ON"). */
     onLabel?: string;
     optional?: boolean;
     schema?: ZodType;
-    /** `switch` is the sliding pill (default); `toggle` is the ON/OFF labelled style. */
-    variant?: 'switch' | 'toggle';
+    /**
+     * `switch` is the sliding pill (default); `onoff` is the ON/OFF labelled
+     * style; `button` is a `.btn` that is filled (`default`) when checked and
+     * outlined (`ghost`) when unchecked, using `children` as its label.
+     */
+    variant?: 'button' | 'onoff' | 'switch';
   }
 
   let {
@@ -55,11 +59,12 @@
 
   const attrs = $derived(view.attrs);
   const required = $derived(!optional);
+  const isChecked = $derived(attrs.checked as boolean);
 </script>
 
 <div class="form-switch-wrapper">
   <div class="form-switch-row">
-    {#if children}
+    {#if children && variant !== 'button'}
       <FieldLabel class="form-switch-label" for={attrs.name} {required}>
         {@render children()}
       </FieldLabel>
@@ -67,16 +72,22 @@
     <Switch.Root
       id={attrs.name}
       name={attrs.name}
-      class={variant === 'toggle' ? 'form-toggle' : 'form-switch'}
+      class={variant === 'onoff'
+        ? 'form-onoff'
+        : variant === 'button'
+          ? `btn form-switch-btn ${isChecked ? 'default' : 'ghost'}`
+          : 'form-switch'}
       aria-invalid={attrs['aria-invalid'] as 'false' | 'true' | boolean | undefined}
-      checked={attrs.checked as boolean}
+      checked={isChecked}
       {disabled}
       onCheckedChange={(v) => view.set(v === true)}
     >
-      {#if variant === 'toggle'}
-        <span class="form-toggle-text form-toggle-text--on">{onLabel}</span>
-        <span class="form-toggle-text form-toggle-text--off">{offLabel}</span>
-        <Switch.Thumb class="form-toggle-thumb" />
+      {#if variant === 'onoff'}
+        <span class="form-onoff-text form-onoff-text--on">{onLabel}</span>
+        <span class="form-onoff-text form-onoff-text--off">{offLabel}</span>
+        <Switch.Thumb class="form-onoff-thumb" />
+      {:else if variant === 'button'}
+        {@render children?.()}
       {:else}
         <Switch.Thumb class="form-switch-thumb" />
       {/if}

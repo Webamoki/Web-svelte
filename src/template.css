@@ -206,7 +206,7 @@
   transform: translateX(18px);
 }
 
-.form-toggle {
+.form-onoff {
   position: relative;
   display: inline-block;
   flex-shrink: 0;
@@ -220,20 +220,20 @@
   outline: none;
 }
 
-.form-toggle[data-state='checked'] {
+.form-onoff[data-state='checked'] {
   background: var(--tx);
 }
 
-.form-toggle[data-disabled] {
+.form-onoff[data-disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.form-toggle:focus-visible {
+.form-onoff:focus-visible {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--tx) 15%, transparent);
 }
 
-.form-toggle-text {
+.form-onoff-text {
   position: absolute;
   top: 0;
   height: 100%;
@@ -248,27 +248,27 @@
   transition: opacity 0.15s ease;
 }
 
-.form-toggle-text--on {
+.form-onoff-text--on {
   left: 2px;
   color: var(--bg);
   opacity: 0;
 }
 
-.form-toggle-text--off {
+.form-onoff-text--off {
   right: 2px;
   color: var(--tx);
   opacity: 1;
 }
 
-.form-toggle[data-state='checked'] .form-toggle-text--on {
+.form-onoff[data-state='checked'] .form-onoff-text--on {
   opacity: 1;
 }
 
-.form-toggle[data-state='checked'] .form-toggle-text--off {
+.form-onoff[data-state='checked'] .form-onoff-text--off {
   opacity: 0;
 }
 
-.form-toggle-thumb {
+.form-onoff-thumb {
   position: absolute;
   top: 2px;
   left: 2px;
@@ -280,8 +280,17 @@
   pointer-events: none;
 }
 
-.form-toggle[data-state='checked'] .form-toggle-thumb {
+.form-onoff[data-state='checked'] .form-onoff-thumb {
   transform: translateX(28px);
+}
+
+/* `button` variant: reuses `.btn` (default when checked, ghost outline when not) */
+.form-switch-btn {
+  flex-shrink: 0;
+}
+
+.form-switch-btn:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tx) 15%, transparent);
 }
 
 .form-slider-wrapper {

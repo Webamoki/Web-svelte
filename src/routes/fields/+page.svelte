@@ -431,27 +431,40 @@
           </Form>
           <Form
             class="mt-4 flex flex-col gap-4"
-            form={checkboxForm.for('toggle')}
+            form={checkboxForm.for('onoff')}
             schema={CheckboxSchema}
           >
-            <SwitchField name="agreed" form={checkboxForm.for('toggle')} variant="toggle">
+            <SwitchField name="agreed" form={checkboxForm.for('onoff')} variant="onoff">
               As an ON/OFF toggle
             </SwitchField>
-            <Button form={checkboxForm.for('toggle')}>Submit</Button>
+            <Button form={checkboxForm.for('onoff')}>Submit</Button>
+          </Form>
+          <Form
+            class="mt-4 flex flex-col gap-4"
+            form={checkboxForm.for('button')}
+            schema={CheckboxSchema}
+          >
+            <SwitchField name="agreed" form={checkboxForm.for('button')} variant="button">
+              As a button
+            </SwitchField>
+            <Button form={checkboxForm.for('button')}>Submit</Button>
           </Form>
           {@render standaloneLabel('bind:checked + onChange')}
           <CheckboxField name="agreed" onChange={(v) => (saChecked = v)} bind:checked={saChecked}>
             I agree
           </CheckboxField>
           <SwitchField name="enabled" bind:checked={saSwitch}>As a switch</SwitchField>
-          <SwitchField name="enabled" variant="toggle" bind:checked={saSwitch}>
+          <SwitchField name="enabled" variant="onoff" bind:checked={saSwitch}>
             As an ON/OFF toggle
+          </SwitchField>
+          <SwitchField name="enabled" variant="button" bind:checked={saSwitch}>
+            As a button
           </SwitchField>
           <SwitchField
             name="power"
             offLabel="NO"
             onLabel="YES"
-            variant="toggle"
+            variant="onoff"
             bind:checked={saSwitch}
           >
             Custom labels
@@ -462,10 +475,11 @@
           {`<CheckboxField name="agreed" form={remoteForm}>I agree to the terms</CheckboxField>
 <CheckboxField name="agreed" form={remoteForm} optional>Optional</CheckboxField>
 
-<!-- switch (default) vs ON/OFF toggle variant -->
+<!-- switch (default) vs onoff (ON/OFF labels) vs button (.btn) variants -->
 <SwitchField name="enabled" bind:checked>As a switch</SwitchField>
-<SwitchField name="enabled" variant="toggle" bind:checked>Toggle</SwitchField>
-<SwitchField name="power" variant="toggle" onLabel="YES" offLabel="NO" bind:checked>Custom</SwitchField>`}
+<SwitchField name="enabled" variant="onoff" bind:checked>Toggle</SwitchField>
+<SwitchField name="enabled" variant="button" bind:checked>As a button</SwitchField>
+<SwitchField name="power" variant="onoff" onLabel="YES" offLabel="NO" bind:checked>Custom</SwitchField>`}
         </CodeBlock>
       </Container>
 

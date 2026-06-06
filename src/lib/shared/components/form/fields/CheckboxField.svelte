@@ -59,7 +59,6 @@
       checked={attrs.checked as boolean}
       {disabled}
       onCheckedChange={(v) => view.set(v === true)}
-      {required}
     >
       {#snippet children({ checked: isChecked })}
         {#if isChecked}

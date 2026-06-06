@@ -72,7 +72,6 @@
       checked={attrs.checked as boolean}
       {disabled}
       onCheckedChange={(v) => view.set(v === true)}
-      {required}
     >
       {#if variant === 'toggle'}
         <span class="form-toggle-text form-toggle-text--on">{onLabel}</span>

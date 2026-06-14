@@ -20,7 +20,7 @@ describe('nullable', () => {
   });
 
   it('treats undefined (empty number field) as null', () => {
-    expect(schema.parse(undefined)).toBeNull();
+    expect(nullable(formNumber).parse(undefined)).toBeNull();
   });
 
   it('still validates the wrapped schema for non-empty values', () => {

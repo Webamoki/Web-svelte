@@ -5,18 +5,23 @@ import z from 'zod';
  * Wraps any string-or-number schema so an empty input becomes `null`.
  * Usage: `nullable(formText.min(3))`, `nullable(formNumber)`, `nullable(formEmail)`.
  *
+ * Transport-agnostic — works for both a `<Form>` (FormData, where an empty field is `''`)
+ * and a JSON body (where an absent field is real `null`/`undefined`). Both empty forms map
+ * to `null`; a value passes through to the wrapped schema. This is why the input union
+ * includes `z.null()`: a well-behaved JSON client sends literal `null`, which must validate.
+ *
  * Handles `undefined` at runtime without exposing it in the type: `convert_formdata` emits
  * `undefined` for empty `n:`-prefixed (number) fields, which we treat as empty → null.
  */
 export function nullable<T extends z.ZodType<unknown, number | string>>(schema: T) {
   return z
-    .union([z.string(), z.number()])
+    .union([z.string(), z.number(), z.null(), z.undefined()])
     .transform((v): null | number | string => {
-      // v may be undefined at runtime (empty n:-prefixed field) — treat as empty
+      // Empty form field (''), absent/empty n:-field (undefined), or JSON null → null.
       if (v == null || (typeof v === 'string' && v.trim() === '')) return null;
       return v;
     })
-    .pipe(schema.nullable()) as z.ZodType<null | z.infer<T>, number | string>;
+    .pipe(schema.nullable()) as z.ZodType<null | z.infer<T>, number | string | null | undefined>;
 }
 
 /** Non-empty text field (trimmed, min 1 character) */

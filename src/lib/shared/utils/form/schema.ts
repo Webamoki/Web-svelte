@@ -5,14 +5,21 @@ import z from 'zod';
  * Wraps any string-or-number schema so an empty input becomes `null`.
  * Usage: `nullable(formText.min(3))`, `nullable(formNumber)`, `nullable(formEmail)`.
  *
- * Handles `undefined` at runtime without exposing it in the type: `convert_formdata` emits
- * `undefined` for empty `n:`-prefixed (number) fields, which we treat as empty → null.
+ * Transport-agnostic at runtime — parses both a `<Form>` value (FormData: empty field = `''`)
+ * and a JSON body (absent/optional field = real `null` or `undefined`). All three (`''`, `null`,
+ * `undefined`) normalise to `null`; a value passes through to the wrapped schema. So the same
+ * helper can back a `<Form>` *and* a JSON API/command body for an optional scalar field.
+ *
+ * The declared **input type stays `number | string`** on purpose: `<Form>`'s `RemoteFormInput`
+ * forbids `null`/`undefined` field values, so widening the type would break form usage. `null`/
+ * `undefined` are accepted at runtime (the union below) without being exposed in the type —
+ * JSON parsing is runtime validation anyway, so the narrower type costs the JSON path nothing.
  */
 export function nullable<T extends z.ZodType<unknown, number | string>>(schema: T) {
   return z
-    .union([z.string(), z.number()])
+    .union([z.string(), z.number(), z.null(), z.undefined()])
     .transform((v): null | number | string => {
-      // v may be undefined at runtime (empty n:-prefixed field) — treat as empty
+      // Empty form field (''), absent/empty n:-field (undefined), or JSON null → null.
       if (v == null || (typeof v === 'string' && v.trim() === '')) return null;
       return v;
     })

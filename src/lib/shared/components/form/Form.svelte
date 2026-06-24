@@ -21,10 +21,12 @@
     children?: Snippet;
     class?: string;
     defaults?: Partial<Input>;
+    /** Bound `true` on any field change, reset to `false` on a successful submit. */
+    dirty?: boolean;
     enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
     form: AnyRemoteForm;
     hidden?: Partial<Input>;
-    onChange?: () => void;
+    onChange?: (event: Event) => void;
     onError?: (info: { data?: Data; message?: string }) => void;
     onSuccess?: (data: Data) => void;
     onThrow?: (error: unknown) => void;
@@ -37,6 +39,7 @@
     children,
     class: className,
     defaults,
+    dirty = $bindable(false),
     enctype,
     form: remote,
     hidden,
@@ -70,9 +73,10 @@
 
 <form
   class={className}
-  oninput={() => {
+  oninput={(event) => {
     remote.validate();
-    onChange?.();
+    dirty = true;
+    onChange?.(event);
   }}
   use:applyEnctype
   {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {
@@ -93,6 +97,7 @@
             break;
           case 'ok':
             if (message) toast.success(message);
+            dirty = false;
             onSuccess?.(data);
             break;
           case 'warning':

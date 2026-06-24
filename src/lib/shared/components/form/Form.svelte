@@ -26,8 +26,8 @@
     enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
     form: AnyRemoteForm;
     hidden?: Partial<Input>;
-    onInput?: (event: Event) => void;
     onError?: (info: { data?: Data; message?: string }) => void;
+    onInput?: (event: Event) => void;
     onSuccess?: (data: Data) => void;
     onThrow?: (error: unknown) => void;
     onWarning?: (info: { data?: Data; message?: string }) => void;

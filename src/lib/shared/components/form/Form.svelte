@@ -26,7 +26,7 @@
     enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
     form: AnyRemoteForm;
     hidden?: Partial<Input>;
-    onChange?: (event: Event) => void;
+    onInput?: (event: Event) => void;
     onError?: (info: { data?: Data; message?: string }) => void;
     onSuccess?: (data: Data) => void;
     onThrow?: (error: unknown) => void;
@@ -43,8 +43,8 @@
     enctype,
     form: remote,
     hidden,
-    onChange,
     onError,
+    onInput,
     onSuccess,
     onThrow,
     onWarning,
@@ -76,7 +76,7 @@
   oninput={(event) => {
     remote.validate();
     dirty = true;
-    onChange?.(event);
+    onInput?.(event);
   }}
   use:applyEnctype
   {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {

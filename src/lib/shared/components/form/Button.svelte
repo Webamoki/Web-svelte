@@ -6,7 +6,7 @@
   import Loader2 from '@lucide/svelte/icons/loader-2';
   import { Button as ButtonPrimitive } from 'bits-ui';
 
-  type Variant = 'default' | 'destructive' | 'ghost' | 'ghost-destructive';
+  type Variant = 'default' | 'destructive' | 'ghost' | 'ghost-destructive' | (string & {});
 
   interface Props extends Omit<HTMLButtonAttributes, 'form' | 'type'> {
     children?: Snippet;

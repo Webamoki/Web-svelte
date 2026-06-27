@@ -78,6 +78,9 @@
     dirty = true;
     onInput?.(event);
   }}
+  onreset={() => {
+    dirty = false;
+  }}
   use:applyEnctype
   {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {
     try {

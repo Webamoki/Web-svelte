@@ -3,7 +3,9 @@
   import type { Component, Snippet } from 'svelte';
   import type { ZodType } from 'zod/v4';
 
+  import Check from '@lucide/svelte/icons/check';
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
+  import { Select } from 'bits-ui';
 
   import { createFormView, createLocalSelectView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
@@ -72,15 +74,23 @@
   const valueToKey = $derived(
     new Map(items.map((item) => [String(getValue(item)), String(getKey(item))]))
   );
+  const keyToLabel = $derived(new Map(items.map((item) => [String(getKey(item)), getLabel(item)])));
+
+  // bits-ui `Select` uses this {value,label} list for typeahead + autofill matching.
+  const bitsItems = $derived(
+    items.map((item) => ({ label: getLabel(item), value: String(getKey(item)) }))
+  );
 
   // Form mode stores the submitted value string; standalone tracks the typed value,
-  // so the selected option is resolved from its key.
+  // so the selected option is resolved from its key. This string is both the value
+  // fed to bits-ui `Select` (its item values are keyed by `getKey`) and the value
+  // carried by the hidden input below into the form's FormData.
   const selectedValue = $derived(
     form ? (attrs.value as string) : (valueToKey.get(String(value ?? '')) ?? '')
   );
+  const selectedLabel = $derived(keyToLabel.get(selectedValue));
 
-  function handleChange(e: Event) {
-    const key = (e.currentTarget as HTMLSelectElement).value;
+  function handleChange(key: string) {
     const newValue = keyToValue.get(key) ?? '';
     const item = valueToItem.get(newValue);
     const typedValue = item === undefined ? undefined : getValue(item);
@@ -93,13 +103,15 @@
   {#if children}
     <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
   {/if}
-  <div class={['form-select-wrapper', className].filter(Boolean).join(' ')}>
-    {#if Icon}
-      <div class="form-input-icon"><Icon /></div>
-    {/if}
-    <select
+  <Select.Root
+    allowDeselect={nullable}
+    items={bitsItems}
+    onValueChange={handleChange}
+    type="single"
+    value={selectedValue}
+  >
+    <Select.Trigger
       id={attrs.name}
-      name={attrs.name}
       class={[
         'form-input',
         'form-select',
@@ -109,17 +121,40 @@
         .filter(Boolean)
         .join(' ')}
       aria-invalid={attrs['aria-invalid'] as 'false' | 'true' | boolean | undefined}
-      onchange={handleChange}
-      {required}
-      value={selectedValue}
     >
-      <option disabled={!nullable} value="">{displayPlaceholder}</option>
-      {#each items as item (getKey(item))}
-        <option value={String(getKey(item))}>{getLabel(item)}</option>
-      {/each}
-    </select>
-    <ChevronDown class="form-select-chevron" size={14} />
-  </div>
+      {#if Icon}
+        <div class="form-input-icon"><Icon /></div>
+      {/if}
+      <span class="form-select-value">{selectedLabel ?? displayPlaceholder}</span>
+      <ChevronDown class="form-select-chevron" size={14} />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Content
+        class={['form-select-menu', className].filter(Boolean).join(' ')}
+        sideOffset={4}
+      >
+        <Select.Viewport>
+          {#each items as item (getKey(item))}
+            <Select.Item
+              class="form-select-item"
+              label={getLabel(item)}
+              value={String(getKey(item))}
+            >
+              {#snippet children({ selected })}
+                <span class="form-select-item-label">{getLabel(item)}</span>
+                {#if selected}
+                  <Check class="form-select-item-check" size={14} />
+                {/if}
+              {/snippet}
+            </Select.Item>
+          {/each}
+        </Select.Viewport>
+      </Select.Content>
+    </Select.Portal>
+  </Select.Root>
+  <!-- bits-ui `Select` has no native form control; this hidden input carries the
+       selected value into FormData exactly as the old native <select name> did. -->
+  <input name={attrs.name} type="hidden" value={selectedValue} />
   {#each view.issues() as issue (`${issue.path}`)}
     <p class="form-error">{issue.message}</p>
   {/each}

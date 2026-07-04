@@ -720,30 +720,89 @@
 
 /* ─── Select (form-select) ─────────────────────────────────────────────────── */
 
-.form-select-wrapper {
-  position: relative;
-}
-
+/* The trigger is a bits-ui <button>, not a native <select>: lay its content out
+   as [icon] [value …grows] [chevron] and keep the .form-input box styling. */
 .form-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding-right: 32px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+  text-align: left;
   cursor: pointer;
-  background-image: none;
 }
 
-.form-select--placeholder {
+.form-select-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form-select--placeholder .form-select-value {
   color: var(--txs);
 }
 
 .form-select-chevron {
+  flex: none;
   pointer-events: none;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   color: var(--txs);
+  transition: transform 0.12s ease;
+}
+
+.form-select[data-state='open'] .form-select-chevron {
+  transform: rotate(180deg);
+}
+
+/* Custom dropdown panel (replaces the OS-rendered <option> list). */
+.form-select-menu {
+  z-index: 60;
+  min-width: var(--bits-floating-anchor-width);
+  max-height: min(300px, var(--bits-floating-available-height));
+  overflow-y: auto;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--bd);
+  border-radius: 2px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  box-sizing: border-box;
+}
+
+.form-select-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 30px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--tx);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.form-select-item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form-select-item-check {
+  flex: none;
+  color: var(--tx);
+}
+
+/* bits-ui marks the keyboard/pointer-highlighted item via data-highlighted. */
+.form-select-item[data-highlighted] {
+  background: var(--bd);
+}
+
+.form-select-item[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ─── Date range ────────────────────────────────────────────────────────────── */

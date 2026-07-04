@@ -797,7 +797,7 @@
 
 /* bits-ui marks the keyboard/pointer-highlighted item via data-highlighted. */
 .form-select-item[data-highlighted] {
-  background: var(--bd);
+  background: var(--sf);
 }
 
 .form-select-item[data-disabled] {

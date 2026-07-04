@@ -107,6 +107,7 @@
     allowDeselect={nullable}
     items={bitsItems}
     onValueChange={handleChange}
+    {required}
     type="single"
     value={selectedValue}
   >
@@ -116,7 +117,8 @@
         'form-input',
         'form-select',
         Icon && 'form-input--with-icon',
-        !selectedValue && 'form-select--placeholder'
+        !selectedValue && 'form-select--placeholder',
+        className
       ]
         .filter(Boolean)
         .join(' ')}
@@ -129,10 +131,7 @@
       <ChevronDown class="form-select-chevron" size={14} />
     </Select.Trigger>
     <Select.Portal>
-      <Select.Content
-        class={['form-select-menu', className].filter(Boolean).join(' ')}
-        sideOffset={4}
-      >
+      <Select.Content class="form-select-menu" sideOffset={4}>
         <Select.Viewport>
           {#each items as item (getKey(item))}
             <Select.Item

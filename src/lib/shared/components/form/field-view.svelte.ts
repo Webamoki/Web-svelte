@@ -1,8 +1,25 @@
 import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
 import type { ZodType } from 'zod/v4';
 
+import { getContext, setContext } from 'svelte';
+
 /** Normalised validation issue shape consumed by every field template. */
 export type FieldIssue = { message: string; path: Array<number | string> };
+
+/**
+ * Bridge between a form-bound field and its enclosing `<Form>`. Native inputs
+ * bubble a DOM `input` event that `<Form>` listens for (to re-validate + mark
+ * dirty), but bits-ui controls (`Switch`, `Slider`, `Select`) update their value
+ * programmatically via `view.set()` and emit no such event — so `<Form>` would
+ * never learn they changed. `<Form>` registers a listener here and every
+ * `createFormView().set` calls it, so those fields flag dirty + validate too.
+ */
+const FORM_CHANGE_KEY = Symbol('web-svelte:form-change');
+
+/** Called by `<Form>` during init to receive programmatic field-change notifications. */
+export function setFormChangeListener(listener: () => void): void {
+  setContext(FORM_CHANGE_KEY, listener);
+}
 
 /**
  * The surface every field template consumes. Produced either from a `RemoteForm`
@@ -33,12 +50,18 @@ export function createFormView<Input extends RemoteFormInput>(
 ): FieldView {
   const field = $derived((form.fields as Record<string, LooseFormField>)[name]);
   const attrs = $derived(field.as(type, ...asArgs));
+  // Read once at init (getContext requirement). Undefined when the field is used
+  // outside a `<Form>`, in which case a programmatic set simply notifies no one.
+  const notifyChange = getContext<(() => void) | undefined>(FORM_CHANGE_KEY);
   return {
     get attrs() {
       return attrs;
     },
     issues: () => field.issues() ?? [],
-    set: (value) => field.set(value)
+    set: (value) => {
+      field.set(value);
+      notifyChange?.();
+    }
   };
 }
 

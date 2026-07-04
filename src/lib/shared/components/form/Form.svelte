@@ -12,6 +12,8 @@
 
   import { toast } from 'svelte-sonner';
 
+  import { setFormChangeListener } from './field-view.svelte.js';
+
   // Accepts both a plain remote form and a `.for(id)` instance (which omits `for`).
   type AnyRemoteForm =
     | Omit<RemoteForm<Input, FormResult<Data>>, 'for'>
@@ -55,6 +57,14 @@
   if (defaults !== undefined) {
     remote.fields.set(defaults);
   }
+
+  // bits-ui fields (Switch/Slider/Select) change value via `view.set()` without a
+  // bubbling DOM `input` event, so the `oninput` handler below never sees them.
+  // They notify through this listener instead — same re-validate + dirty as typing.
+  setFormChangeListener(() => {
+    remote.validate();
+    dirty = true;
+  });
 
   // Only render hidden inputs whose value is set — `as('hidden', value)` throws on
   // null/undefined/empty string. Derived so value changes on `hidden` propagate.

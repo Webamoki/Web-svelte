@@ -1,17 +1,25 @@
 <script generics="Input extends RemoteFormInput, T = string" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Component, Snippet } from 'svelte';
+  import type { HTMLInputAttributes } from 'svelte/elements';
   import type { ZodType } from 'zod/v4';
 
   import Field from '../Field.svelte';
 
   interface Props {
+    autocomplete?: HTMLInputAttributes['autocomplete'];
     children?: Snippet;
+    class?: string;
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
+    /** Mobile keyboard hint — e.g. 'numeric' to avoid the native spinner while keeping the numeric pad. */
+    inputmode?: HTMLInputAttributes['inputmode'];
+    max?: HTMLInputAttributes['max'];
+    min?: HTMLInputAttributes['min'];
     name: keyof Input & string;
     onChange?: (value: T) => void;
     onInput?: (value: T) => void;
+    onkeydown?: (event: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
     optional?: boolean;
     placeholder?: string;
     schema?: ZodType;
@@ -19,12 +27,18 @@
   }
 
   let {
+    autocomplete,
     children,
+    class: className,
     form,
     icon,
+    inputmode,
+    max,
+    min,
     name,
     onChange,
     onInput,
+    onkeydown,
     optional,
     placeholder,
     schema,
@@ -34,11 +48,17 @@
 
 <Field
   {name}
+  class={className}
+  {autocomplete}
   {children}
   {form}
   {icon}
+  {inputmode}
+  {max}
+  {min}
   {onChange}
   {onInput}
+  {onkeydown}
   {optional}
   {placeholder}
   {schema}

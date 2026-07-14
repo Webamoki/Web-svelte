@@ -1,5 +1,9 @@
 packages:
   - '.'
+overrides:
+  # 7.25.0 throws "invalid content-length header" during the release asset
+  # upload (@semantic-release/github -> @octokit/request), failing every Release run.
+  undici: 7.24.8
 catalog:
   '@internationalized/date': ^3.12.1
   '@sveltejs/kit': ^2.57.1

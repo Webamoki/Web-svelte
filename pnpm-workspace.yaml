@@ -1,11 +1,5 @@
 packages:
   - '.'
-overrides:
-  # @semantic-release/github pulls undici@7.25.0, which throws "invalid
-  # content-length header" during the release asset upload, failing every
-  # Release run. Scoped to that one edge so @actions/http-client keeps its
-  # own undici@6 line untouched.
-  '@semantic-release/github>undici': 7.24.8
 catalog:
   '@internationalized/date': ^3.12.1
   '@sveltejs/kit': ^2.57.1

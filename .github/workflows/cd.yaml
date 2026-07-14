@@ -59,6 +59,12 @@ jobs:
 
       - name: Setup CI Environment
         uses: ./.github/actions/setup-ci
+        with:
+          # Node 24.18.0's bundled undici rejects the numeric content-length
+          # header @octokit/request sends on the release asset upload,
+          # failing every Release run. semantic-release supports
+          # ^22.14.0 || >=24.10.0 — pin this job to 22 until upstream fixes it.
+          node-version: '22'
 
       - name: Semantic Release
         env:

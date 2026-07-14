@@ -1,13 +1,27 @@
 name: 'Setup CI'
 description: 'Check out code, setup pnpm, and setup Node.js'
 
+inputs:
+  node-version:
+    description: 'Override Node.js version (defaults to engines.node in package.json)'
+    required: false
+    default: ''
+
 runs:
   using: 'composite'
   steps:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
 
-    - name: Setup Node.js
+    - name: Setup Node.js (pinned)
+      if: inputs.node-version != ''
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+
+    - name: Setup Node.js (from package.json)
+      if: inputs.node-version == ''
       uses: actions/setup-node@v6
       with:
         node-version-file: 'package.json'

@@ -906,7 +906,6 @@
 .form-daterange-day[data-unavailable] {
   cursor: not-allowed;
   opacity: 0.35;
-  pointer-events: none;
 }
 
 .form-daterange-day[data-range-middle] {

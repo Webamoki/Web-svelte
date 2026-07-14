@@ -96,7 +96,7 @@
   let localRange: DateRange = $state({ end: undefined, start: undefined });
 
   $effect(() => {
-    if (open) localRange = calendarValue;
+    if (!open) localRange = calendarValue;
   });
 
   function handleRangeChange(range: DateRange) {
@@ -139,7 +139,7 @@
           weekdayFormat="short"
         >
           {#snippet children({ months, weekdays })}
-            {#each months as month (month.value)}
+            {#each months as month (month.value.toString())}
               <div class="form-daterange-header">
                 <RangeCalendar.PrevButton class="form-daterange-nav">
                   <ChevronLeft size={14} />
@@ -160,9 +160,9 @@
                   </RangeCalendar.GridRow>
                 </RangeCalendar.GridHead>
                 <RangeCalendar.GridBody>
-                  {#each month.weeks as weekDates (weekDates)}
+                  {#each month.weeks as weekDates (weekDates[0].toString())}
                     <RangeCalendar.GridRow class="form-daterange-row">
-                      {#each weekDates as date (date)}
+                      {#each weekDates as date (date.toString())}
                         <RangeCalendar.Cell class="form-daterange-cell" {date} month={month.value}>
                           <RangeCalendar.Day class="form-daterange-day" />
                         </RangeCalendar.Cell>

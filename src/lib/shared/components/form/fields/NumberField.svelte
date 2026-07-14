@@ -14,8 +14,6 @@
     icon?: Component;
     /** Mobile keyboard hint — e.g. 'numeric' to avoid the native spinner while keeping the numeric pad. */
     inputmode?: HTMLInputAttributes['inputmode'];
-    max?: HTMLInputAttributes['max'];
-    min?: HTMLInputAttributes['min'];
     name: keyof Input & string;
     onChange?: (value: T) => void;
     onInput?: (value: T) => void;
@@ -33,8 +31,6 @@
     form,
     icon,
     inputmode,
-    max,
-    min,
     name,
     onChange,
     onInput,
@@ -54,8 +50,6 @@
   {form}
   {icon}
   {inputmode}
-  {max}
-  {min}
   {onChange}
   {onInput}
   {onkeydown}

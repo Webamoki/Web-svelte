@@ -22,10 +22,6 @@
     icon?: Component;
     /** Mobile keyboard hint (e.g. 'numeric', 'decimal') — passed through to the underlying <input>. */
     inputmode?: HTMLInputAttributes['inputmode'];
-    /** `type="number"` upper bound — passed through to the underlying <input>. */
-    max?: HTMLInputAttributes['max'];
-    /** `type="number"` lower bound — passed through to the underlying <input>. */
-    min?: HTMLInputAttributes['min'];
     name: keyof Input & string;
     /** Standalone only — fired on the native `change` event. */
     onChange?: (value: T) => void;
@@ -52,8 +48,6 @@
     form,
     icon,
     inputmode,
-    max,
-    min,
     name,
     onChange,
     onInput,
@@ -101,8 +95,6 @@
     {autocomplete}
     {icon}
     {inputmode}
-    {max}
-    {min}
     {onkeydown}
     placeholder={displayPlaceholder}
     {required}

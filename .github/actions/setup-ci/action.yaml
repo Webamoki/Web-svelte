@@ -29,4 +29,6 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      # engineStrict rejects a pinned node-version override that doesn't match
+      # engines.node in package.json (e.g. the Release job's Node 22 vs ^24.0.0).
+      run: pnpm install --frozen-lockfile ${{ inputs.node-version != '' && '--config.engine-strict=false' || '' }}

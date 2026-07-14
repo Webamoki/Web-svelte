@@ -51,6 +51,17 @@ jobs:
       pull-requests: write
       id-token: write
 
+    env:
+      # Node 24.18.0's bundled undici rejects the numeric content-length
+      # header @octokit/request sends on the release asset upload, failing
+      # every Release run. semantic-release supports ^22.14.0 || >=24.10.0,
+      # so this job pins Node to 22 until upstream fixes it — which trips
+      # engineStrict (package.json wants ^24.0.0) on every pnpm invocation
+      # this job makes, including the `pnpm pack` @anolilab/semantic-release-pnpm
+      # runs internally. Only an env var reaches that subprocess; a CLI flag
+      # on our own `pnpm install` step does not.
+      PNPM_CONFIG_ENGINE_STRICT: 'false'
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -60,10 +71,6 @@ jobs:
       - name: Setup CI Environment
         uses: ./.github/actions/setup-ci
         with:
-          # Node 24.18.0's bundled undici rejects the numeric content-length
-          # header @octokit/request sends on the release asset upload,
-          # failing every Release run. semantic-release supports
-          # ^22.14.0 || >=24.10.0 — pin this job to 22 until upstream fixes it.
           node-version: '22'
 
       - name: Semantic Release

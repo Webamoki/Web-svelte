@@ -32,7 +32,7 @@
     /** Standalone only — fired on every keystroke. */
     onInput?: (value: T) => void;
     /** Raw native keydown — passed through to the underlying <input> (e.g. Enter-to-submit). */
-    onkeydown?: (event: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+    onkeydown?: HTMLInputAttributes['onkeydown'];
     optional?: boolean;
     placeholder?: string;
     /** Standalone only — optional per-field validation. */

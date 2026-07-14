@@ -15,7 +15,7 @@
     name: keyof Input & string;
     onChange?: (value: T) => void;
     onInput?: (value: T) => void;
-    onkeydown?: (event: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+    onkeydown?: HTMLInputAttributes['onkeydown'];
     optional?: boolean;
     placeholder?: string;
     schema?: ZodType;

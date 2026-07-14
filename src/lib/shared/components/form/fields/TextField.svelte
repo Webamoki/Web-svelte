@@ -17,13 +17,13 @@
     name: keyof Input & string;
     onChange?: (value: T) => void;
     onInput?: (value: T) => void;
-    onkeydown?: (event: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+    onkeydown?: HTMLInputAttributes['onkeydown'];
     optional?: boolean;
     placeholder?: string;
     schema?: ZodType;
     spellcheck?: HTMLInputAttributes['spellcheck'];
-    /** Defaults to 'text' — override for a text-like native type (e.g. 'tel', 'url'). */
-    type?: Extract<HTMLInputTypeAttribute, 'tel' | 'text' | 'url'>;
+    /** Defaults to 'text' — override for a text-like native type (e.g. 'search', 'tel', 'url'). */
+    type?: Extract<HTMLInputTypeAttribute, 'search' | 'tel' | 'text' | 'url'>;
     value?: T;
   }
 

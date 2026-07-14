@@ -32,7 +32,7 @@ catalogs:
       version: 4.3.6
 
 overrides:
-  undici: 7.24.8
+  '@semantic-release/github>undici': 7.24.8
 
 importers:
 
@@ -3337,6 +3337,10 @@ packages:
   undici-types@7.19.2:
     resolution: {integrity: sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==}
 
+  undici@6.27.0:
+    resolution: {integrity: sha512-YmfV3YnEDzXRC5lZ2jWtWWHKGUm1zIt8AhesR1tens+HTNv+YZlN/dp6G727LOvMJ8xjP9Be7Y2Sdr96LDm+pg==}
+    engines: {node: '>=18.17'}
+
   undici@7.24.8:
     resolution: {integrity: sha512-6KQ/+QxK49Z/p3HO6E5ZCZWNnCasyZLa5ExaVYyvPxUwKtbCPMKELJOqh7EqOle0t9cH/7d2TaaTRRa6Nhs4YQ==}
     engines: {node: '>=20.18.1'}
@@ -3654,7 +3658,7 @@ snapshots:
   '@actions/http-client@4.0.1':
     dependencies:
       tunnel: 0.0.6
-      undici: 7.24.8
+      undici: 6.27.0
 
   '@actions/io@3.0.2': {}
 
@@ -6587,6 +6591,8 @@ snapshots:
     optional: true
 
   undici-types@7.19.2: {}
+
+  undici@6.27.0: {}
 
   undici@7.24.8: {}
 

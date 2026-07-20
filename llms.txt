@@ -1,11 +1,11 @@
 # @webamoki/web-svelte
 
-> A Svelte 5 component library for SvelteKit providing type-safe forms, UI components, and utilities.
+> A Svelte 5 component library for SvelteKit providing type-safe forms (built on SvelteKit remote forms), UI components, and utilities.
 
 - **Framework:** Svelte 5 (Runes) & SvelteKit
 - **Styling:** Tailwind CSS v4
 - **Validation:** Zod (v4)
-- **Forms:** sveltekit-superforms
+- **Forms:** SvelteKit remote forms (`@sveltejs/kit` `form`/`command`/`query`)
 
 ---
 
@@ -15,7 +15,9 @@
 pnpm add @webamoki/web-svelte
 ```
 
-Peer dependencies: `svelte`, `@sveltejs/kit`, `zod`, `sveltekit-superforms`, `tailwindcss`, `@tailwindcss/forms`, `@tailwindcss/typography`, `@internationalized/date`
+Peer dependencies: `svelte`, `@sveltejs/kit`, `zod`, `sveltekit-superforms`, `svelte-sonner`, `tailwindcss`, `@tailwindcss/forms`, `@tailwindcss/typography`, `@internationalized/date`
+
+`sveltekit-superforms` is only required if you use the legacy `server/form-handler` or `server/form-processor` exports (see below). `svelte-sonner` is required by `Form` and `utils/command` for toast notifications.
 
 ---
 
@@ -23,82 +25,76 @@ Peer dependencies: `svelte`, `@sveltejs/kit`, `zod`, `sveltekit-superforms`, `ta
 
 ### `@webamoki/web-svelte/components/form`
 
-Type-safe form components built on sveltekit-superforms and Zod.
+Type-safe form components built on SvelteKit remote forms and Zod.
 
-All field components extend `FieldWrapperProps`:
+All scalar field components (`TextField`, `PasswordField`, `EmailField`, `NumberField`, `DateField`, `TimeField`, `HexColorField`) share this prop shape:
 
 ```ts
-interface FieldWrapperProps<T extends Record<string, unknown>, U extends FormPath<T>, M> {
-  class?: string;
-  description?: string;
-  form: FsSuperForm<T, M>;
-  label?: string;
-  name: U;
+interface ScalarFieldProps<Input extends RemoteFormInput, T = string> {
+  children?: Snippet; // rendered as the field's label
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>; // omit for a standalone field
+  name: keyof Input & string;
+  onChange?: (value: T) => void; // standalone only, fired on native `change`
+  onInput?: (value: T) => void;  // standalone only, fired on every keystroke
+  optional?: boolean;
+  schema?: ZodType; // standalone only, per-field validation
+  bind:value?: T;   // standalone only
 }
 ```
 
 #### `Form`
 
-Main form wrapper with server action handling.
+Remote-form wrapper with schema validation, dirty tracking, and toast notifications on submit.
 
 ```svelte
-<Form actionName?: string actionPath?: string class?: string form: FsSuperForm<T, M>>
+<Form
+  bind:dirty?: boolean
+  class?: string
+  defaults?: Partial<Input>
+  enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data'
+  form: Omit<RemoteForm<Input, FormResult<Data>>, 'for'> | RemoteForm<Input, FormResult<Data>>
+  hidden?: Partial<Input>
+  onError?: (info: { data?: Data; message?: string }) => void
+  onInput?: (event: Event) => void
+  onSuccess?: (data: Data) => void
+  onThrow?: (error: unknown) => void
+  onWarning?: (info: { data?: Data; message?: string }) => void
+  reset?: boolean
+  schema: StandardSchemaV1<Input, unknown>
+>
   {children}
 </Form>
 ```
 
+`reset` defaults to `true` (resets the form on a successful submit). `dirty` is bound `true` on any field change and reset to `false` on success. Submit results (`FormResult`, see `utils/form` below) are toasted automatically via `svelte-sonner`.
+
 #### `Button`
 
-Submit button with loading state.
+Submit button with loading state, tied to a `RemoteForm`'s pending state when `form` is passed.
 
 ```svelte
-<Button class?: string disabled?: boolean loading?: boolean loadingMessage?: string>
+<Button
+  class?: string
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  href?: string
+  loading?: boolean
+  loadingMessage?: string
+  reset?: boolean
+  variant?: 'default' | 'destructive' | 'ghost' | 'ghost-destructive' | (string & {})
+>
   {children}
 </Button>
 ```
 
-`loadingMessage` defaults to `"Please wait"`.
-
-#### `CheckboxField`
-
-Checkbox field for boolean values.
-
-```svelte
-<CheckboxField
-  {...fieldWrapperProps}
-  class?: string
-  disabled?: boolean
-  bind:checked?: boolean
-/>
-```
+`variant` defaults to `'default'`. When `href` is set, renders as a link styled like a button. When `form` is passed, loading state is driven by `form.pending > 0` (the standalone `loading` prop is ignored).
 
 #### `TextField`
 
-Text input field with optional icon.
-
 ```svelte
 <TextField
-  {...fieldWrapperProps}
-  class?: string
+  {...scalarFieldProps}
   icon?: Component
   placeholder?: string
-  type?: HTMLInputElement['type']
-  bind:value?: string
-/>
-```
-
-#### `TextFieldNullable`
-
-Text input that supports `null` values.
-
-```svelte
-<TextFieldNullable
-  {...fieldWrapperProps}
-  class?: string
-  icon?: Component
-  placeholder?: string
-  type?: HTMLInputElement['type']
-  bind:value?: string | null
 />
 ```
 
@@ -108,71 +104,107 @@ Password input with show/hide toggle.
 
 ```svelte
 <PasswordField
-  {...fieldWrapperProps}
-  class?: string
-  icon?: Component
-  bind:value?: string
+  {...scalarFieldProps}
+  placeholder?: string
 />
 ```
 
-#### `PinField`
+#### `EmailField`
 
-6-digit PIN input for 2FA verification, built on the shadcn input-otp primitive.
+Text input with `type="email"`.
 
 ```svelte
-<PinField
-  {...fieldWrapperProps}
-  class?: string
-  disabled?: boolean
-  maxlength?: number
-  bind:value?: string
+<EmailField
+  {...scalarFieldProps}
+  placeholder?: string
 />
 ```
-
-`maxlength` defaults to `6`.
 
 #### `NumberField`
 
-Number input with optional step precision.
-
 ```svelte
 <NumberField
-  {...fieldWrapperProps}
-  class?: string
+  {...scalarFieldProps}
   icon?: Component
   placeholder?: string
-  step?: HTMLInputElement['step']
-  bind:value?: number
 />
 ```
 
 #### `DateField`
 
-Date input bound to `CalendarDate` from `@internationalized/date`.
+Native `<input type="date">` bound to an ISO date string (`YYYY-MM-DD`). Pair with `formDate` from `utils/form` to parse to `CalendarDate` in the schema.
 
 ```svelte
-<DateField
-  {...fieldWrapperProps}
-  class?: string
-  icon?: Component
-  bind:value?: CalendarDate
-/>
+<DateField {...scalarFieldProps} />
 ```
 
 #### `TimeField`
 
-Time input bound to `Time` from `@internationalized/date`.
+Native `<input type="time">` bound to an ISO time string (`HH:mm`). Pair with `formTime` from `utils/form` to parse to `Time` in the schema.
 
 ```svelte
-<TimeField
-  {...fieldWrapperProps}
-  class?: string
-  icon?: Component
-  placeholder?: string
-  step?: HTMLInputElement['step']
-  bind:value?: Time
+<TimeField {...scalarFieldProps} />
+```
+
+#### `DateRangeField`
+
+Calendar-popover date range picker built on `bits-ui`'s `RangeCalendar`/`Popover`. Submits two separate field names.
+
+```svelte
+<DateRangeField
+  children?: Snippet
+  bind:endValue?: string
+  endName: keyof Input & string
+  endSchema?: ZodType
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  onChange?: (range: { end: string; start: string }) => void
+  optional?: boolean
+  bind:startValue?: string
+  startName: keyof Input & string
+  startSchema?: ZodType
 />
 ```
+
+#### `CheckboxField`
+
+Checkbox field for boolean values.
+
+```svelte
+<CheckboxField
+  bind:checked?: boolean
+  children?: Snippet
+  description?: string
+  disabled?: boolean
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  name: keyof Input & string
+  onChange?: (value: boolean) => void
+  optional?: boolean
+  schema?: ZodType
+/>
+```
+
+#### `PinField`
+
+Numeric PIN input for 2FA verification, built on the shadcn input-otp primitive.
+
+```svelte
+<PinField
+  children?: Snippet
+  class?: string
+  description?: string
+  disabled?: boolean
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  maxlength?: number
+  name: keyof Input & string
+  onChange?: (value: string) => void
+  onInput?: (value: string) => void
+  optional?: boolean
+  schema?: ZodType
+  bind:value?: string
+/>
+```
+
+`maxlength` defaults to `6`. Pair with `formPin()` from `utils/form` for schema validation.
 
 #### `SelectField`
 
@@ -180,78 +212,95 @@ Single-select dropdown.
 
 ```svelte
 <SelectField
-  {...fieldWrapperProps}
+  children?: Snippet
   class?: string
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
   getKey: (item: I) => K
   getLabel: (item: I) => string
   getValue: (item: I) => V
   icon?: Component
   items: readonly I[]
+  name: keyof Input & string
+  nullable?: boolean
   onchange?: (value: V | undefined) => void
+  optional?: boolean
   placeholder: string
+  schema?: ZodType
   bind:value?: V
 />
 ```
 
-#### `SelectMultiField`
+`nullable` defaults to `false`.
 
-Multi-select dropdown.
+#### `SliderField`
 
-```svelte
-<SelectMultiField
-  {...fieldWrapperProps}
-  class?: string
-  getKey: (item: I) => K
-  getLabel: (item: I) => string
-  getValue: (item: I) => V
-  icon?: Component
-  items: readonly I[]
-  onchange?: (value: V[]) => void
-  placeholder: string
-  bind:values?: V[]
-/>
-```
-
-#### `ChoiceField`
-
-Single-choice toggle buttons.
+Single-thumb or dual-thumb range slider.
 
 ```svelte
-<ChoiceField
-  {...fieldWrapperProps}
-  buttonContent?: Snippet
+<SliderField
+  children?: Snippet
   disabled?: boolean
-  getKey: (item: I) => K
-  getLabel: (item: I) => string
-  getValue: (item: I) => V
-  items: readonly I[]
-  onChange?: (value: V) => void
-  readonly?: boolean
-  bind:value?: V
-  vertical?: boolean
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  highName?: keyof Input & string
+  lowName?: keyof Input & string
+  max?: number
+  min?: number
+  name?: keyof Input & string
+  onChange?: (value: number | number[]) => void
+  optional?: boolean
+  range?: boolean
+  schema?: ZodType
+  showValue?: boolean
+  step?: number
+  bind:value?: number | number[]
 />
 ```
 
-#### `ChoiceMultiField`
+`min` defaults to `0`, `max` to `100`, `step` to `1`, `showValue` to `true`, `range` to `false`. In single mode, use `name` and `value: number`. In range mode (`range={true}`), use `lowName`/`highName` in form mode, and `value` becomes `[low, high]` in standalone mode.
 
-Multi-choice toggle buttons.
+#### `SwitchField`
+
+Toggle switch for boolean values, with three visual variants.
 
 ```svelte
-<ChoiceMultiField
-  {...fieldWrapperProps}
-  buttonContent?: Snippet
+<SwitchField
+  bind:checked?: boolean
+  children?: Snippet
+  description?: string
   disabled?: boolean
-  getKey: (item: I) => K
-  getLabel: (item: I) => string
-  getValue: (item: I) => V
-  items: readonly I[]
-  onAdd?: (value: V) => void
-  onRemove?: (value: V) => void
-  readonly?: boolean
-  bind:value?: V[]
-  vertical?: boolean
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  name: keyof Input & string
+  offLabel?: string
+  onChange?: (value: boolean) => void
+  onLabel?: string
+  optional?: boolean
+  schema?: ZodType
+  variant?: 'button' | 'onoff' | 'switch'
 />
 ```
+
+`variant` defaults to `'switch'` (sliding pill). `'onoff'` shows `offLabel`/`onLabel` text (defaults `"OFF"`/`"ON"`). `'button'` renders `children` as the label of a filled/outlined button.
+
+#### `FileField`
+
+File upload field.
+
+```svelte
+<FileField
+  accept?: string
+  children?: Snippet
+  disabled?: boolean
+  form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>
+  multiple?: boolean
+  name: keyof Input & string
+  onSelect?: (files: File[]) => void
+  optional?: boolean
+  schema?: ZodType
+  variant?: 'button' | 'dropzone'
+/>
+```
+
+`variant` defaults to `'button'`. Pair with `formFile` from `utils/form` for schema validation.
 
 #### `MessageField`
 
@@ -259,13 +308,12 @@ Textarea for longer text input.
 
 ```svelte
 <MessageField
-  {...fieldWrapperProps}
+  {...scalarFieldProps}
   class?: string
   defaultHeight?: number
   icon?: Component
   placeholder?: string
   resize?: boolean
-  bind:value?: string
 />
 ```
 
@@ -276,58 +324,18 @@ Textarea for longer text input.
 Hex color picker field.
 
 ```svelte
-<HexColorField
-  {...fieldWrapperProps}
-  bind:value?: string
-/>
+<HexColorField {...scalarFieldProps} />
 ```
 
-#### `WeekdayChoiceField`
+Pair with `formHexColor` from `utils/form` for schema validation.
 
-Single weekday selector.
+---
 
-```svelte
-<WeekdayChoiceField
-  {...fieldWrapperProps}
-  disabled?: boolean
-  letterLabels?: boolean
-  longLabels?: boolean
-  onChange?: (value: Day) => void
-  readonly?: boolean
-  bind:value?: Day
-  vertical?: boolean
-/>
-```
+### `@webamoki/web-svelte/components/form/fields`
 
-#### `WeekdayChoiceMultiField`
+Re-exports the field components above without `Form`/`Button`. Currently includes: `CheckboxField`, `DateField`, `DateRangeField`, `EmailField`, `FileField`, `HexColorField`, `MessageField`, `NumberField`, `PasswordField`, `PinField`, `SelectField`, `SwitchField`, `TextField`, `TimeField`.
 
-Multi-weekday selector.
-
-```svelte
-<WeekdayChoiceMultiField
-  {...fieldWrapperProps}
-  disabled?: boolean
-  letterLabels?: boolean
-  longLabels?: boolean
-  onAdd?: (value: Day) => void
-  onRemove?: (value: Day) => void
-  readonly?: boolean
-  bind:value?: Day[]
-  vertical?: boolean
-/>
-```
-
-#### `IconInputWrapper`
-
-Wrapper that adds an icon to input fields.
-
-```svelte
-<IconInputWrapper icon?: Component iconPosition?: 'center' | 'top' flex?: boolean>
-  {#snippet children(attrs: { class: string })}
-    <input class={attrs.class} />
-  {/snippet}
-</IconInputWrapper>
-```
+`SliderField` is exported from `components/form` but not from this subpath (source inconsistency — import it from `components/form` if needed).
 
 ---
 
@@ -343,11 +351,14 @@ Standalone text input with optional icon.
 <Input
   class?: string
   icon?: Component
+  iconPosition?: 'center' | 'top'
   type?: HTMLInputElement['type'] // 'file' excluded
   bind:value?: string
   {...HTMLInputAttributes}
 />
 ```
+
+`iconPosition` defaults to `'center'`.
 
 #### `TextArea`
 
@@ -398,6 +409,28 @@ Standalone single-select dropdown.
   onchange?: (value: V | undefined) => void
   placeholder: string
   bind:value?: V
+/>
+```
+
+#### `Checkbox`
+
+Standalone checkbox (used internally by `CheckboxField`, also available standalone).
+
+```svelte
+<Checkbox
+  bind:checked?: boolean
+  children?: Snippet
+  class?: string
+  description?: string
+  disabled?: boolean
+  id?: string
+  bind:indeterminate?: boolean
+  name?: string
+  onChecked?: () => void
+  onCheckedChange?: (checked: boolean) => void
+  onUnchecked?: () => void
+  required?: boolean
+  {...HTMLButtonAttributes}
 />
 ```
 
@@ -500,7 +533,7 @@ State manager for drag-and-drop operations.
 ```ts
 class DragManager<T> {
   get isDragging(): boolean;
-  get dragData(): T | undefined;
+  get dragData(): T | null;
   drag(data: T): void;
   stop(): void;
 }
@@ -543,6 +576,10 @@ Search input with icon and debounced change callback.
   placeholder?: string
 />
 ```
+
+#### `Sidebar`
+
+Namespace re-export of the shadcn sidebar primitives (`Root`, `Provider`, `Content`, `Header`, `Footer`, `Group*`, `Menu*`, `Inset`, `Input`, `Rail`, `Separator`, `Trigger`, `useSidebar`), plus flat `Sidebar*`-prefixed aliases (e.g. `SidebarContent`). See shadcn-svelte sidebar docs for usage.
 
 ---
 
@@ -643,65 +680,72 @@ function trimTo<T extends z.ZodType<string, string>>(typeTo: T): z.ZodPipe<z.Zod
 
 ---
 
+### `@webamoki/web-svelte/utils/env`
+
+Public (client-safe) environment variable validation, backed by `$env/dynamic/public`. Result is validated once and cached.
+
+```ts
+function makePublic<S extends ZodRawShape>(schema: ZodObject<S>): () => z.infer<ZodObject<S>>;
+const Env: { makePublic: typeof makePublic };
+```
+
+Throws on validation failure with a joined `path: message` list.
+
+---
+
+### `@webamoki/web-svelte/server/env`
+
+Private (server-only) environment variable validation. Prefers Cloudflare Workers `platform.env` (including secret-binding objects), falling back to `$env/dynamic/private` outside a request context. Result is validated once and cached.
+
+```ts
+function makePrivate<S extends ZodRawShape>(schema: ZodObject<S>): () => Promise<z.infer<ZodObject<S>>>;
+const Env: { makePrivate: typeof makePrivate };
+```
+
+Throws on validation failure with a joined `path: message` list.
+
+---
+
 ### `@webamoki/web-svelte/utils/form`
 
-Form initialization utilities for sveltekit-superforms.
+Result type and Zod schema helpers for use with SvelteKit remote forms and the `components/form` field components.
 
-#### `prepareForm`
-
-Initializes a superform with a Zod schema and pre-validated data.
+#### `FormResult`
 
 ```ts
-function prepareForm<S extends z.ZodType<Record<string, unknown>>>(
-  schema: S,
-  validated: Infer<S, 'zod4'> | SuperValidated<Infer<S, 'zod4'>>,
-  options?: {
-    invalidateAll?: boolean;
-    onError?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    onSuccess?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    onUpdated?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    resetForm?: boolean;
-  }
-): { data: Writable<Infer<S, 'zod4'>>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+type FormResponseType = 'error' | 'ok' | 'warning';
+type FormResult<T> = { data: T; message?: string; type: FormResponseType };
+
+const FormResult = {
+  errData<T>(info: { data: T; message?: string }): FormResult<T>;
+  err(message?: string): FormResult<void>;
+  warnData<T>(info: { data: T; message?: string }): FormResult<T>;
+  warn(message?: string): FormResult<void>;
+  okData<T>(info: { data: T; message?: string }): FormResult<T>;
+  ok(message?: string): FormResult<void>;
+};
 ```
 
-#### `prepareEmptyForm`
+Return one of these from a remote `form()` action; `Form`'s `onSuccess`/`onWarning`/`onError` and its automatic toast are driven by the `type`.
 
-Initializes a superform with defaults (no initial data needed).
+#### Schema helpers
 
 ```ts
-function prepareEmptyForm<S extends z.ZodType<Record<string, unknown>>>(
-  schema: S,
-  options?: {
-    invalidateAll?: boolean;
-    onError?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    onSuccess?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    onUpdated?: (form: SuperValidated<Infer<S, 'zod4'>, App.Superforms.Message>) => void;
-    resetForm?: boolean;
-  }
-): { data: Writable<Infer<S, 'zod4'>>; errors: Writable<...>; form: SuperForm; isProcessing: Readable<boolean> };
+function nullable<T extends z.ZodType<unknown, number | string>>(schema: T): z.ZodType<null | z.infer<T>, number | string>;
+const formText: z.ZodString;               // trim + min(1)
+const formEmail: z.ZodString;               // z.email()
+const formBoolean: z.ZodType<boolean, boolean | undefined>; // defaults to false
+const formInt: z.ZodType<number, number | string>;   // any finite number
+const formNumber: z.ZodType<number, number | string>; // formInt piped to .min(0)
+const formDate: z.ZodType<CalendarDate, string>;      // parses "YYYY-MM-DD"
+const formTime: z.ZodType<Time, string>;              // parses "HH:mm"
+const formFile: z.ZodType<File>;            // instanceof File, size > 0
+const formHexColor: z.ZodString;            // ^[0-9a-fA-F]{6}$ (6-digit only)
+function formPin(length?: number): z.ZodString;       // default length 6
+function formSelect<T extends readonly [string, ...string[]]>(options: T): z.ZodEnum<...>;
 ```
 
-#### `VirtualForm`
-
-Client-side form submission without a `<form>` element. Useful for programmatic submissions.
-
-```ts
-class VirtualForm<S extends z.ZodType<Record<string, unknown>>> {
-  constructor(
-    schema: S,
-    action: string,
-    options?: {
-      actionName?: string;
-      onError?: (message: App.Superforms.Message) => void;
-      onSuccess?: (form: SuperValidated<z.infer<S>, App.Superforms.Message>) => void;
-      transport?: Transport;
-    }
-  );
-  get isProcessing(): boolean;
-  submit(data: z.infer<S>): Promise<void>;
-}
-```
+`nullable` wraps a string/number schema so an empty form field, `null`, or `undefined` all normalize to `null` — for optional scalar fields shared between a `<Form>` and a JSON body.
 
 ---
 
@@ -762,7 +806,7 @@ const Result = {
 
 ### `@webamoki/web-svelte/server/form-handler`
 
-Server-side form handling helpers for `+page.server.ts` actions.
+Legacy `sveltekit-superforms`-based server-side form handling helpers for `+page.server.ts` actions. Not related to the remote-form `Form`/field components above, which use `utils/form`'s `FormResult` instead.
 
 ```ts
 function errorMessage<T extends Record<string, unknown>>(
@@ -792,7 +836,7 @@ function isDuplicateDbError(err: unknown): boolean;
 
 ### `@webamoki/web-svelte/server/form-processor`
 
-Server-side form validation.
+Legacy `sveltekit-superforms`-based server-side form validation.
 
 ```ts
 function processForm<S extends z.ZodType<Record<string, unknown>>>(
@@ -950,24 +994,48 @@ Both classes catch network errors as `Result.err({ code: 500, message: 'Internal
 
 ## Usage Example
 
+`schema.ts`:
+
+```ts
+import { formDate } from '@webamoki/web-svelte/utils/form';
+import { z } from 'zod/v4';
+
+export const Schema = z.object({
+  name: z.string().min(1),
+  age: z.int().min(0),
+  date: formDate
+});
+```
+
+`data.remote.ts`:
+
+```ts
+import { form } from '$app/server';
+
+import { FormResult } from '@webamoki/web-svelte/utils/form';
+
+import { Schema } from './schema.js';
+
+export const submitForm = form(Schema, async (data) => {
+  // ...persist data...
+  return FormResult.ok('Saved');
+});
+```
+
+`+page.svelte`:
+
 ```svelte
 <script lang="ts">
-  import { Form, Button, TextField, NumberField } from '@webamoki/web-svelte/components/form';
-  import { prepareForm } from '@webamoki/web-svelte/utils/form';
-  import { z } from 'zod/v4';
+  import { Button, DateField, Form, NumberField, TextField } from '@webamoki/web-svelte/components/form';
 
-  const Schema = z.object({
-    name: z.string().min(1),
-    age: z.int().min(0)
-  });
-
-  let { data } = $props();
-  const { form, data: formData, isProcessing } = prepareForm(Schema, data.form);
+  import { submitForm } from './data.remote.js';
+  import { Schema } from './schema.js';
 </script>
 
-<Form {form} actionPath="/api/submit">
-  <TextField {form} name="name" label="Name" placeholder="Enter name" />
-  <NumberField {form} name="age" label="Age" placeholder="Enter age" />
-  <Button loading={$isProcessing}>Submit</Button>
+<Form form={submitForm} schema={Schema}>
+  <TextField form={submitForm} name="name">Name</TextField>
+  <NumberField form={submitForm} name="age">Age</NumberField>
+  <DateField form={submitForm} name="date">Date</DateField>
+  <Button form={submitForm}>Submit</Button>
 </Form>
 ```

@@ -38,7 +38,7 @@ export function guardedCommand<Schema extends StandardSchemaV1, Output extends C
   check: CheckFunction,
   schema: Schema,
   fn: (output: StandardSchemaV1.InferOutput<Schema>) => Promise<CommandResult<Output>>
-): RemoteCommand<StandardSchemaV1.InferInput<Schema>, Promise<CommandResult<Output>>> {
+): RemoteCommand<StandardSchemaV1.InferInput<Schema>, CommandResult<Output>> {
   return command(schema, async (output) => {
     const outcome = await check();
     // Command remote functions cannot redirect for error,
@@ -52,7 +52,7 @@ export function guardedCommand<Schema extends StandardSchemaV1, Output extends C
 export function guardedCommandVoid<Output extends CommandSuccess>(
   check: CheckFunction,
   fn: () => Promise<CommandResult<Output>>
-): RemoteCommand<void, Promise<CommandResult<Output>>> {
+): RemoteCommand<void, CommandResult<Output>> {
   return command(async () => {
     const outcome = await check();
     if (!outcome.ok) return Result.err(outcome.error);
@@ -72,7 +72,10 @@ export function guardedForm<
     issue: InvalidField<StandardSchemaV1.InferInput<Schema>>
   ) => Promise<Output>
 ): RemoteForm<StandardSchemaV1.InferInput<Schema>, Output> {
-  return form(schema, async (output, issue) => {
+  // kit's `form()` overload rejects schemas with non-optional booleans via a conditional
+  // type on its `Schema` param, but that conditional can't evaluate against our own generic
+  // `Schema` passthrough — cast bridges the mismatch; runtime validation is unaffected.
+  return form(schema as never, async (output, issue) => {
     // Enforce auth check or throw sveltekit error
     CheckResult.enforceOk(await check());
     return await fn(output, issue);

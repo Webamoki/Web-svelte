@@ -92,13 +92,13 @@
     dirty = false;
   }}
   use:applyEnctype
-  {...remote.preflight(schema).enhance(async ({ form: formElement, submit }) => {
+  {...remote.preflight(schema).enhance(async (instance) => {
     try {
-      const submitted = await submit();
+      const submitted = await instance.submit();
       const result = remote.result;
 
       if (submitted && reset && result?.type === 'ok') {
-        formElement.reset();
+        instance.element.reset();
       }
 
       if (result !== undefined) {

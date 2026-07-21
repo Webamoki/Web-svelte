@@ -8,7 +8,7 @@ import type { CommandResult, CommandSuccess, ResponseError } from './remote.js';
 
 import { Result } from './functional/result.js';
 
-type RC<S, O extends CommandSuccess> = RemoteCommand<S, Promise<CommandResult<O>>>;
+type RC<S, O extends CommandSuccess> = RemoteCommand<S, CommandResult<O>>;
 
 /**
  * Command Remote function handler for Client
@@ -132,7 +132,7 @@ export class CommandAction<S, O extends CommandSuccess> {
   }
 }
 
-type RCV<O extends CommandSuccess> = RemoteCommand<void, Promise<CommandResult<O>>>;
+type RCV<O extends CommandSuccess> = RemoteCommand<void, CommandResult<O>>;
 
 /**
  * Command Remote function handler for Client without input

@@ -5,7 +5,7 @@
   import { Select } from 'bits-ui';
   import { getContext } from 'svelte';
 
-  import { OPTIONS_FIELD_CONTEXT, type OptionsFieldContext } from './options-field-context.js';
+  import { SELECT_FIELD_CONTEXT, type SelectFieldContext } from './select-field-context.js';
 
   interface Props {
     /** The visible option content — plain text or rich markup (e.g. an icon). */
@@ -23,8 +23,8 @@
   const key = String(value);
   const resolvedLabel = $derived(label ?? key);
 
-  const ctx = getContext<OptionsFieldContext>(OPTIONS_FIELD_CONTEXT);
-  // Registers this option's rich content against its key so the parent `<OptionsField>` can
+  const ctx = getContext<SelectFieldContext>(SELECT_FIELD_CONTEXT);
+  // Registers this option's rich content against its key so the parent `<SelectField>` can
   // re-render the SAME snippet as the closed-trigger display when this option is selected —
   // called synchronously at init (not inside `$effect`, which only runs post-mount and would
   // flash the placeholder for one frame on first render). `<Option>` is a static declaration

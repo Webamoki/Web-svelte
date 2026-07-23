@@ -9,7 +9,6 @@ export { default as HexColorField } from './fields/HexColorField.svelte';
 export { default as MessageField } from './fields/MessageField.svelte';
 export { default as NumberField } from './fields/NumberField.svelte';
 export { default as Option } from './fields/Option.svelte';
-export { default as OptionsField } from './fields/OptionsField.svelte';
 export { default as PasswordField } from './fields/PasswordField.svelte';
 export { default as PinField } from './fields/PinField.svelte';
 export { default as SelectField } from './fields/SelectField.svelte';

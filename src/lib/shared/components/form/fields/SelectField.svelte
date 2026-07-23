@@ -1,24 +1,26 @@
-<script generics="Input extends RemoteFormInput, I, V, K extends number | string" lang="ts">
+<script generics="Input extends RemoteFormInput, V extends number | string" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Component, Snippet } from 'svelte';
   import type { ZodType } from 'zod/v4';
 
-  import Check from '@lucide/svelte/icons/check';
   import ChevronDown from '@lucide/svelte/icons/chevron-down';
   import { Select } from 'bits-ui';
+  import { setContext } from 'svelte';
+  import { SvelteMap } from 'svelte/reactivity';
 
   import { createFormView, createLocalSelectView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
+  import { SELECT_FIELD_CONTEXT, type SelectFieldContext } from './select-field-context.js';
 
   interface Props {
-    children?: Snippet;
+    /** The `<Option>` list — declarative, native `<select><option>`-style, in place of an
+     *  `items`/`getKey`/`getLabel`/`getValue` array. */
+    children: Snippet;
     class?: string;
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
-    getKey: (item: I) => K;
-    getLabel: (item: I) => string;
-    getValue: (item: I) => V;
     icon?: Component;
-    items: readonly I[];
+    /** Field label text. Not `children` here — that's the option list. */
+    label?: string;
     name: keyof Input & string;
     nullable?: boolean;
     onchange?: (value: undefined | V) => void;
@@ -32,11 +34,8 @@
     children,
     class: className,
     form,
-    getKey,
-    getLabel,
-    getValue,
     icon: Icon,
-    items,
+    label,
     name,
     nullable = false,
     onchange,
@@ -46,7 +45,15 @@
     value = $bindable()
   }: Props = $props();
 
-  // `as('select')` is reached only via the `form` branch; standalone uses local state.
+  const registry = new SvelteMap<string, { content: Snippet; label: string; value: unknown }>();
+  const context: SelectFieldContext = {
+    register: (key, entry) => registry.set(key, entry),
+    unregister: (key) => registry.delete(key)
+  };
+  setContext(SELECT_FIELD_CONTEXT, context);
+
+  // `as('select')` is reached only via the `form` branch; standalone uses local state — same
+  // split `Combobox` uses.
   // svelte-ignore state_referenced_locally
   const view: FieldView = form
     ? createFormView(form, name, 'select')
@@ -59,57 +66,31 @@
 
   const attrs = $derived(view.attrs);
   const required = $derived(!optional);
-
-  // With a label the asterisk carries the required/optional cue. Without one,
-  // required fields just show the placeholder; optional fields get an (Optional)
-  // suffix so the cue reads naturally after the placeholder text.
   const displayPlaceholder = $derived(
-    children || required || !placeholder ? placeholder : `${placeholder} (Optional)`
+    label || required || !placeholder ? placeholder : `${placeholder} (Optional)`
   );
 
-  const keyToValue = $derived(
-    new Map(items.map((item) => [String(getKey(item)), String(getValue(item))]))
-  );
-  const valueToItem = $derived(new Map(items.map((item) => [String(getValue(item)), item])));
-  const valueToKey = $derived(
-    new Map(items.map((item) => [String(getValue(item)), String(getKey(item))]))
-  );
-  const keyToLabel = $derived(new Map(items.map((item) => [String(getKey(item)), getLabel(item)])));
-
-  // bits-ui `Select` uses this {value,label} list for typeahead + autofill matching.
-  const bitsItems = $derived(
-    items.map((item) => ({ label: getLabel(item), value: String(getKey(item)) }))
-  );
-
-  // Form mode stores the submitted value string; standalone tracks the typed value,
-  // so the selected option is resolved from its key. This string is both the value
-  // fed to bits-ui `Select` (its item values are keyed by `getKey`) and the value
-  // carried by the hidden input below into the form's FormData.
-  const selectedValue = $derived(
-    form ? (attrs.value as string) : (valueToKey.get(String(value ?? '')) ?? '')
-  );
-  const selectedLabel = $derived(keyToLabel.get(selectedValue));
+  const selectedKey = $derived(form ? (attrs.value as string) : String(value ?? ''));
+  const selectedEntry = $derived(registry.get(selectedKey));
 
   function handleChange(key: string) {
-    const newValue = keyToValue.get(key) ?? '';
-    const item = valueToItem.get(newValue);
-    const typedValue = item === undefined ? undefined : getValue(item);
+    const entry = registry.get(key);
+    const typedValue = entry === undefined ? undefined : (entry.value as V);
     view.set(typedValue);
     onchange?.(typedValue);
   }
 </script>
 
 <div class="form-field">
-  {#if children}
-    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
+  {#if label}
+    <FieldLabel for={attrs.name} {required}>{label}</FieldLabel>
   {/if}
   <Select.Root
     allowDeselect={nullable}
-    items={bitsItems}
     onValueChange={handleChange}
     {required}
     type="single"
-    value={selectedValue}
+    value={selectedKey}
   >
     <Select.Trigger
       id={attrs.name}
@@ -117,7 +98,7 @@
         'form-input',
         'form-select',
         Icon && 'form-input--with-icon',
-        !selectedValue && 'form-select--placeholder',
+        !selectedKey && 'form-select--placeholder',
         className
       ]
         .filter(Boolean)
@@ -127,33 +108,26 @@
       {#if Icon}
         <div class="form-input-icon"><Icon /></div>
       {/if}
-      <span class="form-select-value">{selectedLabel ?? displayPlaceholder}</span>
+      <span class="form-select-value">
+        {#if selectedEntry}
+          {@render selectedEntry.content()}
+        {:else}
+          {displayPlaceholder}
+        {/if}
+      </span>
       <ChevronDown class="form-select-chevron" size={14} />
     </Select.Trigger>
     <Select.Portal>
       <Select.Content class="form-select-menu" sideOffset={4}>
         <Select.Viewport>
-          {#each items as item (getKey(item))}
-            <Select.Item
-              class="form-select-item"
-              label={getLabel(item)}
-              value={String(getKey(item))}
-            >
-              {#snippet children({ selected })}
-                <span class="form-select-item-label">{getLabel(item)}</span>
-                {#if selected}
-                  <Check class="form-select-item-check" size={14} />
-                {/if}
-              {/snippet}
-            </Select.Item>
-          {/each}
+          {@render children()}
         </Select.Viewport>
       </Select.Content>
     </Select.Portal>
   </Select.Root>
   <!-- bits-ui `Select` has no native form control; this hidden input carries the
        selected value into FormData exactly as the old native <select name> did. -->
-  <input name={attrs.name} type="hidden" value={selectedValue} />
+  <input name={attrs.name} type="hidden" value={selectedKey} />
   {#each view.issues() as issue (`${issue.path}`)}
     <p class="form-error">{issue.message}</p>
   {/each}

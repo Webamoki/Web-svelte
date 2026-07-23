@@ -14,6 +14,7 @@
     HexColorField,
     MessageField,
     NumberField,
+    Option,
     PasswordField,
     PinField,
     SelectField,
@@ -24,7 +25,6 @@
   } from '$lib/shared/components/form/index.js';
   import { Sidebar } from '$lib/shared/components/ui/index.js';
   import { Hash, MessageSquare, Tag, User } from '@lucide/svelte';
-  import { identity } from 'ramda';
   import { z } from 'zod/v4';
 
   import {
@@ -597,19 +597,21 @@
         </CodeBlock>
       </Container>
 
-      <Container description="A single-select field (wraps ui/Select)" title="SelectField">
+      <Container
+        description="A single-select field — declarative <Option> children, native <select><option>-style"
+        title="SelectField"
+      >
         <Preview slot="preview">
           <Form class="flex flex-col gap-4" form={selectForm} schema={SelectSchema}>
             <SelectField
               name="select"
               form={selectForm}
-              getKey={identity}
-              getLabel={(s: string) => s.toUpperCase()}
-              getValue={identity}
-              items={['apple', 'banana', 'cherry']}
+              label="Select (pick cherry)"
               placeholder="Please select"
             >
-              Select (pick cherry)
+              <Option value="apple">APPLE</Option>
+              <Option value="banana">BANANA</Option>
+              <Option value="cherry">CHERRY</Option>
             </SelectField>
             <Button form={selectForm}>Submit</Button>
           </Form>
@@ -621,14 +623,13 @@
             <SelectField
               name="select"
               form={selectForm.for('icon')}
-              getKey={identity}
-              getLabel={(s: string) => s.toUpperCase()}
-              getValue={identity}
               icon={Tag}
-              items={['apple', 'banana', 'cherry']}
+              label="With Icon"
               placeholder="Please select"
             >
-              With Icon
+              <Option value="apple">APPLE</Option>
+              <Option value="banana">BANANA</Option>
+              <Option value="cherry">CHERRY</Option>
             </SelectField>
             <Button form={selectForm.for('icon')}>Submit</Button>
           </Form>
@@ -640,45 +641,39 @@
             <SelectField
               name="select"
               form={selectNullableForm}
-              getKey={identity}
-              getLabel={(s: string) => s.toUpperCase()}
-              getValue={identity}
-              items={[...SELECT_OPTIONS]}
+              label="Select (optional)"
               nullable
               optional
               placeholder="Please select"
             >
-              Select (optional)
+              {#each SELECT_OPTIONS as opt (opt)}
+                <Option value={opt}>{opt.toUpperCase()}</Option>
+              {/each}
             </SelectField>
             <Button form={selectNullableForm}>Submit</Button>
           </Form>
           {@render standaloneLabel('bind:value + onchange')}
           <SelectField
             name="select"
-            getKey={identity}
-            getLabel={(s: string) => s.toUpperCase()}
-            getValue={identity}
-            items={['apple', 'banana', 'cherry']}
+            label="Select"
             placeholder="Please select"
             bind:value={saSelect}
           >
-            Select
+            <Option value="apple">APPLE</Option>
+            <Option value="banana">BANANA</Option>
+            <Option value="cherry">CHERRY</Option>
           </SelectField>
           <p class="mt-1 text-xs text-gray-600">value: {saSelect ?? '(none)'}</p>
         </Preview>
         <CodeBlock slot="code">
-          {`<SelectField
-  name="select"
-  form={remoteForm}
-  items={['apple', 'banana', 'cherry']}
-  getKey={identity}
-  getLabel={(s) => s.toUpperCase()}
-  getValue={identity}
-  placeholder="Please select"
->
-  Select
+          {`<SelectField name="select" form={remoteForm} label="Select" placeholder="Please select">
+  <Option value="apple">APPLE</Option>
+  <Option value="banana">BANANA</Option>
+  <Option value="cherry">CHERRY</Option>
 </SelectField>
-<SelectField name="select" form={remoteForm} nullable optional ...>Select</SelectField>`}
+<SelectField name="select" form={remoteForm} nullable optional label="Select (optional)" ...>
+  ...
+</SelectField>`}
         </CodeBlock>
       </Container>
 
@@ -838,13 +833,12 @@
             <SelectField
               name="select"
               form={showcaseForm.for('form-demo')}
-              getKey={identity}
-              getLabel={identity}
-              getValue={identity}
-              items={[...SELECT_OPTIONS]}
+              label="Select"
               placeholder="Please select"
             >
-              Select
+              {#each SELECT_OPTIONS as opt (opt)}
+                <Option value={opt}>{opt}</Option>
+              {/each}
             </SelectField>
             <Button form={showcaseForm.for('form-demo')}>Submit</Button>
           </Form>

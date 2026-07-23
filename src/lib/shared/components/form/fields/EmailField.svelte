@@ -11,6 +11,7 @@
     autocomplete?: HTMLInputAttributes['autocomplete'];
     children?: Snippet;
     class?: string;
+    disabled?: HTMLInputAttributes['disabled'];
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     name: keyof Input & string;
     onChange?: (value: T) => void;
@@ -28,6 +29,7 @@
     autocomplete,
     children,
     class: className,
+    disabled,
     form,
     name,
     onChange,
@@ -47,6 +49,7 @@
   {autocapitalize}
   {autocomplete}
   {children}
+  {disabled}
   {form}
   {onChange}
   {onInput}

@@ -17,6 +17,8 @@
     children?: Snippet;
     /** Extra class(es) merged onto the underlying <input> (in addition to `form-input`). */
     class?: string;
+    /** Passed through to the underlying <input>. */
+    disabled?: HTMLInputAttributes['disabled'];
     /** When omitted the field is standalone — controlled via `bind:value`. */
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
@@ -45,6 +47,7 @@
     autocomplete,
     children,
     class: className,
+    disabled,
     form,
     icon,
     inputmode,
@@ -93,6 +96,7 @@
     class={className}
     {autocapitalize}
     {autocomplete}
+    {disabled}
     {icon}
     {inputmode}
     {onkeydown}

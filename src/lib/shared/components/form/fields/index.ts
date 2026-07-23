@@ -1,4 +1,5 @@
 export { default as CheckboxField } from './CheckboxField.svelte';
+export { default as Combobox } from './Combobox.svelte';
 export { default as DateField } from './DateField.svelte';
 export { default as DateRangeField } from './DateRangeField.svelte';
 export { default as EmailField } from './EmailField.svelte';
@@ -6,6 +7,8 @@ export { default as FileField } from './FileField.svelte';
 export { default as HexColorField } from './HexColorField.svelte';
 export { default as MessageField } from './MessageField.svelte';
 export { default as NumberField } from './NumberField.svelte';
+export { default as Option } from './Option.svelte';
+export { default as OptionsField } from './OptionsField.svelte';
 export { default as PasswordField } from './PasswordField.svelte';
 export { default as PinField } from './PinField.svelte';
 export { default as SelectField } from './SelectField.svelte';

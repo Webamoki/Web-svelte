@@ -116,7 +116,7 @@
   const selectedKeys = $derived(
     multiple
       ? form
-        ? (attrs.value as string[])
+        ? ((attrs.value as string[] | undefined) ?? [])
         : ((value as undefined | V[]) ?? []).map((v) => valueToKey.get(String(v)) ?? '')
       : []
   );
@@ -176,7 +176,9 @@
       value={selectedKeys}
     >
       <div
-        class={['form-input', 'form-select', 'form-combobox', className].filter(Boolean).join(' ')}
+        class={['form-input', 'form-select', 'form-combobox', 'form-combobox-multi', className]
+          .filter(Boolean)
+          .join(' ')}
       >
         {#if Icon}<Icon class="form-input-icon" />{/if}
         <div class="form-combobox-chips">

@@ -11,6 +11,7 @@
     autocomplete?: HTMLInputAttributes['autocomplete'];
     children?: Snippet;
     class?: string;
+    disabled?: HTMLInputAttributes['disabled'];
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
     icon?: Component;
     inputmode?: HTMLInputAttributes['inputmode'];
@@ -32,6 +33,7 @@
     autocomplete,
     children,
     class: className,
+    disabled,
     form,
     icon,
     inputmode,
@@ -54,6 +56,7 @@
   {autocapitalize}
   {autocomplete}
   {children}
+  {disabled}
   {form}
   {icon}
   {inputmode}

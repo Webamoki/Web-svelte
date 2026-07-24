@@ -11,6 +11,7 @@ export { default as Option } from './Option.svelte';
 export { default as PasswordField } from './PasswordField.svelte';
 export { default as PinField } from './PinField.svelte';
 export { default as SelectField } from './SelectField.svelte';
+export { default as SliderField } from './SliderField.svelte';
 export { default as SwitchField } from './SwitchField.svelte';
 export { default as TextField } from './TextField.svelte';
 export { default as TimeField } from './TimeField.svelte';

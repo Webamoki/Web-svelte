@@ -12,6 +12,8 @@ export type SelectFieldEntry = {
 };
 
 export type SelectFieldContext = {
+  /** Live search query, only set by `<Combobox>` — `<Option>` filters itself against it. */
+  getQuery?: () => string;
   register: (key: string, entry: SelectFieldEntry) => void;
   unregister: (key: string) => void;
 };

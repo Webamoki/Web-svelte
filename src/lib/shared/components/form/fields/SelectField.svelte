@@ -118,7 +118,7 @@
       <ChevronDown class="form-select-chevron" size={14} />
     </Select.Trigger>
     <Select.Portal>
-      <Select.Content class="form-select-menu" sideOffset={4}>
+      <Select.Content class="form-select-menu" forceMount sideOffset={4}>
         <Select.Viewport>
           {@render children()}
         </Select.Viewport>

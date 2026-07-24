@@ -1,6 +1,7 @@
 export { default as Button } from './Button.svelte';
 export { default as CheckboxField } from './fields/CheckboxField.svelte';
 export { default as Combobox } from './fields/Combobox.svelte';
+export { default as ComboboxAction } from './fields/ComboboxAction.svelte';
 export { default as DateField } from './fields/DateField.svelte';
 export { default as DateRangeField } from './fields/DateRangeField.svelte';
 export { default as EmailField } from './fields/EmailField.svelte';

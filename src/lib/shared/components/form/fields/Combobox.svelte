@@ -1,32 +1,37 @@
-<script generics="Input extends RemoteFormInput, I, V, K extends number | string" lang="ts">
+<script generics="Input extends RemoteFormInput, V extends number | string" lang="ts">
   import type { RemoteForm, RemoteFormInput } from '@sveltejs/kit';
   import type { Component, Snippet } from 'svelte';
   import type { ZodType } from 'zod/v4';
 
-  import Check from '@lucide/svelte/icons/check';
   import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down';
   import X from '@lucide/svelte/icons/x';
   import { Combobox as ComboboxPrimitive } from 'bits-ui';
+  import { setContext } from 'svelte';
+  import { SvelteMap } from 'svelte/reactivity';
 
-  import { fuzzySearch, fuzzySearchHighlight } from '../../../utils/string.js';
+  import { fuzzySearch } from '../../../utils/string.js';
   import { createFormView, createLocalSelectView, type FieldView } from '../field-view.svelte.js';
   import FieldLabel from '../FieldLabel.svelte';
+  import {
+    SELECT_FIELD_CONTEXT,
+    type SelectFieldContext,
+    type SelectFieldEntry
+  } from './select-field-context.js';
 
-  type BaseProps<Input extends RemoteFormInput, I, V, K extends number | string> = {
-    children?: Snippet;
+  type BaseProps<Input extends RemoteFormInput> = {
+    /** The `<Option>` list — declarative, native `<select><option>`-style. */
+    children: Snippet;
     class?: string;
     /** Overrides the "no results" row. Receives the current search query. */
     empty?: Snippet<[query: string]>;
     /** Rendered below the option list, inside the panel (e.g. an "add new…" action). */
     footer?: Snippet;
     form?: Omit<RemoteForm<Input, unknown>, 'for'> | RemoteForm<Input, unknown>;
-    getKey: (item: I) => K;
-    getLabel: (item: I) => string;
-    getValue: (item: I) => V;
     /** Rendered above the option list, inside the panel (e.g. a hint line). */
     header?: Snippet;
     icon?: Component;
-    items: readonly I[];
+    /** Field label text. Not `children` here — that's the option list. */
+    label?: string;
     name: keyof Input & string;
     /** Only meaningful for single-select — ignored when `multiple`. */
     nullable?: boolean;
@@ -37,13 +42,13 @@
     schema?: ZodType;
   };
 
-  type Props<Input extends RemoteFormInput, I, V, K extends number | string> =
-    | (BaseProps<Input, I, V, K> & {
+  type Props<Input extends RemoteFormInput, V> =
+    | (BaseProps<Input> & {
         multiple: true;
         onchange?: (value: V[]) => void;
         value?: V[];
       })
-    | (BaseProps<Input, I, V, K> & {
+    | (BaseProps<Input> & {
         multiple?: false;
         onchange?: (value: undefined | V) => void;
         value?: undefined | V;
@@ -55,12 +60,9 @@
     empty,
     footer,
     form,
-    getKey,
-    getLabel,
-    getValue,
     header,
     icon: Icon,
-    items,
+    label,
     multiple = false,
     name,
     nullable = false,
@@ -71,7 +73,18 @@
     placeholder,
     schema,
     value = $bindable()
-  }: Props<Input, I, V, K> = $props();
+  }: Props<Input, V> = $props();
+
+  const registry = new SvelteMap<string, SelectFieldEntry>();
+  let query = $state('');
+  const context: SelectFieldContext = {
+    getQuery: () => query,
+    register: (key, entry) => registry.set(key, entry),
+    unregister: (key) => registry.delete(key)
+  };
+  setContext(SELECT_FIELD_CONTEXT, context);
+
+  let boxEl = $state<HTMLDivElement | undefined>();
 
   // `as('select'|'select multiple')` is reached only via the `form` branch — SvelteKit's remote
   // forms natively support both (RemoteFormFieldType resolves 'select multiple' for a string[]
@@ -89,61 +102,48 @@
   const attrs = $derived(view.attrs);
   const required = $derived(!optional);
   const displayPlaceholder = $derived(
-    children || required || !placeholder ? placeholder : `${placeholder} (Optional)`
-  );
-
-  let query = $state('');
-
-  const keyToValue = $derived(
-    new Map(items.map((item) => [String(getKey(item)), String(getValue(item))]))
-  );
-  const valueToItem = $derived(new Map(items.map((item) => [String(getValue(item)), item])));
-  const valueToKey = $derived(
-    new Map(items.map((item) => [String(getValue(item)), String(getKey(item))]))
-  );
-  const keyToLabel = $derived(new Map(items.map((item) => [String(getKey(item)), getLabel(item)])));
-
-  const filteredItems = $derived(
-    query.trim() === '' ? items : items.filter((item) => fuzzySearch(query, getLabel(item)))
+    label || required || !placeholder ? placeholder : `${placeholder} (Optional)`
   );
 
   // bits-ui `Combobox` uses this {value,label} list for typeahead matching, same as `Select`.
   const bitsItems = $derived(
-    items.map((item) => ({ label: getLabel(item), value: String(getKey(item)) }))
+    [...registry.entries()].map(([key, entry]) => ({ label: entry.label, value: key }))
   );
 
-  // Form mode stores the submitted key(s); standalone tracks the typed value(s), resolved to
-  // key(s) via valueToKey — same split SelectField uses, just branched on `multiple`.
+  const hasVisibleOptions = $derived(
+    [...registry.values()].some((entry) => query.trim() === '' || fuzzySearch(query, entry.label))
+  );
+
+  // Form mode stores the submitted key(s); standalone tracks the typed value(s), keyed the same
+  // way `<Option>` derives its own key (`String(value)`) — same split `SelectField` uses, just
+  // branched on `multiple`.
   const selectedKey = $derived(
-    !multiple ? (form ? (attrs.value as string) : (valueToKey.get(String(value ?? '')) ?? '')) : ''
+    !multiple ? (form ? (attrs.value as string) : String(value ?? '')) : ''
   );
   const selectedKeys = $derived(
     multiple
       ? form
         ? ((attrs.value as string[] | undefined) ?? [])
-        : ((value as undefined | V[]) ?? []).map((v) => valueToKey.get(String(v)) ?? '')
+        : ((value as undefined | V[]) ?? []).map((v) => String(v))
       : []
   );
-  const selectedLabel = $derived(keyToLabel.get(selectedKey));
+  const selectedLabel = $derived(registry.get(selectedKey)?.label);
   const selectedChips = $derived(
     selectedKeys
-      .map((key) => ({ key, label: keyToLabel.get(key) ?? key }))
+      .map((key) => ({ key, label: registry.get(key)?.label ?? key }))
       .filter((chip) => chip.label)
   );
 
   function handleSingleChange(key: string) {
-    const newValue = keyToValue.get(key) ?? '';
-    const item = valueToItem.get(newValue);
-    const typedValue = item === undefined ? undefined : getValue(item);
+    const typedValue = registry.get(key)?.value as undefined | V;
     view.set(typedValue);
     (onchange as ((value: undefined | V) => void) | undefined)?.(typedValue);
   }
 
   function handleMultiChange(keys: string[]) {
     const typedValues = keys
-      .map((key) => valueToItem.get(keyToValue.get(key) ?? ''))
-      .filter((item): item is I => item !== undefined)
-      .map((item) => getValue(item));
+      .map((key) => registry.get(key)?.value)
+      .filter((v): v is V => v !== undefined);
     view.set(typedValues);
     (onchange as ((value: V[]) => void) | undefined)?.(typedValues);
   }
@@ -153,22 +153,9 @@
   }
 </script>
 
-{#snippet optionRow(item: I)}
-  {@const label = getLabel(item)}
-  {@const highlighted = query.trim() === '' ? null : fuzzySearchHighlight(query, label)}
-  <span class="form-select-item-label">
-    {#if highlighted}
-      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-      {@html highlighted}
-    {:else}
-      {label}
-    {/if}
-  </span>
-{/snippet}
-
 <div class="form-field">
-  {#if children}
-    <FieldLabel for={attrs.name} {required}>{@render children()}</FieldLabel>
+  {#if label}
+    <FieldLabel for={attrs.name} {required}>{label}</FieldLabel>
   {/if}
 
   {#if multiple}
@@ -182,6 +169,7 @@
       bind:open
     >
       <div
+        bind:this={boxEl}
         class={['form-input', 'form-select', 'form-combobox', 'form-combobox-multi', className]
           .filter(Boolean)
           .join(' ')}
@@ -212,22 +200,16 @@
         </ComboboxPrimitive.Trigger>
       </div>
       <ComboboxPrimitive.Portal>
-        <ComboboxPrimitive.Content class="form-select-menu form-combobox-menu" sideOffset={4}>
+        <ComboboxPrimitive.Content
+          class="form-select-menu form-combobox-menu"
+          customAnchor={boxEl}
+          forceMount
+          sideOffset={4}
+        >
           {#if header}<div class="form-combobox-header">{@render header()}</div>{/if}
           <ComboboxPrimitive.Viewport>
-            {#each filteredItems as item (getKey(item))}
-              <ComboboxPrimitive.Item
-                class="form-select-item"
-                label={getLabel(item)}
-                value={String(getKey(item))}
-              >
-                {#snippet children({ selected })}
-                  {@render optionRow(item)}
-                  {#if selected}<Check class="form-select-item-check" size={14} />{/if}
-                {/snippet}
-              </ComboboxPrimitive.Item>
-            {/each}
-            {#if filteredItems.length === 0}
+            {@render children()}
+            {#if !hasVisibleOptions}
               {#if empty}
                 {@render empty(query)}
               {:else}
@@ -240,7 +222,7 @@
       </ComboboxPrimitive.Portal>
     </ComboboxPrimitive.Root>
     {#each selectedKeys as key (key)}
-      <input name={attrs.name} type="hidden" value={keyToValue.get(key) ?? ''} />
+      <input name={attrs.name} type="hidden" value={key} />
     {/each}
   {:else}
     <ComboboxPrimitive.Root
@@ -255,6 +237,7 @@
       bind:open
     >
       <div
+        bind:this={boxEl}
         class={['form-input', 'form-select', 'form-combobox', className].filter(Boolean).join(' ')}
       >
         {#if Icon}<Icon class="form-input-icon" />{/if}
@@ -268,22 +251,16 @@
         </ComboboxPrimitive.Trigger>
       </div>
       <ComboboxPrimitive.Portal>
-        <ComboboxPrimitive.Content class="form-select-menu form-combobox-menu" sideOffset={4}>
+        <ComboboxPrimitive.Content
+          class="form-select-menu form-combobox-menu"
+          customAnchor={boxEl}
+          forceMount
+          sideOffset={4}
+        >
           {#if header}<div class="form-combobox-header">{@render header()}</div>{/if}
           <ComboboxPrimitive.Viewport>
-            {#each filteredItems as item (getKey(item))}
-              <ComboboxPrimitive.Item
-                class="form-select-item"
-                label={getLabel(item)}
-                value={String(getKey(item))}
-              >
-                {#snippet children({ selected })}
-                  {@render optionRow(item)}
-                  {#if selected}<Check class="form-select-item-check" size={14} />{/if}
-                {/snippet}
-              </ComboboxPrimitive.Item>
-            {/each}
-            {#if filteredItems.length === 0}
+            {@render children()}
+            {#if !hasVisibleOptions}
               {#if empty}
                 {@render empty(query)}
               {:else}

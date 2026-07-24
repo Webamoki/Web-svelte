@@ -5,6 +5,7 @@
   import { Select } from 'bits-ui';
   import { getContext } from 'svelte';
 
+  import { fuzzySearch } from '../../../utils/string.js';
   import { SELECT_FIELD_CONTEXT, type SelectFieldContext } from './select-field-context.js';
 
   interface Props {
@@ -34,11 +35,16 @@
   $effect(() => {
     return () => ctx.unregister(key);
   });
+
+  const query = $derived(ctx.getQuery?.() ?? '');
+  const visible = $derived(query.trim() === '' || fuzzySearch(query, resolvedLabel));
 </script>
 
-<Select.Item class="form-select-item" label={resolvedLabel} value={key}>
-  {#snippet children({ selected })}
-    <span class="form-select-item-label">{@render content()}</span>
-    {#if selected}<Check class="form-select-item-check" size={14} />{/if}
-  {/snippet}
-</Select.Item>
+{#if visible}
+  <Select.Item class="form-select-item" label={resolvedLabel} value={key}>
+    {#snippet children({ selected })}
+      <span class="form-select-item-label">{@render content()}</span>
+      {#if selected}<Check class="form-select-item-check" size={14} />{/if}
+    {/snippet}
+  </Select.Item>
+{/if}

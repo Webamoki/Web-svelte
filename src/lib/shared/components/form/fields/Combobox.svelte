@@ -30,6 +30,8 @@
     name: keyof Input & string;
     /** Only meaningful for single-select — ignored when `multiple`. */
     nullable?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    open?: boolean;
     optional?: boolean;
     placeholder: string;
     schema?: ZodType;
@@ -63,6 +65,8 @@
     name,
     nullable = false,
     onchange,
+    onOpenChange,
+    open = $bindable(false),
     optional,
     placeholder,
     schema,
@@ -170,10 +174,12 @@
   {#if multiple}
     <ComboboxPrimitive.Root
       items={bitsItems}
+      {onOpenChange}
       onValueChange={(keys) => handleMultiChange(keys)}
       {required}
       type="multiple"
       value={selectedKeys}
+      bind:open
     >
       <div
         class={['form-input', 'form-select', 'form-combobox', 'form-combobox-multi', className]
@@ -241,10 +247,12 @@
       allowDeselect={nullable}
       inputValue={selectedLabel ?? ''}
       items={bitsItems}
+      {onOpenChange}
       onValueChange={(key) => handleSingleChange(key)}
       {required}
       type="single"
       value={selectedKey}
+      bind:open
     >
       <div
         class={['form-input', 'form-select', 'form-combobox', className].filter(Boolean).join(' ')}
